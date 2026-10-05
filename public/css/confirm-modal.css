@@ -1,0 +1,27 @@
+.confirm-del-card {
+    background: rgba(22, 31, 54, 0.92);
+    backdrop-filter: blur(16px);
+    box-shadow: 0 18px 40px rgba(2, 6, 23, 0.45);
+    border: 1px solid rgba(59, 130, 246, 0.28);
+}
+.confirm-del-name {
+    margin: 0 0 8px;
+    color: #e2e8f0;
+    font-size: 15px;
+    font-weight: 700;
+}
+.confirm-del-name[hidden] { display: none !important; }
+.confirm-del-yes {
+    background: linear-gradient(90deg, #dc2626, #b91c1c);
+    color: #fff;
+    border: 0;
+    border-radius: 12px;
+    padding: 10px 16px;
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow: 0 8px 18px rgba(185, 28, 28, 0.28);
+}
+#confirmDel.modal-back {
+    z-index: 80;
+}
+#confirmDel.modal-back[hidden] { display: none !important; }

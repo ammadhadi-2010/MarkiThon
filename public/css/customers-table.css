@@ -1,0 +1,14 @@
+.cust-table { width: 100%; }
+.cust-table th, .cust-table td { vertical-align: middle; }
+.cust-check { width: 40px; text-align: center; }
+.cust-who { display: flex; align-items: center; gap: 10px; min-width: 160px; }
+.cust-who div { min-width: 0; }
+.cust-who strong { display: inline; margin-right: 6px; }
+.cust-vip {
+    display: inline-flex; align-items: center;
+    background: linear-gradient(90deg, #f59e0b, #d97706);
+    color: #111827; border-radius: 999px;
+    padding: 2px 8px; font-size: 10px; font-weight: 800;
+}
+.cust-addr { max-width: 220px; overflow-wrap: anywhere; color: #c9d6ee; }
+.cust-cards { display: none; }

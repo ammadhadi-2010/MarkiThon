@@ -1,0 +1,33 @@
+services:
+  - type: web
+    name: markithon-api
+    env: node
+    plan: starter
+    buildCommand: npm install
+    startCommand: npm start
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: FRONTEND_URL
+        value: https://markithon.com
+      - key: API_URL
+        value: https://api.markithon.com
+      - key: CORS_ORIGINS
+        value: https://markithon.com,https://www.markithon.com,https://api.markithon.com
+      - key: COOKIE_DOMAIN
+        value: .markithon.com
+      - key: DB_SSL
+        value: "1"
+      - key: JWT_SECRET
+        sync: false
+      - key: DB_HOST
+        sync: false
+      - key: DB_PORT
+        value: "5432"
+      - key: DB_NAME
+        sync: false
+      - key: DB_USER
+        sync: false
+      - key: DB_PASSWORD
+        sync: false

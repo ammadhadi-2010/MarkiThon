@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Forgot Password · MarkiThon</title>
+    <link rel="stylesheet" href="/css/auth-pages.css?v=auth1">
+</head>
+<body class="auth-page">
+    <form class="auth-card" id="authForgotForm" autocomplete="off">
+        <div class="auth-brand"><span class="auth-mark">M</span><strong>MarkiThon</strong></div>
+        <h1>Forgot Password</h1>
+        <p>Enter your email to receive a reset code for your customer account.</p>
+        <p class="auth-error" id="authError"></p>
+        <p class="auth-ok" id="authOk"></p>
+        <label>Email<input id="forgotEmail" name="forgotEmail" type="email" autocomplete="off" required></label>
+        <button type="submit">Send Reset Code</button>
+        <div class="auth-links"><a href="/login">Back to sign in</a></div>
+    </form>
+    <form class="auth-card" id="authResetForm" autocomplete="off" hidden>
+        <div class="auth-brand"><span class="auth-mark">M</span><strong>MarkiThon</strong></div>
+        <h1>Reset Password</h1>
+        <p>Enter the reset code and choose a new password.</p>
+        <p class="auth-error" id="resetError"></p>
+        <p class="auth-ok" id="resetOk"></p>
+        <label>Email<input id="resetEmail" name="resetEmail" type="email" autocomplete="off" required></label>
+        <label>Reset code<input id="resetToken" name="resetToken" autocomplete="off" required></label>
+        <label>New password<input id="resetPassword" name="resetPassword" type="password" autocomplete="off" required></label>
+        <button type="submit">Update Password</button>
+        <div class="auth-links"><a href="/login">Back to sign in</a></div>
+    </form>
+    <script src="/js/cloud-config.js?v=cloud1"></script>
+    <script src="/js/api-base.js?v=cloud1"></script>
+    <script src="/js/auth-client.js?v=cloud1"></script>
+    <script src="/js/auth-customer-forgot.js?v=auth1"></script>
+</body>
+</html>

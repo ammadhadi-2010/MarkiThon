@@ -1,0 +1,102 @@
+.sa-shop-head, .sa-shop-tools { display: flex; justify-content: space-between; gap: 12px; align-items: center; }
+.sa-shop-head { margin-bottom: 14px; }
+.sa-shop-title { display: flex; gap: 12px; align-items: center; }
+.sa-shop-title h1 { margin: 0; font-size: 26px; }
+.sa-shop-title p { margin: 4px 0 0; }
+.sa-shop-mark {
+    width: 42px; height: 42px; border-radius: 12px; display: grid; place-items: center;
+    background: linear-gradient(135deg, #2563eb, #7c3aed); color: white;
+}
+.sa-shop-stats .sa-stat { min-height: 108px; }
+.sa-shop-stats .sa-ico { color: white; }
+.sa-shop-dash { color: #64748b; font-size: 18px; line-height: 1; }
+.sa-add {
+    border: 0; border-radius: 10px; padding: 10px 14px; cursor: pointer; color: white;
+    background: linear-gradient(90deg, #2563eb, #7c3aed);
+}
+.sa-shop-stats { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; margin-bottom: 12px; }
+.sa-shop-tools { margin-bottom: 12px; }
+.sa-shop-search, .sa-shop-tools select, .sa-modal input, .sa-modal select, .sa-modal textarea {
+    background: #10182c; color: #f8fafc; border: 1px solid var(--sa-line); border-radius: 12px; padding: 11px 12px;
+    color-scheme: dark;
+}
+.sa-modal textarea { width: 100%; min-height: 96px; resize: vertical; }
+.sa-shop-search-wrap { position: relative; flex: 1; display: block; }
+.sa-shop-search-wrap svg { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: #93a0bd; }
+.sa-shop-search { width: 100%; padding-left: 36px; }
+.sa-shop-tools select, .sa-modal select {
+    min-width: 150px; color: #f8fafc; background-color: #10182c; color-scheme: dark;
+}
+.sa-shop-tools select option, .sa-modal select option, .sa-app select option {
+    color: #f8fafc; background-color: #121a2e;
+}
+.sa-app select, .sa-modal select {
+    color: #f8fafc; background-color: #10182c; color-scheme: dark;
+}
+.sa-detail { display: grid; gap: 0; margin-top: 8px; }
+.sa-detail div { display: flex; justify-content: space-between; gap: 16px; padding: 8px 0; border-top: 1px solid var(--sa-line); }
+.sa-detail span { color: #93a0bd; }
+.sa-detail strong { text-align: right; }
+.sa-detail a { color: #93c5fd; }
+.sa-wide { width: min(560px, 100%); }
+.sa-shop-board { padding: 6px 8px 12px; }
+.sa-shop-table { min-width: 760px; }
+.sa-shop-table td, .sa-shop-table th { padding: 14px 10px; vertical-align: middle; }
+.sa-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+.sa-shop-who { display: flex; gap: 12px; align-items: center; }
+.sa-shop-who strong { display: block; }
+.sa-shop-logo {
+    width: 42px; height: 42px; border-radius: 12px; display: grid; place-items: center;
+    font-weight: 700; color: white; background: #1d4ed8;
+}
+.sa-contact { display: inline-flex; align-items: center; gap: 8px; }
+.sa-shop-table .sa-pill.is-active { background: rgba(22, 163, 74, 0.22); color: #4ade80; }
+.sa-shop-table .sa-pill.is-pending { background: rgba(217, 119, 6, 0.22); color: #fdba74; }
+.sa-shop-table .sa-pill.is-suspended { background: rgba(220, 38, 38, 0.22); color: #fca5a5; }
+.sa-shop-who small, .sa-pack small { display: block; color: var(--sa-muted); }
+.sa-wa {
+    display: inline-grid; place-items: center; width: 22px; height: 22px;
+    border-radius: 50%; background: #16a34a; color: white; text-decoration: none;
+}
+.sa-actions { display: flex; gap: 6px; justify-content: flex-end; }
+.sa-actions button, .sa-page-btn {
+    border: 1px solid var(--sa-line); background: #121a2e; color: #cbd5e1;
+    border-radius: 8px; width: 32px; height: 32px; cursor: pointer;
+    display: inline-grid; place-items: center; padding: 0;
+}
+.sa-menu-pop {
+    position: absolute; z-index: 5; min-width: 140px; padding: 6px;
+    background: #121a2e; border: 1px solid var(--sa-line); border-radius: 10px;
+}
+.sa-menu-pop button { display: block; width: 100%; text-align: left; border: 0; background: transparent; color: var(--sa-text); padding: 8px; cursor: pointer; }
+.sa-pager { display: flex; justify-content: space-between; align-items: center; gap: 8px; margin-top: 12px; }
+.sa-pager div { display: flex; gap: 6px; }
+.sa-page-btn.is-on { background: #2563eb; border-color: #2563eb; }
+.sa-modal-back {
+    position: fixed; inset: 0; z-index: 30; background: rgba(2, 6, 23, 0.72);
+    display: grid; place-items: center; padding: 16px;
+}
+.sa-modal-back[hidden] { display: none !important; }
+.sa-modal { width: min(440px, 100%); }
+.sa-modal label { display: block; margin: 10px 0 4px; font-size: 13px; }
+.sa-modal input, .sa-modal select { width: 100%; }
+.sa-modal-actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 14px; }
+.sa-modal-actions button {
+    color: #f8fafc; background: #121a2e; border: 1px solid var(--sa-line);
+    border-radius: 10px; padding: 10px 16px; cursor: pointer;
+}
+.sa-modal-actions .sa-add {
+    color: #ffffff; border: 0; background: linear-gradient(90deg, #2563eb, #7c3aed);
+}
+.sa-note-line { color: #fecaca; font-size: 13px; }
+@media (max-width: 900px) {
+    .sa-shop-head, .sa-shop-tools { display: grid; grid-template-columns: 1fr 1fr; }
+    .sa-shop-search-wrap { grid-column: 1 / -1; }
+    .sa-shop-stats {
+        display: flex; flex-wrap: nowrap; overflow-x: auto; gap: 12px;
+        scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch;
+        touch-action: pan-x; scrollbar-width: none;
+    }
+    .sa-shop-stats::-webkit-scrollbar { display: none; }
+    .sa-shop-stats .sa-stat { flex: 0 0 calc((100% - 56px) / 2); scroll-snap-align: start; }
+}

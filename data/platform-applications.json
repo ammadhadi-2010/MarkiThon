@@ -1,0 +1,20 @@
+[
+  {
+    "id": "app-alnoor",
+    "name": "Al-Noor Fabrics",
+    "wait": "2h ago",
+    "status": "approved"
+  },
+  {
+    "id": "app-modern",
+    "name": "Modern Textiles",
+    "wait": "5h ago",
+    "status": "pending"
+  },
+  {
+    "id": "app-fashion",
+    "name": "Fashion Hub",
+    "wait": "1d ago",
+    "status": "pending"
+  }
+]

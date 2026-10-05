@@ -1,0 +1,94 @@
+.os-count { display: block; text-align: right; margin-top: 4px; color: #8b9bb8; font-size: 11px; }
+#osEditShort { min-height: 64px; resize: vertical; }
+.os-rich {
+    border: 1px solid rgba(59, 130, 246, 0.2);
+    border-radius: 12px;
+    overflow: hidden;
+    background: #0b1120;
+}
+.os-rich-bar {
+    display: flex;
+    gap: 4px;
+    padding: 6px 8px;
+    border-bottom: 1px solid rgba(59, 130, 246, 0.16);
+    background: #10192c;
+}
+.os-rich-bar button {
+    min-width: 32px;
+    height: 28px;
+    border: 0;
+    border-radius: 8px;
+    background: transparent;
+    color: #dbeafe;
+    cursor: pointer;
+}
+.os-rich-bar button:hover { background: rgba(59, 130, 246, 0.18); }
+.os-rich-body {
+    min-height: 110px;
+    padding: 10px 12px;
+    color: #e8eefc;
+    outline: none;
+    line-height: 1.45;
+}
+.os-photo-row { display: flex; gap: 16px; flex-wrap: wrap; align-items: flex-start; }
+.os-photo-grid { display: flex; gap: 10px; flex-wrap: wrap; }
+.os-photo-tile, .os-photo-add {
+    width: 110px;
+    height: 110px;
+    border-radius: 14px;
+    position: relative;
+    overflow: hidden;
+    border: 1px dashed rgba(59, 130, 246, 0.28);
+    background: #10192c;
+}
+.os-photo-tile img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.os-photo-main {
+    position: absolute;
+    left: 6px;
+    bottom: 6px;
+    background: #2563eb;
+    color: #fff;
+    font-size: 10px;
+    font-weight: 700;
+    border-radius: 999px;
+    padding: 3px 8px;
+}
+.os-photo-add {
+    display: grid;
+    place-content: center;
+    gap: 4px;
+    color: #93c5fd;
+    cursor: pointer;
+    text-align: center;
+    font-size: 12px;
+    font-weight: 700;
+}
+.os-photo-add span { font-size: 22px; line-height: 1; }
+.os-photo-tips { margin: 0; padding-left: 18px; color: #86efac; font-size: 12px; line-height: 1.7; }
+.os-photo-x {
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    width: 22px;
+    height: 22px;
+    border: 0;
+    border-radius: 999px;
+    background: rgba(15, 23, 42, 0.82);
+    color: #fff;
+    cursor: pointer;
+    line-height: 1;
+}
+.os-save-btn.is-busy .os-save-label { visibility: hidden; }
+.os-save-btn.is-busy::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    margin: auto;
+    width: 16px;
+    height: 16px;
+    border: 2px solid rgba(255, 255, 255, 0.35);
+    border-top-color: #fff;
+    border-radius: 50%;
+    animation: osSpin 0.7s linear infinite;
+}
+@keyframes osSpin { to { transform: rotate(360deg); } }

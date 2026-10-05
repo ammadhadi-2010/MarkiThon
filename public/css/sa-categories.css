@@ -1,0 +1,24 @@
+.sa-cat-layout { display: grid; grid-template-columns: 230px minmax(0, 1fr); gap: 14px; align-items: start; }
+.sa-cat-side {
+    display: flex; flex-direction: column; gap: 4px; padding: 8px;
+    background: rgba(22, 31, 54, 0.92); border: 1px solid var(--sa-line); border-radius: 16px;
+}
+.sa-cat-link {
+    display: flex; justify-content: space-between; align-items: center; gap: 8px; width: 100%;
+    border: 0; background: transparent; color: #d5deef; border-radius: 10px; padding: 10px 12px; cursor: pointer;
+}
+.sa-cat-link.is-on { background: #2563eb; color: white; box-shadow: 0 0 16px rgba(37, 99, 235, 0.45); }
+.sa-cat-link b {
+    min-width: 22px; text-align: center; border-radius: 999px; padding: 2px 7px; font-size: 12px;
+    background: rgba(148, 163, 184, 0.16); color: #f8fafc;
+}
+.sa-cat-link.is-on b { background: rgba(255, 255, 255, 0.18); }
+.sa-cat-thumb { width: 42px; height: 42px; border-radius: 10px; flex: 0 0 42px; }
+.sa-cat-table { min-width: 860px; }
+.sa-cat-table .sa-pill.is-active { background: rgba(22, 163, 74, 0.22); color: #4ade80; }
+.sa-cat-table .sa-pill.is-inactive { background: rgba(220, 38, 38, 0.22); color: #fca5a5; }
+@media (max-width: 800px) {
+    .sa-cat-layout { grid-template-columns: 1fr; }
+    .sa-cat-side { flex-direction: row; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+    .sa-cat-link { width: auto; flex: 0 0 auto; }
+}

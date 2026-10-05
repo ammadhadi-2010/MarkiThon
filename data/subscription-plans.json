@@ -1,0 +1,55 @@
+{
+  "updatedAt": "2026-09-29T10:52:54.018Z",
+  "plans": [
+    {
+      "id": "Basic",
+      "label": "Basic Free Plan",
+      "icon": "🥇",
+      "monthlyPrice": 0,
+      "yearlyPrice": 0,
+      "productLimit": 50,
+      "orderLimit": 100,
+      "popular": false,
+      "features": [
+        "Inventory Management",
+        "Billing / POS",
+        "Customer Ledger",
+        "Basic Reports"
+      ]
+    },
+    {
+      "id": "Business",
+      "label": "Business",
+      "icon": "👑",
+      "monthlyPrice": 3999,
+      "yearlyPrice": 39990,
+      "productLimit": 500,
+      "orderLimit": 2000,
+      "popular": true,
+      "features": [
+        "All Basic Features",
+        "Wholesale Orders",
+        "Supplier Ledger",
+        "Multi-User (3)",
+        "Advanced Reports"
+      ]
+    },
+    {
+      "id": "Premium",
+      "label": "Premium",
+      "icon": "💎",
+      "monthlyPrice": 6999,
+      "yearlyPrice": 69990,
+      "productLimit": 5000,
+      "orderLimit": 20000,
+      "popular": false,
+      "features": [
+        "All Business Features",
+        "Online Store",
+        "Multi-Branch (Up to 5)",
+        "API Access",
+        "Priority Support"
+      ]
+    }
+  ]
+}

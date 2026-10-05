@@ -1,0 +1,119 @@
+function mpEscAttr(value) {
+    return String(value || '').replace(/[&<>"']/g, (ch) => ({
+        '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+    }[ch]));
+}
+
+function mpGuestPillMarkup() {
+    const mark = '<svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="3.2"/><path d="M5.5 19.2c.8-3.2 3.2-4.8 6.5-4.8s5.7 1.6 6.5 4.8"/></svg>';
+    return `<button type="button" class="mp-pill mp-pill-guest" id="mpAuthOpen" aria-label="Sign In / Register" title="Sign In / Register"><span class="mp-pill-avatar">${mark}</span></button>`;
+}
+
+function mpMenuAvatar(buyer) {
+    const name = buyer.name || 'Customer';
+    const letter = name.trim().charAt(0).toUpperCase() || 'C';
+    const image = mpEscAttr(buyer.imageUrl || (buyer.preferences && buyer.preferences.avatar) || '');
+    if (image) {
+        return `<img class="mp-pill-avatar mp-pill-photo" src="${image}" alt="" width="40" height="40">`;
+    }
+    return `<span class="mp-pill-avatar">${letter}</span>`;
+}
+
+function mpProfileMenuMarkup(buyer) {
+    const name = mpEscAttr(buyer.name || 'Customer');
+    const letter = (buyer.name || 'C').trim().charAt(0).toUpperCase() || 'C';
+    const shopkeeper = buyer.role === 'shopkeeper';
+    const badge = mpEscAttr(buyer.subtitle || (shopkeeper ? 'Vendor' : 'Customer'));
+    const avatar = mpMenuAvatar(buyer);
+    const pillAvatar = buyer.imageUrl
+        ? `<img class="mp-pill-avatar mp-pill-photo" src="${mpEscAttr(buyer.imageUrl)}" alt="">`
+        : `<span class="mp-pill-avatar">${letter}</span>`;
+    const verifyLabel = buyer.verified ? 'Verified' : 'Verify now';
+    return `
+        <button type="button" class="mp-pill" id="mpAuthMenuBtn" aria-label="Account menu" aria-expanded="false" aria-haspopup="true">
+            ${pillAvatar}
+            <span class="mp-pill-name">${name}</span>
+            <span class="mp-pill-caret" aria-hidden="true">▾</span>
+        </button>
+        <div class="mp-auth-menu" id="mpAuthMenu" hidden>
+            <div class="mp-menu-card">
+                ${avatar}
+                <div>
+                    <strong>${name}</strong>
+                    <span class="mp-role">${badge}</span>
+                </div>
+            </div>
+            <div class="mp-menu-actions">
+                <button type="button" class="mp-menu-view" data-mp-account="settings">View Profile</button>
+                <button type="button" class="mp-menu-verify${buyer.verified ? ' is-ok' : ''}" data-mp-account="settings">${verifyLabel}</button>
+            </div>
+            <p class="mp-menu-label">Quick</p>
+            <div class="mp-menu-links">
+                <button type="button" data-mp-account="settings">Profile</button>
+                <button type="button" data-mp-account="wallet">Wallet</button>
+                <button type="button" data-mp-account="settings">Settings</button>
+                <a href="/contact">Help</a>
+            </div>
+            <p class="mp-menu-label">Account</p>
+            <div class="mp-menu-links">
+                <button type="button" class="mp-menu-lang" data-mp-lang="en">Language <span>English</span></button>
+            </div>
+            <p class="mp-menu-label">Manage</p>
+            <div class="mp-menu-links">
+                <a href="/app">My Shop / Vendor Account</a>
+            </div>
+            <button type="button" class="mp-signout" id="mpLogout">Sign out</button>
+        </div>`;
+}
+
+function mpAuthModalMarkup() {
+    return `
+    <div class="mp-modal" id="mpAuthModal" hidden>
+        <form class="mp-modal-card" id="mpAuthForm" autocomplete="off">
+            <div class="mp-modal-head">
+                <h2 id="mpAuthTitle">Sign In</h2>
+                <button type="button" class="mp-icon" id="mpAuthClose" aria-label="Close">×</button>
+            </div>
+            <div class="mp-auth-switch">
+                <button type="button" class="on" data-mp-mode="login">Sign In</button>
+                <button type="button" data-mp-mode="register">Register</button>
+            </div>
+            <div class="mp-auth-switch" id="mpAuthChannels">
+                <button type="button" class="on" data-mp-channel="email">Email</button>
+                <button type="button" data-mp-channel="phone">Phone</button>
+                <button type="button" data-mp-channel="google">Google</button>
+            </div>
+            <div id="mpGoogleBtn" class="mp-google-slot" hidden></div>
+            <label id="mpAuthNameWrap">Name
+                <input id="mpAuthName" name="buyerName" autocomplete="off" placeholder="Your name">
+            </label>
+            <label id="mpAuthEmailWrap">Email
+                <input id="mpAuthEmail" name="buyerEmail" type="email" autocomplete="off" placeholder="name@email.com">
+            </label>
+            <label id="mpAuthPhoneWrap" hidden>Phone number
+                <input id="mpAuthPhone" name="buyerPhone" autocomplete="off" placeholder="03001234567">
+            </label>
+            <label id="mpAuthPassWrap">Password
+                <input id="mpAuthPass" name="buyerPassword" type="password" autocomplete="off" placeholder="At least 6 characters">
+            </label>
+            <p class="mp-auth-note" id="mpAuthNote" hidden>Use Google Sign-In below. Your Google credential is verified on the server.</p>
+            <p class="mp-auth-error" id="mpAuthError" hidden></p>
+            <button type="submit" class="mp-cta" id="mpAuthSubmit">Sign In</button>
+            <p class="mp-auth-note"><a href="/forgot-password">Forgot password</a> · <a href="/signup">Full signup page</a> · <a href="/login">Full login page</a></p>
+        </form>
+    </div>`;
+}
+
+function mpAccountDrawerMarkup() {
+    return `
+    <div class="mp-drawer-back" id="mpAccountDrawer" hidden>
+        <aside class="mp-drawer" aria-label="Customer account">
+            <div class="mp-modal-head">
+                <h2 id="mpAccountTitle">My Orders</h2>
+                <button type="button" class="mp-icon" id="mpAccountClose" aria-label="Close">×</button>
+            </div>
+            <p class="mp-auth-note" id="mpAccountWho"></p>
+            <div id="mpAccountBody"></div>
+        </aside>
+    </div>`;
+}

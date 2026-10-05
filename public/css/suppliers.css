@@ -1,0 +1,35 @@
+.sup-due { color: #f87171; font-weight: 800; }
+.inv-sup-row { display: flex; gap: 8px; margin-top: 8px; }
+.inv-sup-row select { flex: 1; }
+.sup-filters { display: flex; gap: 8px; flex-wrap: wrap; margin: 10px 0; }
+.sup-ledger-stats {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 10px;
+    margin: 12px 0 16px;
+}
+.sup-stat {
+    background: #10192c;
+    border: 1px solid rgba(59, 130, 246, 0.28);
+    border-radius: 14px;
+    padding: 12px;
+}
+.sup-stat span {
+    display: block;
+    color: #9fb0cc;
+    font-size: 11px;
+    margin-bottom: 6px;
+}
+.sup-stat strong { font-size: 16px; color: #dbeafe; }
+.sup-stat.due strong { color: #f87171; }
+#supQuickDue { color: #93c5fd; font-weight: 600; }
+#supLedgerCard .card-title {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+}
+@media (max-width: 900px) {
+    .inv-sup-row { flex-direction: column; }
+    .sup-ledger-stats { grid-template-columns: 1fr 1fr; }
+}

@@ -1,0 +1,92 @@
+[
+  {
+    "id": "shop-ammad",
+    "name": "Ammad Hadi Stor",
+    "owner": "Ammad Ul Hadi",
+    "phone": "+92 300 7012010",
+    "package": "Standard",
+    "months": 6,
+    "status": "Active"
+  },
+  {
+    "id": "shop-zain",
+    "name": "Zain Textiles",
+    "owner": "Zain Khan",
+    "phone": "+92 300 1234567",
+    "package": "Standard",
+    "months": 3,
+    "status": "Active"
+  },
+  {
+    "id": "shop-royal",
+    "name": "Royal Fabrics",
+    "owner": "Bilal Ahmed",
+    "phone": "+92 333 9876543",
+    "package": "Premium",
+    "months": 12,
+    "status": "Active"
+  },
+  {
+    "id": "shop-sana",
+    "name": "Sana Collection",
+    "owner": "Sana Fatima",
+    "phone": "+92 321 7654321",
+    "package": "Standard",
+    "months": 3,
+    "status": "Pending"
+  },
+  {
+    "id": "shop-fabric",
+    "name": "Fabric World",
+    "owner": "Usman Ali",
+    "phone": "+92 345 4455667",
+    "package": "Premium",
+    "months": 6,
+    "status": "Active"
+  },
+  {
+    "id": "shop-pillow",
+    "name": "Luxury Pillow Set",
+    "owner": "Hina Butt",
+    "phone": "+92 300 7788999",
+    "package": "Standard",
+    "months": 3,
+    "status": "Active"
+  },
+  {
+    "id": "shop-cotton",
+    "name": "Cotton King",
+    "owner": "Tahir Mehmood",
+    "phone": "+92 333 7788990",
+    "package": "Premium",
+    "months": 12,
+    "status": "Active"
+  },
+  {
+    "id": "shop-modern",
+    "name": "Modern Textiles",
+    "owner": "Rabia Noor",
+    "phone": "+92 304 5566778",
+    "package": "Standard",
+    "months": 3,
+    "status": "Active"
+  },
+  {
+    "id": "shop-fashion",
+    "name": "Fashion Hub",
+    "owner": "Nadia Malik",
+    "phone": "+92 311 4556677",
+    "package": "Premium",
+    "months": 6,
+    "status": "Pending"
+  },
+  {
+    "id": "shop-trendi",
+    "name": "Trendi Fashion",
+    "owner": "Asif Raza",
+    "phone": "+92 345 6677889",
+    "package": "Standard",
+    "months": 3,
+    "status": "Suspended"
+  }
+]

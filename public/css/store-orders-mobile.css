@@ -1,0 +1,116 @@
+.os-ord-cards { display: none; }
+
+@media (min-width: 768px) {
+    .os-ord-wrap { display: block; }
+    .os-ord-cards { display: none !important; }
+}
+
+@media (max-width: 767px) {
+    .os-ord-head { flex-direction: column; align-items: stretch; }
+    #osOrdCreate { width: 100%; justify-content: center; }
+    .os-ord-tabs {
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        gap: 8px;
+        padding: 4px 2px 10px;
+        margin: 0 0 12px;
+        scrollbar-width: thin;
+    }
+    .os-ord-tab {
+        flex: 0 0 auto;
+        padding: 10px 14px;
+        min-height: 44px;
+    }
+    .os-ord-tools {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 8px;
+        margin-bottom: 10px;
+    }
+    .os-ord-tools .os-search,
+    .os-ord-tools .list-search {
+        flex: 0 0 auto;
+        width: 100%;
+        max-width: none;
+        min-height: 0;
+        height: auto;
+        margin: 0;
+    }
+    .os-ord-tools .os-search input {
+        min-height: 44px;
+        box-sizing: border-box;
+    }
+    .os-ord-range {
+        flex: 0 0 auto;
+        width: 100%;
+        max-width: none;
+        min-height: 44px;
+        box-sizing: border-box;
+        justify-content: space-between;
+    }
+    .os-ord-range select { flex: 1; min-width: 0; }
+    .os-ord-wrap { display: none !important; }
+    .os-ord-cards {
+        display: flex !important;
+        flex-direction: column;
+        gap: 12px;
+    }
+    .os-ord-card {
+        background: rgba(22, 31, 54, 0.94);
+        border: 1px solid rgba(59, 130, 246, 0.22);
+        border-radius: 16px;
+        padding: 14px;
+        box-shadow: 0 10px 24px rgba(8, 15, 32, 0.35);
+    }
+    .os-ord-card.on {
+        border-color: rgba(59, 130, 246, 0.55);
+        box-shadow: 0 0 18px rgba(37, 99, 235, 0.28);
+    }
+    .os-ord-card-top {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 10px;
+        margin-bottom: 12px;
+    }
+    .os-ord-card-top .os-ord-when { text-align: right; }
+    .os-ord-card .os-ord-cust { margin-bottom: 12px; }
+    .os-ord-card-sum {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 12px;
+    }
+    .os-ord-chip {
+        background: #10192c;
+        border: 1px solid rgba(59, 130, 246, 0.22);
+        border-radius: 999px;
+        padding: 5px 10px;
+        font-size: 11px;
+        font-weight: 700;
+        color: #bfdbfe;
+    }
+    .os-ord-card-go {
+        width: 100%;
+        min-height: 44px;
+        border: 0;
+        border-radius: 12px;
+        background: linear-gradient(90deg, #3b82f6, #2563eb);
+        color: #fff;
+        font-weight: 800;
+        cursor: pointer;
+        box-shadow: 0 6px 16px rgba(37, 99, 235, 0.35);
+    }
+    .os-ord-empty { margin: 0; color: var(--muted); text-align: center; padding: 18px 8px; }
+    .os-ord-foot {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        justify-content: center;
+    }
+    .os-ord-foot .os-pager { justify-content: center; flex-wrap: wrap; }
+    .os-ord-grid { grid-template-columns: 1fr; }
+    .os-ord-panel { width: 100vw; }
+}

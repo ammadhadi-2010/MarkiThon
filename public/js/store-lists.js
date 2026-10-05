@@ -1,0 +1,1 @@
+/* Online Store customers page was removed. Use the root Customers dashboard. */

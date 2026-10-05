@@ -1,0 +1,129 @@
+* { box-sizing: border-box; }
+body {
+    margin: 0;
+    font-family: Inter, Segoe UI, sans-serif;
+    background: #0b1120;
+    color: #e2e8f0;
+}
+a { color: inherit; text-decoration: none; }
+button, input { font: inherit; }
+.mp-nav {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    padding: 12px 28px;
+    background: rgba(22, 31, 54, 0.92);
+    border-bottom: 1px solid rgba(59, 130, 246, 0.2);
+    position: sticky;
+    top: 0;
+    z-index: 20;
+}
+.mp-brand { display: flex; gap: 10px; align-items: center; }
+.mp-mark {
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    display: grid;
+    place-items: center;
+    font-weight: 800;
+    background: linear-gradient(135deg, #7c3aed, #2563eb);
+}
+.mp-brand small { display: block; color: #8b9bb8; font-size: 11px; }
+.mp-links { display: flex; gap: 12px; flex: 1; font-size: 13px; color: #c9d6ee; }
+.mp-links a.on { color: #fff; font-weight: 700; }
+.mp-drop { position: relative; }
+.mp-drop button {
+    background: none;
+    border: 0;
+    color: #c9d6ee;
+    cursor: pointer;
+}
+.mp-drop-menu {
+    display: none;
+    position: absolute;
+    top: 120%;
+    left: 0;
+    background: #161f36;
+    border: 1px solid rgba(59, 130, 246, 0.25);
+    border-radius: 12px;
+    padding: 8px;
+    min-width: 160px;
+}
+.mp-drop:hover .mp-drop-menu { display: grid; gap: 6px; }
+.mp-utils { display: flex; align-items: center; gap: 10px; }
+.mp-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    border: 1px solid rgba(59, 130, 246, 0.2);
+    background: #10192c;
+    color: #e2e8f0;
+    position: relative;
+    cursor: pointer;
+    display: grid;
+    place-items: center;
+    font-size: 18px;
+    line-height: 1;
+    padding: 0;
+}
+.mp-wish svg { display: block; width: 24px; height: 24px; }
+.mp-badge {
+    position: absolute;
+    top: -4px;
+    right: -4px;
+    background: #7c3aed;
+    color: #fff;
+    border-radius: 99px;
+    font-size: 10px;
+    padding: 1px 5px;
+}
+.mp-login { color: #c9d6ee; font-size: 14px; }
+.mp-cta {
+    background: linear-gradient(90deg, #7c3aed, #2563eb);
+    color: #fff;
+    border-radius: 10px;
+    padding: 8px 14px;
+    font-weight: 700;
+}
+.mp-block { padding: 28px 28px 8px; max-width: 1240px; margin: 0 auto; }
+.mp-block.mp-tight { padding-bottom: 0; margin-bottom: 0; }
+.mp-block.mp-tight-top { padding-top: 4px; }
+#trending.mp-block { padding-bottom: 0; margin-bottom: 0; }
+#mpPromos.mp-block { padding-top: 4px; padding-bottom: 0; margin: 0; }
+#shops.mp-block { padding-top: 4px; margin-top: 0; }
+.mp-head { display: flex; justify-content: space-between; gap: 12px; align-items: end; margin-bottom: 12px; }
+.mp-head h2 { margin: 0; }
+.mp-head p, .mp-head a { color: #8b9bb8; font-size: 13px; }
+#trending .mp-head p,
+#shops .mp-head p { display: none !important; }
+@media (max-width: 900px) {
+    .mp-links { display: none; }
+    .mp-nav {
+        flex-wrap: nowrap;
+        gap: 8px;
+        padding: 10px 12px;
+    }
+    .mp-brand { min-width: 0; flex: 1 1 auto; gap: 8px; }
+    .mp-brand small { display: none; }
+    .mp-brand strong {
+        display: block;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        font-size: 15px;
+    }
+    .mp-mark { width: 32px; height: 32px; flex: 0 0 32px; }
+    .mp-utils { gap: 6px; flex: 0 0 auto; }
+    .mp-utils .mp-icon { width: 32px; height: 32px; }
+    .mp-utils .mp-wish svg { width: 20px; height: 20px; }
+    .mp-nav .mp-pill {
+        width: 32px;
+        height: 32px;
+        max-width: 32px;
+        padding: 0;
+        justify-content: center;
+    }
+    .mp-nav .mp-pill-name,
+    .mp-nav .mp-pill-caret { display: none; }
+    .mp-block { padding: 18px 12px; }
+}

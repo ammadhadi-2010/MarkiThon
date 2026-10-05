@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Super Admin Login · MarkiThon</title>
+    <link rel="stylesheet" href="/css/auth-pages.css?v=auth1">
+</head>
+<body class="auth-page">
+    <form class="auth-card" id="authForm" autocomplete="off">
+        <div class="auth-brand"><span class="auth-mark">M</span><strong>MarkiThon</strong></div>
+        <h1>Super Admin Login</h1>
+        <p>Sign in to manage Ammad Hadi Stor marketplace operations.</p>
+        <p class="auth-error" id="authError"></p>
+        <label>Email<input id="authEmail" name="adminEmail" type="email" autocomplete="off" placeholder="admin@markithon.com" value="admin@markithon.com"></label>
+        <label>Password<input id="authPassword" name="adminPassword" type="password" autocomplete="off" placeholder="Password (temporary bypass)"></label>
+        <button type="submit">Sign In</button>
+        <div class="auth-links"><a href="/">View Marketplace</a></div>
+    </form>
+    <script src="/js/cloud-config.js?v=cloud1"></script>
+    <script src="/js/api-base.js?v=cloud1"></script>
+    <script src="/js/auth-client.js?v=cloud1"></script>
+    <script src="/js/auth-admin-login.js?v=bypass1"></script>
+</body>
+</html>

@@ -1,0 +1,94 @@
+.print-a4 .inv-sheet {
+    width: min(210mm, 100%);
+    max-width: 100%;
+    text-align: left;
+    font-family: "Segoe UI", sans-serif;
+    font-size: 14px;
+    line-height: 1.65;
+    padding: 28px 32px;
+    border-style: solid;
+    border-radius: 12px;
+}
+.print-a4 .inv-brand {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 24px;
+    text-align: left;
+    margin-bottom: 8px;
+}
+.print-a4 .inv-platform {
+    font-size: 22px;
+    font-weight: 800;
+    letter-spacing: 0.02em;
+    color: #93c5fd;
+}
+.print-a4 .inv-shop-block { text-align: right; max-width: 52%; }
+.print-a4 .slip-shop { font-size: 18px; line-height: 1.4; }
+.print-a4 .slip-contact { font-size: 13px; line-height: 1.5; }
+.print-a4 .slip-num { font-size: 16px; margin: 10px 0 4px; }
+.print-a4 .inv-rule {
+    border-top: 2px solid rgba(96, 165, 250, 0.55);
+    margin: 16px 0;
+}
+.print-a4 .inv-thermal-table,
+.print-a4 .inv-thermal-only { display: none; }
+.print-a4 .inv-a4-table {
+    width: 100%;
+    table-layout: fixed;
+    border-collapse: collapse;
+    margin: 14px 0 20px;
+    border: 1px solid #d1d5db;
+}
+.print-a4 .inv-a4-table th,
+.print-a4 .inv-a4-table td {
+    border: 1px solid #d1d5db;
+    padding: 10px 12px;
+    font-size: 13px;
+    line-height: 1.5;
+    overflow: visible;
+    white-space: normal;
+}
+.print-a4 .inv-a4-table th {
+    color: #93c5fd;
+    text-align: left;
+    font-weight: 700;
+    background: rgba(37, 99, 235, 0.12);
+}
+.print-a4 .inv-a4-table th:nth-child(1),
+.print-a4 .inv-a4-table td:nth-child(1) { width: 10%; }
+.print-a4 .inv-a4-table th:nth-child(2),
+.print-a4 .inv-a4-table td:nth-child(2) { width: 38%; }
+.print-a4 .inv-a4-table th:nth-child(3),
+.print-a4 .inv-a4-table td:nth-child(3) { width: 20%; }
+.print-a4 .inv-a4-table th:nth-child(4),
+.print-a4 .inv-a4-table td:nth-child(4),
+.print-a4 .inv-a4-table th:nth-child(5),
+.print-a4 .inv-a4-table td:nth-child(5) { width: 16%; text-align: right; }
+.print-a4 .inv-finance {
+    margin-left: auto;
+    width: min(320px, 100%);
+    padding: 16px 18px;
+    border-radius: 12px;
+    background: rgba(22, 31, 54, 0.92);
+    border: 1px solid #9ca3af;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
+}
+.print-a4 .inv-finance .slip-row { padding: 6px 0; font-size: 14px; line-height: 1.5; }
+.print-a4 .inv-finance .slip-grand {
+    margin-top: 8px;
+    padding-top: 10px;
+    border-top: 1px solid #d1d5db;
+    font-size: 16px;
+}
+.print-a4 .inv-barcode-wrap {
+    margin: 22px auto 12px;
+    text-align: center;
+    max-width: 420px;
+}
+.print-a4 .inv-barcode-svg svg { width: 100%; height: 58px; }
+.print-a4 .pay-badge { margin-left: 0; }
+@media (max-width: 640px) {
+    .print-a4 .inv-brand { flex-direction: column; }
+    .print-a4 .inv-shop-block { text-align: left; max-width: 100%; }
+}

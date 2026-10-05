@@ -1,0 +1,41 @@
+.vp-wrap { display: grid; gap: 14px; margin-bottom: 18px; }
+.vp-head { display: flex; justify-content: space-between; gap: 12px; align-items: start; }
+.vp-head h2, .vp-setup-label h3, .vp-card h3 { margin: 0 0 6px; color: #f8fafc; }
+.vp-head p, .vp-setup-label p, .vp-hint { margin: 0; color: #93c5fd; font-size: 0.92rem; }
+.vp-gate, .vp-card {
+    background: rgba(22, 31, 54, 0.92);
+    border: 1px solid rgba(59, 130, 246, 0.28);
+    border-radius: 16px;
+    padding: 16px;
+}
+.vp-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+.vp-card label { display: grid; gap: 6px; margin-bottom: 10px; color: #e2e8f0; font-size: 0.9rem; }
+.vp-card input, .vp-card textarea {
+    width: 100%; box-sizing: border-box; border-radius: 10px; padding: 10px 12px;
+    border: 1px solid rgba(59, 130, 246, 0.35); background: #10182c; color: #f8fafc; color-scheme: dark;
+}
+.vp-card textarea { min-height: 78px; resize: vertical; }
+.vp-card input[readonly] { opacity: 0.85; }
+.vp-btn {
+    border: 0; border-radius: 10px; padding: 10px 14px; cursor: pointer; font-weight: 700;
+    background: linear-gradient(90deg, #2563eb, #1d4ed8); color: #fff;
+}
+.vp-btn.ghost { background: #121a2e; border: 1px solid rgba(59, 130, 246, 0.35); color: #e2e8f0; }
+.vp-avatar-row { display: flex; gap: 12px; align-items: center; margin-bottom: 12px; }
+.vp-avatar {
+    width: 72px; height: 72px; border-radius: 18px; display: grid; place-items: center;
+    background: #0b1120 center/cover no-repeat; border: 1px solid rgba(59, 130, 246, 0.35);
+    color: #93c5fd; font-weight: 800;
+}
+.vp-file input { margin-top: 6px; }
+.vp-note { min-height: 1.2em; color: #86efac; font-size: 0.86rem; }
+.vp-note.is-bad { color: #fecaca; }
+.vp-switch {
+    display: flex !important; align-items: center; justify-content: space-between; gap: 12px;
+    grid-template-columns: unset;
+}
+.vp-switch input { width: 42px; height: 24px; accent-color: #2563eb; }
+@media (max-width: 900px) {
+    .vp-grid { grid-template-columns: 1fr; }
+    .vp-head { flex-direction: column; }
+}

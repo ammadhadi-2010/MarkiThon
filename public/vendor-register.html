@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Shopkeeper Registration · MarkiThon</title>
+    <link rel="stylesheet" href="/css/auth-pages.css?v=auth1">
+</head>
+<body class="auth-page">
+    <form class="auth-card wide" id="authForm" autocomplete="off">
+        <div class="auth-brand"><span class="auth-mark">M</span><strong>MarkiThon</strong></div>
+        <h1>Open Your Shop</h1>
+        <p>Register your shop. New accounts stay Pending Admin Approval until reviewed.</p>
+        <p class="auth-error" id="authError"></p>
+        <p class="auth-ok" id="authOk"></p>
+        <div class="auth-grid">
+            <label>Shop name<input id="shopName" name="shopName" autocomplete="off" required></label>
+            <label>Owner name<input id="ownerName" name="ownerName" autocomplete="off" required></label>
+            <label>Email<input id="authEmail" name="vendorEmail" type="email" autocomplete="off" required></label>
+            <label>Phone<input id="phone" name="vendorPhone" autocomplete="off" required></label>
+        </div>
+        <label>Address<textarea id="address" name="vendorAddress" autocomplete="off" required></textarea></label>
+        <label>Password<input id="authPassword" name="vendorPassword" type="password" autocomplete="off" required></label>
+        <button type="submit">Submit Registration</button>
+        <div class="auth-links">
+            <a href="/vendor/login">Already registered? Sign in</a>
+            <a href="/">Marketplace</a>
+        </div>
+    </form>
+    <script src="/js/cloud-config.js?v=cloud1"></script>
+    <script src="/js/api-base.js?v=cloud1"></script>
+    <script src="/js/auth-client.js?v=cloud1"></script>
+    <script src="/js/auth-vendor-register.js?v=auth1"></script>
+</body>
+</html>

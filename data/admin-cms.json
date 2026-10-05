@@ -1,0 +1,356 @@
+{
+  "online": true,
+  "domain": "",
+  "visitors": 0,
+  "updatedAt": "2026-09-29T09:01:14.241Z",
+  "banners": [
+    {
+      "id": "ban-1",
+      "title": "Premium Fabrics",
+      "text": "For a better tomorrow",
+      "image": "https://images.unsplash.com/photo-1558769132-cb1aea458c5e?auto=format&fit=crop&w=1200&q=80",
+      "link": "/",
+      "shopId": "",
+      "cta": "Shop Now",
+      "enabled": true
+    },
+    {
+      "id": "ban-2",
+      "title": "Summer Sale",
+      "text": "Selected styles on offer",
+      "image": "https://images.unsplash.com/photo-1441986300917-64674bd600d8?auto=format&fit=crop&w=1200&q=80",
+      "link": "/#trending",
+      "shopId": "shop-ammad",
+      "cta": "Shop Now",
+      "enabled": true
+    }
+  ],
+  "featuredShopIds": [
+    "live-shop",
+    "shop-ammad",
+    "shop-zain"
+  ],
+  "featuredProductIds": [
+    "63935b24-d8a0-4f9e-bdbf-1b64cacbd92b",
+    "8a41ce79-9d3c-4ed7-b32c-814dab4a7349",
+    "9b09d7e3-7adb-446d-a076-329f32613f4d",
+    "31e8d23b-3586-404f-af4e-22f79f531247"
+  ],
+  "featuredShopAdIds": [
+    "1"
+  ],
+  "promos": [
+    {
+      "id": "promo-1",
+      "title": "Up To 40% OFF",
+      "text": "On Selected Items",
+      "image": "https://images.unsplash.com/photo-1584100936595-c0654b55a2e6?auto=format&fit=crop&w=400&q=80",
+      "link": "/#trending",
+      "shopId": "live-shop"
+    },
+    {
+      "id": "promo-2",
+      "title": "Home Essentials",
+      "text": "Bedsheets • Blankets • Pillows",
+      "image": "https://images.unsplash.com/photo-1631049307264-da0ec9d70304?auto=format&fit=crop&w=500&q=80",
+      "link": "/#categories",
+      "shopId": "live-shop"
+    },
+    {
+      "id": "promo-3",
+      "title": "Fresh Arrivals",
+      "text": "New Styles • Latest Trends",
+      "image": "https://images.unsplash.com/photo-1558769132-cb1aea458c5e?auto=format&fit=crop&w=500&q=80",
+      "link": "/#trending",
+      "shopId": "live-shop"
+    }
+  ],
+  "sections": {
+    "banners": true,
+    "shops": true,
+    "products": true
+  },
+  "seo": {
+    "title": "MarkiThon",
+    "description": "Shop from verified local businesses on MarkiThon.",
+    "keywords": "MarkiThon, local shops, marketplace, Ammad Hadi Stor",
+    "canonical": "",
+    "index": true,
+    "follow": true,
+    "siteName": "MarkiThon",
+    "ogTitle": "",
+    "ogDescription": "",
+    "ogImage": ""
+  },
+  "activity": [
+    {
+      "text": "Page content updated.",
+      "at": "2026-09-29T09:01:14.241Z"
+    },
+    {
+      "text": "Page content updated.",
+      "at": "2026-09-29T09:00:55.626Z"
+    },
+    {
+      "text": "Page content updated.",
+      "at": "2026-09-29T07:43:52.886Z"
+    },
+    {
+      "text": "Footer links updated.",
+      "at": "2026-09-28T17:19:20.112Z"
+    },
+    {
+      "text": "Footer links updated.",
+      "at": "2026-09-28T17:16:08.403Z"
+    },
+    {
+      "text": "SEO settings updated.",
+      "at": "2026-09-28T16:29:26.531Z"
+    },
+    {
+      "text": "Homepage section updated.",
+      "at": "2026-09-28T16:12:56.288Z"
+    },
+    {
+      "text": "Homepage section updated.",
+      "at": "2026-09-28T16:11:49.754Z"
+    }
+  ],
+  "home": {
+    "categories": true,
+    "why": true,
+    "reviews": true,
+    "newsletter": true,
+    "offers": true,
+    "recent": true,
+    "categoriesLabel": "Explore Categories",
+    "whyTitle": "Why Shop With MarkiThon?",
+    "reviewsTitle": "What Our Customers Say",
+    "newsTitle": "Stay Updated",
+    "newsText": "Get the latest products, offers and shop updates directly to your inbox.",
+    "offersLabel": "Special Offers",
+    "recentLabel": "Recently Viewed",
+    "benefits": [
+      {
+        "title": "Verified Shops",
+        "text": "Trusted and approved local businesses"
+      },
+      {
+        "title": "Wide Selection",
+        "text": "Fashion, home, beauty, electronics and more"
+      },
+      {
+        "title": "Direct Shopping",
+        "text": "Deal directly with shop owners"
+      },
+      {
+        "title": "Reliable Ordering",
+        "text": "Track your orders and shop with confidence"
+      }
+    ],
+    "quotes": [
+      {
+        "name": "Ayesha Khan",
+        "text": "Amazing experience! The quality is great and delivery was on time. Highly recommended.",
+        "stars": "4.9"
+      },
+      {
+        "name": "Usman Raza",
+        "text": "Finally a platform that supports local shops. Love the variety and prices.",
+        "stars": "5.0"
+      },
+      {
+        "name": "Fatima S.",
+        "text": "The best online shopping experience I've had in Pakistan. Keep it up!",
+        "stars": "4.8"
+      },
+      {
+        "name": "Ali Ahmed",
+        "text": "Easy to use, great products and excellent customer support.",
+        "stars": "4.7"
+      }
+    ]
+  },
+  "footer": {
+    "tagline": "Local shops. Global vibes.",
+    "copyright": "© 2026 MarkiThon. All rights reserved.",
+    "vibe": "Local Shops. Global Vibes.",
+    "social": [
+      {
+        "id": "facebook",
+        "name": "Facebook",
+        "mark": "f",
+        "href": "/about"
+      },
+      {
+        "id": "instagram",
+        "name": "Instagram",
+        "mark": "ig",
+        "href": "/about"
+      },
+      {
+        "id": "youtube",
+        "name": "YouTube",
+        "mark": "yt",
+        "href": "/about"
+      },
+      {
+        "id": "tiktok",
+        "name": "TikTok",
+        "mark": "tk",
+        "href": "/about"
+      }
+    ],
+    "groups": [
+      {
+        "id": "company",
+        "title": "Company",
+        "links": [
+          {
+            "id": "about",
+            "label": "About MarkiThon",
+            "href": "/about"
+          },
+          {
+            "id": "mission",
+            "label": "Our Mission",
+            "href": "/mission"
+          },
+          {
+            "id": "careers",
+            "label": "Careers",
+            "href": "/careers"
+          },
+          {
+            "id": "contact",
+            "label": "Contact Us",
+            "href": "/contact"
+          },
+          {
+            "id": "become",
+            "label": "Become a Shopkeeper",
+            "href": "/app"
+          },
+          {
+            "id": "terms",
+            "label": "Terms & Conditions",
+            "href": "/terms"
+          }
+        ]
+      },
+      {
+        "id": "support",
+        "title": "Help & Support",
+        "links": [
+          {
+            "id": "faqs",
+            "label": "FAQs",
+            "href": "/faqs"
+          },
+          {
+            "id": "delivery",
+            "label": "Delivery Information",
+            "href": "/delivery"
+          },
+          {
+            "id": "returns",
+            "label": "Returns & Exchange",
+            "href": "/returns"
+          },
+          {
+            "id": "tracking",
+            "label": "Order Tracking",
+            "href": "/profile/orders"
+          },
+          {
+            "id": "support",
+            "label": "Contact Support",
+            "href": "/contact"
+          }
+        ]
+      },
+      {
+        "id": "shopkeepers",
+        "title": "For Shopkeepers",
+        "links": [
+          {
+            "id": "open",
+            "label": "Open Your Shop",
+            "href": "/app"
+          },
+          {
+            "id": "login",
+            "label": "Login",
+            "href": "/app"
+          },
+          {
+            "id": "register",
+            "label": "Shopkeeper Registration",
+            "href": "/app"
+          },
+          {
+            "id": "pricing",
+            "label": "Pricing",
+            "href": "/about"
+          }
+        ]
+      }
+    ],
+    "apps": {
+      "title": "Download Our App",
+      "note": "Coming Soon",
+      "google": "",
+      "apple": ""
+    }
+  },
+  "pages": {
+    "about": {
+      "id": "about",
+      "title": "About MarkiThon",
+      "path": "/about",
+      "body": "MarkiThon is Pakistan's fabric and clothing marketplace. We connect shoppers with verified local shops without replacing each seller's own storefront.\n\nBrowse new arrivals, seasonal offers and best sellers from one marketplace, then complete checkout with confidence."
+    },
+    "mission": {
+      "id": "mission",
+      "title": "Our Mission",
+      "path": "/mission",
+      "body": "Our mission is to help people shop from verified local businesses. Each seller keeps their own shop, and MarkiThon brings those shops together in one place."
+    },
+    "careers": {
+      "id": "careers",
+      "title": "Careers",
+      "path": "/careers",
+      "body": "We look for people who care about local shops. Use Contact Us and tell us the role you want."
+    },
+    "terms": {
+      "id": "terms",
+      "title": "Terms & Conditions",
+      "path": "/terms",
+      "body": "Using MarkiThon means you shop with verified sellers. Orders, prices, and delivery follow the shop you buy from.\n\nPlease read Delivery Information and Returns & Exchange before you place an order."
+    },
+    "privacy": {
+      "id": "privacy",
+      "title": "Privacy Policy",
+      "path": "/privacy",
+      "body": "MarkiThon keeps the account and order details needed to run the marketplace. We do not sell personal information."
+    },
+    "faqs": {
+      "id": "faqs",
+      "title": "FAQs",
+      "path": "/faqs",
+      "body": "Sign in and open Order Tracking to see an order.\n\n- Delivery times depend on the shop.\n- Returns follow the Returns & Exchange page.\n- Contact Support if a shop does not reply."
+    },
+    "delivery": {
+      "id": "delivery",
+      "title": "Delivery Information",
+      "path": "/delivery",
+      "body": "Each shop sets its own delivery window. Your order shows the shop name and the items that shop is sending."
+    },
+    "returns": {
+      "id": "returns",
+      "title": "Returns & Exchange",
+      "path": "/returns",
+      "body": "Start a return with the shop that sold the item. Contact Support if that shop does not respond."
+    }
+  }
+}

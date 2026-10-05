@@ -1,0 +1,25 @@
+.mp-shop-ads-gap { display: grid; gap: 12px; }
+#mpShopAds { display: grid; gap: 12px; }
+.mp-shop-ad {
+    min-height: 208px; border-radius: 16px; padding: 18px 20px;
+    display: flex; align-items: center;
+    border: 1px solid rgba(59, 130, 246, 0.22);
+    background-color: #161f36;
+    background-image: linear-gradient(90deg, rgba(11, 17, 32, 0.9), rgba(37, 99, 235, 0.28));
+    background-size: cover; background-position: center;
+    box-shadow: 0 10px 22px rgba(15, 23, 42, 0.28);
+}
+.mp-shop-ad-copy { display: flex; flex-direction: column; align-items: flex-start; gap: 4px; max-width: 560px; }
+.mp-shop-ad-kicker { color: #93c5fd; font-size: 11px; font-weight: 800; letter-spacing: 0.12em; }
+.mp-shop-ad h2 { margin: 0; font-size: 26px; line-height: 1.15; color: #f8fafc; }
+.mp-shop-ad p { margin: 0; color: #cbd5e1; font-size: 13px; }
+.mp-shop-ad-cta {
+    margin-top: 6px; border-radius: 999px; padding: 8px 14px; font-weight: 800;
+    color: #ffffff; text-decoration: none;
+    background: linear-gradient(90deg, #f59e0b, #ea580c);
+    box-shadow: 0 8px 16px rgba(234, 88, 12, 0.28);
+}
+@media (max-width: 760px) {
+    .mp-shop-ad { min-height: 180px; padding: 16px; }
+    .mp-shop-ad h2 { font-size: 22px; }
+}

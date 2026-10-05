@@ -1,0 +1,27 @@
+{
+  "version": 2,
+  "name": "markithon-frontend",
+  "buildCommand": "npm run build",
+  "outputDirectory": "public",
+  "rewrites": [
+    { "source": "/api/(.*)", "destination": "https://api.markithon.com/api/$1" },
+    { "source": "/admin", "destination": "/admin.html" },
+    { "source": "/admin/login", "destination": "/admin-login.html" },
+    { "source": "/app", "destination": "/index.html" },
+    { "source": "/app/(.*)", "destination": "/index.html" },
+    { "source": "/vendor/login", "destination": "/vendor-login.html" },
+    { "source": "/vendor/register", "destination": "/vendor-register.html" },
+    { "source": "/login", "destination": "/customer-login.html" },
+    { "source": "/signup", "destination": "/customer-signup.html" },
+    { "source": "/((?!css|js|img|images|icons|uploads|views|manifest\\.json).*)", "destination": "/views/public/marketplace.html" }
+  ],
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        { "key": "X-Content-Type-Options", "value": "nosniff" },
+        { "key": "Referrer-Policy", "value": "strict-origin-when-cross-origin" }
+      ]
+    }
+  ]
+}

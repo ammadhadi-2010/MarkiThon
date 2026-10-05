@@ -1,0 +1,8 @@
+.sa-cust-table { min-width: 980px; }
+.sa-cust-table .sa-pill.is-active { background: rgba(22, 163, 74, 0.22); color: #4ade80; }
+.sa-cust-table .sa-pill.is-inactive { background: rgba(220, 38, 38, 0.22); color: #fca5a5; }
+.sa-call {
+    display: inline-grid; place-items: center; width: 22px; height: 22px;
+    border-radius: 50%; background: #2563eb; color: white; text-decoration: none;
+}
+.sa-contact .sa-wa, .sa-actions .sa-call, .sa-actions .sa-wa { flex: 0 0 auto; }

@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MarkiThon — Ammad Hadi Stor</title>
+    <meta name="theme-color" content="#0f172a">
+    <link rel="manifest" href="/manifest.json">
+    <link rel="apple-touch-icon" href="/icons/icon-192.png">
+    <link rel="icon" href="/icons/icon.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="/css/theme.css?v=88">
+    <link rel="stylesheet" href="/css/report-issue.css?v=ord1">
+    <link rel="stylesheet" href="/css/components.css?v=92">
+    <link rel="stylesheet" href="/css/confirm-modal.css?v=87">
+    <link rel="stylesheet" href="/css/suppliers.css">
+    <link rel="stylesheet" href="/css/inventory.css?v=scope1">
+    <link rel="stylesheet" href="/css/wholesale.css">
+    <link rel="stylesheet" href="/css/wholesalers.css">
+    <link rel="stylesheet" href="/css/retail.css?v=62">
+    <link rel="stylesheet" href="/css/stock.css?v=63">
+    <link rel="stylesheet" href="/css/reports.css?v=55">
+    <link rel="stylesheet" href="/css/dashboard.css">
+    <link rel="stylesheet" href="/css/expenses.css">
+    <link rel="stylesheet" href="/css/store.css?v=95">
+    <link rel="stylesheet" href="/css/store-banner.css?v=90">
+    <link rel="stylesheet" href="/css/store-theme.css?v=116">
+    <link rel="stylesheet" href="/css/storefront-themes.css?v=116">
+    <link rel="stylesheet" href="/css/store-table.css?v=dots1">
+    <link rel="stylesheet" href="/css/store-orders.css?v=100">
+    <link rel="stylesheet" href="/css/store-orders-mobile.css?v=101">
+    <link rel="stylesheet" href="/css/store-order-detail.css?v=105">
+    <link rel="stylesheet" href="/css/store-order-detail-ui.css?v=105">
+    <link rel="stylesheet" href="/css/store-order-detail-mobile.css?v=105">
+    <link rel="stylesheet" href="/css/customers.css?v=108">
+    <link rel="stylesheet" href="/css/customers-table.css?v=108">
+    <link rel="stylesheet" href="/css/customers-mobile.css?v=108">
+    <link rel="stylesheet" href="/css/customers-acts.css?v=108">
+    <link rel="stylesheet" href="/css/customers-detail.css?v=108">
+    <link rel="stylesheet" href="/css/customers-detail-ui.css?v=108">
+    <link rel="stylesheet" href="/css/customers-detail-mobile.css?v=108">
+    <link rel="stylesheet" href="/css/store-mobile.css?v=75">
+    <link rel="stylesheet" href="/css/store-edit.css?v=83">
+    <link rel="stylesheet" href="/css/store-policy.css?v=story1">
+    <link rel="stylesheet" href="/css/store-edit-media.css?v=83">
+    <link rel="stylesheet" href="/css/store-edit-stickers.css?v=87">
+    <link rel="stylesheet" href="/css/invoice.css?v=57">
+    <link rel="stylesheet" href="/css/invoice-a4.css">
+    <link rel="stylesheet" href="/css/invoice-print.css">
+    <link rel="stylesheet" href="/css/onboarding.css?v=acc1">
+    <link rel="stylesheet" href="/css/onboarding-hero.css?v=93">
+    <link rel="stylesheet" href="/css/onboarding-step4.css">
+    <link rel="stylesheet" href="/css/onboarding-step5.css?v=sub1">
+    <link rel="stylesheet" href="/css/onboarding-step6.css?v=pass1">
+    <link rel="stylesheet" href="/css/onboarding-step7.css?v=95">
+    <link rel="stylesheet" href="/css/offline.css">
+</head>
+<body>
+<div class="overlay" id="overlay"></div>
+<div class="app">
+    <aside class="sidebar" id="sidebar">
+        <div class="brand">
+            <div class="brand-mark">M</div>
+            <div>
+                <h1>MarkiThon</h1>
+                <p id="shopName">Ammad Hadi Stor</p>
+            </div>
+        </div>
+        <nav id="sidebarNav"></nav>
+    </aside>
+
+    <main class="main">
+        <header class="topbar">
+            <button class="menu-btn" id="menuBtn" type="button" aria-label="Open menu">☰</button>
+            <div class="search-wrap">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3-3"/></svg>
+                <input id="globalSearch" name="globalSearch" type="text" placeholder="Search suppliers..." autocomplete="off">
+            </div>
+            <div class="top-actions">
+                <span id="netBadge" class="net-badge online" role="status">Online</span>
+                <div class="icon-btn" title="Notifications">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8a6 6 0 10-12 0c0 7-3 7-3 7h18s-3 0-3-7"/><path d="M13.7 21a2 2 0 01-3.4 0"/></svg>
+                </div>
+                <div class="profile">
+                    <div class="avatar">A</div>
+                    <div><strong>Admin</strong><span>Owner</span></div>
+                </div>
+            </div>
+        </header>
+        <div id="invQuickActions" class="inv-quick" hidden>
+            <button type="button" class="inv-quick-btn" data-invquick="product">+ Add Product</button>
+            <button type="button" class="inv-quick-btn" data-invquick="category">+ Add Category</button>
+            <button type="button" class="inv-quick-btn" data-invquick="wholesaler">+ Add Wholesaler</button>
+            <button type="button" class="inv-quick-btn" data-invquick="supplier">+ Add Supplier</button>
+        </div>
+
+        <section id="view-suppliers" class="view active"></section>
+
+        <section id="view-inventory" class="view"></section>
+        <section id="view-categories" class="view"></section>
+        <section id="view-brands" class="view"></section>
+        <section id="view-colors" class="view"></section>
+
+        <section id="view-billing" class="view"></section>
+
+        <section id="view-wholesalers" class="view"></section>
+
+        <section id="view-customers" class="view"></section>
+
+        <section id="view-dashboard" class="view" data-label="Dashboard"></section>
+        <section id="view-stock" class="view" data-label="Stock Movement"></section>
+        <section id="view-wholesale" class="view"></section>
+        <section id="view-store" class="view" data-label="Online Store"></section>
+        <section id="view-reports" class="view" data-label="Reports"></section>
+        <section id="view-expenses" class="view" data-label="Expenses"></section>
+        <section id="view-settings" class="view" data-label="Settings"></section>
+    </main>
+</div>
+<div id="toast" class="toast"></div>
+<script src="/js/cloud-config.js?v=cloud1"></script>
+<script src="/js/api-base.js?v=cloud1"></script>
+<script src="/js/api.js?v=cloud1"></script>
+<script src="/js/offline-db.js"></script>
+<script src="/js/offline-ops.js?v=shop1"></script>
+<script src="/js/offline-sync.js?v=pwa1"></script>
+<script src="/js/menu.js?v=scope1"></script>
+<script src="/js/confirm-modal-view.js?v=87"></script>
+<script src="/js/confirm-modal.js?v=87"></script>
+<script src="/js/ui.js?v=109"></script>
+<script src="/js/store-nav.js?v=109"></script>
+<script src="/js/mobile-units.js?v=mob1"></script>
+<script src="/js/units.js?v=mob1"></script>
+<script src="/js/suppliers-ledger-view.js"></script>
+<script src="/js/suppliers-pay-view.js"></script>
+<script src="/js/suppliers-view.js"></script>
+<script src="/js/suppliers.js"></script>
+<script src="/js/suppliers-ledger.js"></script>
+<script src="/js/suppliers-pay.js"></script>
+<script src="/js/inventory-supplier-form.js"></script>
+<script src="/js/inventory-supplier-list.js"></script>
+<script src="/js/inventory-mobile-view.js?v=mob1"></script>
+<script src="/js/inventory-view.js?v=mob1"></script>
+<script src="/js/recv-proofs.js"></script>
+<script src="/js/inventory-receive-finance.js?v=62"></script>
+<script src="/js/recv-bedsheet.js?v=63"></script>
+<script src="/js/recv-mobile.js?v=mob2"></script>
+<script src="/js/recv-blanket.js?v=64"></script>
+<script src="/js/recv-variants.js?v=mob1"></script>
+<script src="/js/recv-vouchers-view.js"></script>
+<script src="/js/inventory-receive-view.js?v=58"></script>
+<script src="/js/inventory-receive-paint.js?v=mob1"></script>
+<script src="/js/inventory-receive-card.js?v=mob1"></script>
+<script src="/js/recv-confirm.js"></script>
+<script src="/js/inventory-share.js"></script>
+<script src="/js/catalog-scope.js?v=mob1"></script>
+<script src="/js/inventory-supplier.js?v=scope1"></script>
+<script src="/js/inventory-bedsheet-view.js?v=63"></script>
+<script src="/js/inventory-blanket-view.js?v=63"></script>
+<script src="/js/inventory-bedsheet.js?v=63"></script>
+<script src="/js/inventory-mobile.js?v=mob1"></script>
+<script src="/js/inventory-blanket.js?v=63"></script>
+<script src="/js/inventory-image.js"></script>
+<script src="/js/recv-zero-input.js?v=62"></script>
+<script src="/js/inventory-receive.js?v=mob1"></script>
+<script src="/js/recv-vouchers.js?v=58"></script>
+<script src="/js/recv-voucher-edit.js?v=58"></script>
+<script src="/js/print-frame.js?v=57"></script>
+<script src="/js/recv-labels.js"></script>
+<script src="/js/inventory-del.js?v=87"></script>
+<script src="/js/inventory.js?v=rpt1"></script>
+<script src="/js/report-issue.js?v=ord1"></script>
+<script src="/js/pos-bedsheet.js?v=mob2"></script>
+<script src="/js/pos-blanket.js?v=63"></script>
+<script src="/js/pos-rate.js?v=62"></script>
+<script src="/js/catalog-nav.js"></script>
+<script src="/js/categories-view.js?v=scope1"></script>
+<script src="/js/categories.js?v=scope2"></script>
+<script src="/js/brands-view.js?v=scope1"></script>
+<script src="/js/brands.js?v=scope1"></script>
+<script src="/js/colors-view.js"></script>
+<script src="/js/colors.js?v=61"></script>
+<script src="/js/wholesale-view.js"></script>
+<script src="/js/wholesale.js?v=63"></script>
+<script src="/js/wholesale-variants.js?v=shop1"></script>
+<script src="/js/wholesale-zero.js"></script>
+<script src="/js/wholesale-scan.js"></script>
+<script src="/js/wholesalers-view.js"></script>
+<script src="/js/wholesalers.js"></script>
+<script src="/js/retail-view.js?v=62"></script>
+<script src="/js/retail.js?v=63"></script>
+<script src="/js/retail-variants.js?v=shop1"></script>
+<script src="/js/retail-zero.js?v=62"></script>
+<script src="/js/retail-scan.js?v=shop1"></script>
+<script src="/js/stock-view.js"></script>
+<script src="/js/stock.js?v=shop1"></script>
+<script src="/js/reports-view.js"></script>
+<script src="/js/reports-supplier.js"></script>
+<script src="/js/reports-sales.js"></script>
+<script src="/js/reports-expenses.js"></script>
+<script src="/js/reports.js"></script>
+<script src="/js/charts.js"></script>
+<script src="/js/dashboard-store-view.js"></script>
+<script src="/js/dashboard-view.js"></script>
+<script src="/js/dashboard-store.js"></script>
+<script src="/js/dashboard.js"></script>
+<script src="/js/store-status-view.js?v=95"></script>
+<script src="/js/store-home-view.js?v=66"></script>
+<script src="/vendor/fabric.min.js"></script>
+<script src="/js/store-edit-stickers-view.js?v=83"></script>
+<script src="/js/store-edit-sticker-presets.js?v=83"></script>
+<script src="/js/store-edit-canvas.js?v=83"></script>
+<script src="/js/store-edit-sticker-act.js?v=87"></script>
+<script src="/js/store-edit-sticker-gallery.js?v=87"></script>
+<script src="/js/store-edit-sticker-export.js?v=83"></script>
+<script src="/js/store-edit-desc.js?v=82"></script>
+<script src="/js/store-edit-policy.js?v=rev1"></script>
+<script src="/js/store-edit-story.js?v=story1"></script>
+<script src="/js/store-edit-tags.js?v=82"></script>
+<script src="/js/store-edit-photos.js?v=82"></script>
+<script src="/js/store-edit-web.js?v=82"></script>
+<script src="/js/store-edit-price.js?v=82"></script>
+<script src="/js/store-edit-homepos.js?v=82"></script>
+<script src="/js/store-edit-view.js?v=story1"></script>
+<script src="/js/store-products-view.js?v=76"></script>
+<script src="/js/store-orders-view.js?v=109"></script>
+<script src="/js/store-order-detail-view.js?v=104"></script>
+<script src="/js/store-orders-modals.js?v=102"></script>
+<script src="/js/store-banner-view.js?v=87"></script>
+<script src="/js/store-banner-preview.js?v=85"></script>
+<script src="/js/store-banner-upload.js?v=85"></script>
+<script src="/js/store-banner.js?v=87"></script>
+<script src="/js/store-theme-data.js?v=116"></script>
+<script src="/js/store-theme-view.js?v=116"></script>
+<script src="/js/store-theme-preview.js?v=116"></script>
+<script src="/js/store-theme-upload.js?v=116"></script>
+<script src="/js/store-theme.js?v=116"></script>
+<script src="/js/store-policy.js?v=rev1"></script>
+<script src="/js/store-view.js?v=rev1"></script>
+<script src="/js/store-status.js?v=95"></script>
+<script src="/js/store-home.js?v=65"></script>
+<script src="/js/store-products.js?v=87"></script>
+<script src="/js/store-products-del.js?v=87"></script>
+<script src="/js/store-products-act.js?v=dots1"></script>
+<script src="/js/store-edit-info.js?v=82"></script>
+<script src="/js/store-edit-route.js?v=82"></script>
+<script src="/js/store-edit-save.js?v=story1"></script>
+<script src="/js/store-edit.js?v=story1"></script>
+<script src="/js/store-lists.js?v=109"></script>
+<script src="/js/store-orders-filter.js?v=97"></script>
+<script src="/js/store-orders-paint.js?v=rpt1"></script>
+<script src="/js/store-orders-cards.js?v=rpt1"></script>
+<script src="/js/store-order-detail-paint.js?v=103"></script>
+<script src="/js/store-order-detail-summary.js?v=105"></script>
+<script src="/js/store-orders-detail.js?v=103"></script>
+<script src="/js/store-order-detail-edit.js?v=102"></script>
+<script src="/js/store-orders-manual.js?v=97"></script>
+<script src="/js/store-orders.js?v=100"></script>
+<script src="/js/store.js?v=rev1"></script>
+<script src="/js/expenses-view.js"></script>
+<script src="/js/expenses-staff.js"></script>
+<script src="/js/expenses.js"></script>
+<script src="/js/settings.js"></script>
+<script src="/js/onboarding-step1-media.js?v=93"></script>
+<script src="/js/onboarding-hero.js?v=93"></script>
+<script src="/js/onboarding-media.js?v=93"></script>
+<script src="/js/onboarding-view.js?v=sub1"></script>
+<script src="/js/onboarding-step2-view.js?v=acc1"></script>
+<script src="/js/onboarding-step4-view.js?v=sub1"></script>
+<script src="/js/onboarding-step5-view.js?v=sub1"></script>
+<script src="/js/onboarding-step6-view.js?v=96"></script>
+<script src="/js/onboarding-step7-view.js?v=pass1"></script>
+<script src="/js/onboarding.js?v=cnic1"></script>
+<script src="/js/onboarding-step4.js?v=sub1"></script>
+<script src="/js/onboarding-step5.js?v=sub1"></script>
+<script src="/js/onboarding-map.js"></script>
+<script src="/js/onboarding-step6-share.js?v=95"></script>
+<script src="/js/onboarding-qr-brand.js?v=95"></script>
+<script src="/js/onboarding-step6.js?v=96"></script>
+<script src="/js/onboarding-pass.js?v=pass1"></script>
+<script src="/js/onboarding-step7.js?v=pass1"></script>
+<script src="/js/invoice-view.js"></script>
+<script src="/js/invoice-format.js"></script>
+<script src="/js/invoice-barcode.js"></script>
+<script src="/js/invoice-paint.js?v=63"></script>
+<script src="/js/invoice.js"></script>
+<script src="/js/customers-view.js?v=108"></script>
+<script src="/js/customers-filter.js?v=108"></script>
+<script src="/js/customers-paint.js?v=108"></script>
+<script src="/js/customers-cards.js?v=108"></script>
+<script src="/js/customers-actions.js?v=108"></script>
+<script src="/js/customers-form.js?v=108"></script>
+<script src="/js/customers-detail-view.js?v=108"></script>
+<script src="/js/customers-detail-paint.js?v=108"></script>
+<script src="/js/customers-detail-tabs.js?v=108"></script>
+<script src="/js/customers-detail.js?v=108"></script>
+<script src="/js/customers.js?v=109"></script>
+<script src="/js/modules.js?v=107"></script>
+</body>
+</html>

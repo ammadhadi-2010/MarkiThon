@@ -1,0 +1,36 @@
+@media (max-width: 767px) {
+    .cust-head { flex-direction: column; align-items: stretch; }
+    #custAddBtn { width: 100%; justify-content: center; }
+    .cust-stats { grid-template-columns: 1fr 1fr; }
+    .cust-tools { flex-direction: column; align-items: stretch; }
+    .cust-tools .os-search,
+    .cust-tools select,
+    .cust-tools .os-ord-range {
+        width: 100%;
+        max-width: none;
+        flex: 0 0 auto;
+        min-height: 44px;
+        box-sizing: border-box;
+    }
+    .cust-wrap { display: none !important; }
+    .cust-cards {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+    }
+    .cust-card {
+        background: rgba(22, 31, 54, 0.94);
+        border: 1px solid rgba(59, 130, 246, 0.22);
+        border-radius: 16px;
+        padding: 14px;
+    }
+    .cust-card-top {
+        display: flex; justify-content: space-between; gap: 10px; align-items: flex-start;
+        margin-bottom: 10px;
+    }
+    .cust-card-line { margin: 0 0 6px; color: #c9d6ee; overflow-wrap: anywhere; }
+    .cust-card-sum { display: flex; flex-wrap: wrap; gap: 8px; margin: 10px 0; }
+    .cust-card .cust-acts { flex-wrap: wrap; }
+    .cust-card .cust-ico { width: 44px; height: 44px; }
+    .cust-stat strong { font-size: 16px; }
+}

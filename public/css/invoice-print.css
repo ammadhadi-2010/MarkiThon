@@ -1,0 +1,70 @@
+@media print {
+    @page { size: auto; margin: 0mm; }
+    html, body {
+        background: #fff !important;
+        height: auto !important;
+        max-height: max-content !important;
+        overflow: hidden !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        print-color-adjust: exact;
+        -webkit-print-color-adjust: exact;
+    }
+    body * {
+        visibility: hidden !important;
+        height: 0 !important;
+        max-height: 0 !important;
+        overflow: hidden !important;
+        page-break-after: avoid !important;
+        page-break-inside: avoid !important;
+        break-inside: avoid !important;
+    }
+    .printable-area,
+    .printable-area * {
+        visibility: visible !important;
+        height: auto !important;
+        max-height: max-content !important;
+        overflow: visible !important;
+        page-break-after: avoid !important;
+        page-break-inside: avoid !important;
+        break-inside: avoid !important;
+    }
+    .inv-format, .invoice-actions, .printable-area .qr-sheet { display: none !important; }
+    #invoiceBack, .invoice-frame {
+        display: block !important;
+        position: static !important;
+        background: transparent !important;
+        padding: 0 !important;
+        max-height: none !important;
+        height: auto !important;
+        overflow: visible !important;
+    }
+    .printable-area {
+        position: absolute !important;
+        left: 0 !important;
+        top: 0 !important;
+        background: #fff !important;
+        color: #111 !important;
+        border: 0 !important;
+        box-shadow: none !important;
+    }
+    .slip-contact, .slip-thanks, .inv-platform, .slip-grand { color: #111 !important; }
+    html.print-thermal .printable-area {
+        width: 80mm;
+        font-family: "Courier New", Consolas, monospace !important;
+        font-size: 11px;
+        padding: 2mm;
+        margin: 0;
+    }
+    html.print-a4 .printable-area {
+        width: 186mm;
+        font-family: "Segoe UI", Arial, sans-serif !important;
+        padding: 0;
+    }
+    html.print-a4 .inv-finance {
+        background: #f4f4f4 !important;
+        border: 1px solid #111 !important;
+        color: #111 !important;
+    }
+    .inv-barcode-wrap img { background: #fff; }
+}

@@ -1,0 +1,196 @@
+.ob-final-grid {
+    display: grid;
+    grid-template-columns: 1.15fr 0.85fr;
+    gap: 16px;
+    margin-bottom: 16px;
+}
+.ob-social {
+    display: grid;
+    grid-template-columns: 36px minmax(0, 1fr) 22px;
+    gap: 10px;
+    align-items: center;
+    background: #10192c;
+    border: 1px solid rgba(59, 130, 246, 0.18);
+    border-radius: 14px;
+    padding: 8px 10px;
+    margin-bottom: 8px;
+}
+.ob-social small { display: block; color: #8b9bb8; font-size: 11px; }
+.ob-social input {
+    width: 100%;
+    background: transparent;
+    border: 0;
+    color: #e2e8f0;
+    outline: none;
+    font-size: 13px;
+}
+.ob-ico {
+    width: 32px;
+    height: 32px;
+    border-radius: 10px;
+    display: grid;
+    place-items: center;
+    font-size: 14px;
+    font-weight: 800;
+    color: #fff;
+}
+.ob-ico.globe { background: #2563eb; }
+.ob-ico.wa { background: #16a34a; }
+.ob-ico.fb { background: #1d4ed8; }
+.ob-ico.ig { background: linear-gradient(135deg, #f97316, #ec4899); }
+.ob-ico.yt { background: #dc2626; }
+.ob-ok {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    display: none;
+    place-items: center;
+    background: #22c55e;
+    color: #fff;
+    font-size: 11px;
+}
+.ob-social.filled .ob-ok { display: grid; }
+.ob-terms {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    font-size: 13px;
+    color: #c9d6ee;
+    margin-top: 10px;
+}
+.ob-terms input { accent-color: #22c55e; }
+.ob-detect {
+    width: 100%;
+    margin-bottom: 8px;
+    border: 0;
+    border-radius: 10px;
+    padding: 9px 12px;
+    font-weight: 700;
+    color: #fff;
+    background: #2563eb;
+    cursor: pointer;
+}
+.ob-map-box {
+    height: 190px;
+    border-radius: 14px;
+    overflow: hidden;
+    border: 1px solid rgba(59, 130, 246, 0.2);
+    margin-bottom: 8px;
+    background: #10192c;
+}
+.ob-map-embed {
+    width: 100%;
+    height: 100%;
+    border: 0;
+    display: block;
+}
+.ob-maps { margin-bottom: 8px; }
+.ob-maps input { font-size: 12px; }
+.ob-map-hint { font-size: 12px; color: #86efac; margin: 0 0 10px; min-height: 16px; }
+.ob-side-col .field { margin-bottom: 10px; }
+.ob-side-col select,
+.ob-side-col input[type="text"],
+.ob-side-col #obLandmarkNote {
+    width: 100%;
+    background: #10192c;
+    border: 1px solid rgba(59, 130, 246, 0.18);
+    color: #e2e8f0;
+    border-radius: 10px;
+    padding: 8px 10px;
+}
+.ob-store-link { margin-bottom: 12px; }
+.ob-store-link input {
+    width: 100%;
+    background: #10192c;
+    border: 1px solid rgba(59, 130, 246, 0.18);
+    color: #93c5fd;
+    border-radius: 10px;
+    padding: 8px 10px;
+    margin-bottom: 8px;
+}
+.ob-store-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+.ob-open-store {
+    display: inline-flex;
+    align-items: center;
+    text-decoration: none;
+}
+.ob-store-share {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 168px;
+    gap: 10px;
+    margin-bottom: 12px;
+}
+.ob-qr-card {
+    background: #10192c;
+    border: 1px solid rgba(59, 130, 246, 0.18);
+    border-radius: 14px;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    min-width: 0;
+}
+.ob-store-qr {
+    width: 148px;
+    height: 148px;
+    object-fit: contain;
+    border-radius: 12px;
+    background: #fff;
+    align-self: center;
+}
+.ob-qr-card button { width: 100%; font-size: 12px; }
+.ob-summary {
+    background: #10192c;
+    border: 1px solid rgba(59, 130, 246, 0.18);
+    border-radius: 14px;
+    padding: 12px 14px;
+}
+.ob-sum-row {
+    display: flex;
+    justify-content: space-between;
+    gap: 8px;
+    font-size: 13px;
+    padding: 6px 0;
+    color: #8b9bb8;
+}
+.ob-sum-row strong { color: #e2e8f0; }
+.ob-complete {
+    border: 0;
+    border-radius: 12px;
+    padding: 11px 18px;
+    font-weight: 800;
+    color: #fff;
+    cursor: pointer;
+    background: linear-gradient(90deg, #22c55e, #16a34a);
+    box-shadow: 0 8px 20px rgba(22, 163, 74, 0.35);
+}
+.ob-pass-card {
+    margin-top: 14px;
+    background: rgba(22, 31, 54, 0.92);
+    border: 1px solid rgba(59, 130, 246, 0.28);
+    border-radius: 14px;
+    padding: 14px;
+}
+.ob-pass-card label {
+    display: grid;
+    gap: 6px;
+    margin-bottom: 10px;
+    color: #e2e8f0;
+    font-size: 0.9rem;
+}
+.ob-pass-card input {
+    width: 100%;
+    box-sizing: border-box;
+    border-radius: 10px;
+    padding: 10px 12px;
+    border: 1px solid rgba(59, 130, 246, 0.35);
+    background: #10182c;
+    color: #f8fafc;
+    color-scheme: dark;
+}
+.ob-pass-note { min-height: 1.2em; margin: 0 0 10px; color: #86efac; font-size: 0.86rem; }
+.ob-pass-note.is-bad { color: #fecaca; }
+@media (max-width: 900px) {
+    .ob-final-grid, .ob-store-share { grid-template-columns: 1fr; }
+    .ob-qr-card { max-width: 240px; }
+}

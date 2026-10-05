@@ -1,0 +1,102 @@
+.os-od-sheet,
+.os-od-card,
+.os-od-id,
+.os-od-person,
+.os-od-addr,
+.os-od-cust-grid,
+.os-od-ship-addr {
+    min-width: 0;
+    max-width: 100%;
+}
+.os-od-addr p,
+.os-od-ship-addr p,
+.os-od-person strong,
+.os-od-line,
+.os-od-num {
+    overflow-wrap: anywhere;
+    word-break: break-word;
+}
+.os-od-person > div,
+.os-od-addr > div { min-width: 0; flex: 1 1 auto; }
+.os-od-table-wrap {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior-x: contain;
+    max-width: 100%;
+}
+.os-od-prod strong { overflow-wrap: anywhere; }
+
+@media (max-width: 767px) {
+    .os-od-back { padding: 8px; place-items: start stretch; }
+    .os-od-sheet {
+        width: 100%;
+        margin-bottom: 12px;
+        padding: 12px;
+        border-radius: 14px;
+        overflow: visible;
+        box-sizing: border-box;
+        align-self: start;
+        height: auto;
+    }
+    .os-od-head {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 12px;
+    }
+    .os-od-id { width: 100%; }
+    .os-od-title-row,
+    .os-od-num,
+    .os-od-when { text-align: left; }
+    .os-od-num { font-size: 20px; }
+    .os-od-quick {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+        width: 100%;
+    }
+    .os-od-btn {
+        flex: none;
+        width: 100%;
+        min-height: 44px;
+        box-sizing: border-box;
+        border-radius: 12px;
+    }
+    .os-od-btn.print,
+    .os-od-quick .os-ord-close {
+        grid-column: 1 / -1;
+        width: 100%;
+        min-height: 44px;
+    }
+    .os-od-card { padding: 12px; }
+    .os-od-card-h { flex-wrap: wrap; align-items: flex-start; }
+    .os-od-cust-grid,
+    .os-od-split,
+    .os-od-ship-grid {
+        grid-template-columns: 1fr;
+        gap: 12px;
+    }
+    .os-od-split > div {
+        background: rgba(11, 17, 32, 0.55);
+        border: 1px solid rgba(59, 130, 246, 0.16);
+        border-radius: 12px;
+        padding: 12px;
+    }
+    .os-od-table { table-layout: auto; min-width: 560px; }
+    .os-od-time {
+        padding-bottom: 6px;
+        margin-bottom: 12px;
+        -webkit-overflow-scrolling: touch;
+    }
+    .os-od-acts {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 8px;
+        width: 100%;
+    }
+    .os-od-acts button {
+        flex: none;
+        width: 100%;
+        min-height: 44px;
+        box-sizing: border-box;
+    }
+}

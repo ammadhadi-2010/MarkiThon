@@ -1,0 +1,14 @@
+---
+description: MarkiThon strict development standards and shop identity
+alwaysApply: true
+---
+
+# MarkiThon Development Rules
+
+- Business name: **Ammad Hadi Stor**. Use this in UI labels, seeds, and demo data.
+- Language: ALL code, UI, comments, logs, and API messages in English only. No Urdu or Roman Urdu.
+- Max 250 lines per file. Split into reusable helpers, CSS, and JS modules.
+- Reuse shared JS/CSS. Do not duplicate layout or fetch logic.
+- UI: Screen 1 dark theme (`#0b1120` background, `#161f36` glass cards, blue glow on active nav).
+- Mobile: sidebar, grids, forms, and tables must work on small screens.
+- Inspect only files needed for the current task. Do not scan the whole repo.

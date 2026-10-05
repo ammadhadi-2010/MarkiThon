@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Shopkeeper Login · MarkiThon</title>
+    <link rel="stylesheet" href="/css/auth-pages.css?v=vp1">
+</head>
+<body class="auth-page">
+    <form class="auth-card" id="authForm" autocomplete="off">
+        <div class="auth-brand"><span class="auth-mark">M</span><strong>MarkiThon</strong></div>
+        <h1>Shopkeeper Login</h1>
+        <p>Sign in to manage your shop on MarkiThon.</p>
+        <p class="auth-error" id="authError"></p>
+        <p class="auth-ok" id="authOk"></p>
+        <label>Email<input id="authEmail" name="vendorEmail" type="email" autocomplete="off" required></label>
+        <label>Password<input id="authPassword" name="vendorPassword" type="password" autocomplete="off" required></label>
+        <button type="submit">Sign In</button>
+        <button class="auth-bio" id="authBioBtn" type="button">Sign In with Thumb Scan</button>
+        <div class="auth-links">
+            <a href="/vendor/register">Create shop account</a>
+            <a href="/">Marketplace</a>
+        </div>
+    </form>
+    <script src="/js/cloud-config.js?v=cloud1"></script>
+    <script src="/js/api-base.js?v=cloud1"></script>
+    <script src="/js/auth-client.js?v=cloud1"></script>
+    <script src="/js/auth-vendor-login.js?v=vp1"></script>
+</body>
+</html>

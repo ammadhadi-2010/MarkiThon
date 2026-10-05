@@ -1,0 +1,79 @@
+.mp-stay {
+    max-width: 1240px;
+    margin: 16px auto 0;
+    padding: 16px 20px;
+    border-radius: 16px;
+    display: flex;
+    gap: 16px;
+    align-items: center;
+    justify-content: space-between;
+    background: #161f36;
+    border: 1px solid rgba(59, 130, 246, 0.22);
+}
+.mp-stay h3, .mp-stay p { margin: 0 0 4px; }
+.mp-stay p { color: #8b9bb8; font-size: 13px; }
+.mp-news { display: flex; gap: 8px; flex: 1; max-width: 460px; }
+.mp-news input {
+    flex: 1;
+    background: #0b1120;
+    border: 1px solid rgba(59, 130, 246, 0.25);
+    color: #e2e8f0;
+    border-radius: 10px;
+    padding: 10px 12px;
+}
+.mp-news button {
+    border: 0;
+    border-radius: 10px;
+    padding: 10px 14px;
+    background: linear-gradient(90deg, #2563eb, #7c3aed);
+    color: #fff;
+    cursor: pointer;
+    font-weight: 700;
+}
+.mp-foot {
+    background: #0d1528;
+    padding: 28px;
+    display: grid;
+    grid-template-columns: 1.4fr 1fr 1fr 1fr 1.1fr;
+    gap: 18px;
+    border-top: 1px solid rgba(59, 130, 246, 0.2);
+    margin-top: 16px;
+}
+.mp-foot h4 { margin: 0 0 8px; }
+.mp-foot a, .mp-foot p { display: block; color: #dbe4f3; font-size: 13px; margin: 4px 0; }
+.mp-foot h4, .mp-foot strong { color: #f8fafc; }
+.mp-social { display: flex !important; gap: 8px; }
+.mp-social a {
+    width: 28px;
+    height: 28px;
+    border-radius: 8px;
+    background: #161f36;
+    display: grid !important;
+    place-items: center;
+    color: #e2e8f0;
+    font-size: 11px;
+    font-weight: 800;
+}
+.mp-stores { display: flex !important; gap: 8px; }
+.mp-stores span, .mp-stores a {
+    background: #161f36;
+    border: 1px solid rgba(59, 130, 246, 0.35);
+    border-radius: 8px;
+    padding: 8px 10px;
+    color: #f8fafc;
+    font-size: 12px;
+    font-weight: 700;
+}
+.mp-copy {
+    grid-column: 1 / -1;
+    display: flex !important;
+    justify-content: space-between;
+    margin-top: 8px;
+    padding-top: 12px;
+    border-top: 1px solid rgba(59, 130, 246, 0.2);
+    color: #e2e8f0;
+}
+@media (max-width: 900px) {
+    .mp-stay, .mp-foot, .mp-news { display: grid; grid-template-columns: 1fr; margin: 12px 14px; }
+    .mp-copy { flex-direction: column; }
+}

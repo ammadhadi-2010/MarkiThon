@@ -1,0 +1,15 @@
+.wl-hint { color: var(--muted); font-size: 13px; margin: 0 0 12px; }
+.wl-sub { display: block; color: var(--muted); font-size: 12px; font-weight: 500; margin-top: 2px; }
+.wl-over { color: #f87171; font-weight: 700; }
+.wl-ledger { margin-top: 18px; }
+.wl-ledger .card-title { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+.wl-pay {
+    display: grid;
+    grid-template-columns: 1fr 1fr auto;
+    gap: 10px;
+    align-items: end;
+    margin-top: 14px;
+}
+@media (max-width: 900px) {
+    .wl-pay { grid-template-columns: 1fr; }
+}

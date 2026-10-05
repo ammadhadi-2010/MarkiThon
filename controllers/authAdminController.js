@@ -1,0 +1,96 @@
+const { signAuth, setAuthCookie, clearAuthCookie, verifyAuth, readAuthToken } = require('../utils/authToken');
+const {
+    publicAdmin,
+    findAdminByEmail,
+    resolveAdminBypass,
+    updateAdminPassword,
+    updateAdminProfile
+} = require('../utils/adminAuthStore');
+const { cleanEmail } = require('../utils/authCrypto');
+
+function sendAdmin(res, user, status) {
+    const token = signAuth({ sub: user.id, role: 'admin', email: user.email }, '7d');
+    setAuthCookie(res, token);
+    res.status(status || 200).json({ token, user: publicAdmin(user) });
+}
+
+function adminFromReq(req) {
+    const payload = verifyAuth(readAuthToken(req));
+    if (!payload || payload.role !== 'admin') return null;
+    return payload;
+}
+
+async function adminLogin(req, res) {
+    try {
+        // TEMP: password verification bypassed — Sign In grants admin access.
+        const email = cleanEmail(req.body.email);
+        const user = await resolveAdminBypass(email);
+        if (!user) return res.status(500).json({ message: 'Admin account is not configured.' });
+        return sendAdmin(res, user);
+    } catch (error) {
+        return res.status(500).json({ message: 'Could not sign in as admin.' });
+    }
+}
+
+async function adminMe(req, res) {
+    try {
+        const payload = adminFromReq(req);
+        if (!payload) return res.status(401).json({ message: 'Sign in as an admin to continue.' });
+        const user = await findAdminByEmail(payload.email || '');
+        if (!user) return res.status(401).json({ message: 'Sign in as an admin to continue.' });
+        return res.status(200).json({ user: publicAdmin(user) });
+    } catch (error) {
+        return res.status(401).json({ message: 'Sign in as an admin to continue.' });
+    }
+}
+
+async function adminUpdateProfile(req, res) {
+    try {
+        const payload = adminFromReq(req);
+        if (!payload) return res.status(401).json({ message: 'Sign in as an admin to continue.' });
+        const user = await updateAdminProfile(payload.email || '', {
+            name: req.body.name,
+            email: req.body.email
+        });
+        if (user && user.conflict) {
+            return res.status(400).json({ message: 'That email is already in use.' });
+        }
+        if (!user) return res.status(404).json({ message: 'Admin account was not found.' });
+        return sendAdmin(res, user);
+    } catch (error) {
+        return res.status(500).json({ message: 'Could not update the admin profile.' });
+    }
+}
+
+async function adminUpdatePassword(req, res) {
+    try {
+        const payload = adminFromReq(req);
+        if (!payload) return res.status(401).json({ message: 'Sign in as an admin to continue.' });
+        const next = String(req.body.newPassword || '');
+        const confirm = String(req.body.confirmPassword || '');
+        if (next.length < 6) {
+            return res.status(400).json({ message: 'Use a new password of at least 6 characters.' });
+        }
+        if (next !== confirm) {
+            return res.status(400).json({ message: 'New password and confirmation do not match.' });
+        }
+        const user = await updateAdminPassword(payload.email || '', next);
+        if (!user) return res.status(404).json({ message: 'Admin account was not found.' });
+        return res.status(200).json({ message: 'Admin password updated.', user: publicAdmin(user) });
+    } catch (error) {
+        return res.status(500).json({ message: 'Could not update the admin password.' });
+    }
+}
+
+function logout(req, res) {
+    clearAuthCookie(res);
+    res.status(200).json({ message: 'Signed out.' });
+}
+
+module.exports = {
+    adminLogin,
+    adminMe,
+    adminUpdateProfile,
+    adminUpdatePassword,
+    logout
+};

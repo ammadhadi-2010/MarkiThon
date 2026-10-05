@@ -1,0 +1,45 @@
+.cust-d-back {
+    position: fixed; inset: 0; z-index: 85;
+    display: grid; place-items: start center;
+    padding: 18px 12px; overflow: auto;
+    background: rgba(2, 6, 23, 0.62);
+    -webkit-overflow-scrolling: touch;
+}
+.cust-d-back[hidden] { display: none !important; }
+.cust-d-sheet {
+    width: min(640px, 100%);
+    margin-bottom: 24px;
+    background: linear-gradient(180deg, rgba(22, 31, 54, 0.98), #0f172a);
+    border: 1px solid rgba(59, 130, 246, 0.28);
+    border-radius: 18px; padding: 18px;
+    box-shadow: 0 24px 60px rgba(0, 0, 0, 0.4);
+}
+.cust-d-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; }
+.cust-d-title { margin: 0; font-size: 18px; font-weight: 800; color: #e8eefc; }
+.cust-d-x {
+    width: 36px; height: 36px; border-radius: 10px; cursor: pointer;
+    border: 1px solid rgba(148, 163, 184, 0.3); background: #10192c; color: #e2e8f0; font-size: 20px;
+}
+.cust-d-hero { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin-bottom: 12px; }
+.cust-d-ava {
+    width: 64px; height: 64px; border-radius: 50%;
+    display: grid; place-items: center; flex: 0 0 64px;
+    background: linear-gradient(135deg, #1d4ed8, #38bdf8);
+    color: #fff; font-weight: 800; font-size: 18px;
+}
+.cust-d-hero #custDStatus { margin-left: auto; }
+.cust-d-name { margin: 0 0 4px; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.cust-d-phone { margin: 0; color: #cbd5e1; }
+.cust-d-contact, .cust-d-qrow { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
+.cust-d-btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+    min-height: 40px; padding: 8px 14px; border-radius: 12px; cursor: pointer;
+    font-weight: 800; font-size: 13px; border: 0; color: #fff;
+}
+.cust-d-btn.call { background: #22c55e; }
+.cust-d-btn.wa { background: #0f766e; }
+.cust-d-btn.msg, .cust-d-btn.edit { background: linear-gradient(90deg, #3b82f6, #2563eb); }
+.cust-d-btn.note {
+    background: #10192c; color: #93c5fd; border: 1px solid rgba(96, 165, 250, 0.45);
+}
+.cust-d-btn.block { background: transparent; color: #f87171; border: 1px solid #ef4444; }

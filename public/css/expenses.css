@@ -1,0 +1,6 @@
+#exStaffWrap[hidden] { display: none !important; }
+#exSalaryHint { margin-top: 4px; }
+#exStaffCard .table-wrap { overflow-x: auto; }
+@media (max-width: 900px) {
+    #exStaffCard table { min-width: 520px; }
+}

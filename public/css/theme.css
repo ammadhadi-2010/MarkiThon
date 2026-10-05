@@ -1,0 +1,193 @@
+:root {
+    --bg: #0b1120;
+    --bg-2: #0d1527;
+    --sidebar: #0a1222;
+    --card: #161f36;
+    --card-border: rgba(59, 130, 246, 0.18);
+    --input: #10192c;
+    --text: #f4f7ff;
+    --muted: #8b9bb8;
+    --blue: #1d4ed8;
+    --blue-bright: #3b82f6;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body {
+    max-width: 100vw;
+    overflow-x: hidden;
+}
+
+body {
+    font-family: "Segoe UI", Inter, system-ui, sans-serif;
+    background: radial-gradient(1200px 600px at 20% -10%, #142044 0%, var(--bg) 45%);
+    color: var(--text);
+    min-height: 100vh;
+    width: 100%;
+}
+
+.app {
+    display: flex;
+    align-items: stretch;
+    width: 100%;
+    max-width: 100vw;
+    min-height: 100vh;
+    overflow-x: hidden;
+}
+
+.sidebar {
+    background: linear-gradient(180deg, #0b1428 0%, var(--sidebar) 100%);
+    border-right: 1px solid rgba(59, 130, 246, 0.12);
+    padding: 18px 12px;
+    position: relative;
+    transform: none;
+    width: 240px;
+    flex: 0 0 240px;
+    min-width: 240px;
+    max-width: 240px;
+}
+
+.brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 6px 10px 18px;
+}
+
+.brand-mark {
+    width: 34px;
+    height: 34px;
+    border-radius: 10px;
+    background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+    display: grid;
+    place-items: center;
+    font-weight: 800;
+    box-shadow: 0 0 18px rgba(59, 130, 246, 0.45);
+}
+
+.brand h1 { font-size: 18px; line-height: 1.1; }
+.brand p { font-size: 10px; color: var(--muted); margin-top: 2px; }
+
+.nav-item {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: transparent;
+    border: 0;
+    color: #c5d2ea;
+    padding: 11px 14px;
+    border-radius: 12px;
+    cursor: pointer;
+    font-size: 13.5px;
+    margin-bottom: 4px;
+    text-align: left;
+}
+
+.nav-item.active {
+    background: linear-gradient(90deg, #2563eb, #1d4ed8);
+    color: #fff;
+    box-shadow: 0 8px 22px rgba(37, 99, 235, 0.35);
+    font-weight: 600;
+}
+
+.nav-item:hover:not(.active) { background: rgba(255, 255, 255, 0.04); }
+
+.nav-group { margin-bottom: 4px; }
+.nav-parent { justify-content: space-between; }
+.nav-caret {
+    font-size: 11px;
+    opacity: 0.7;
+    transition: transform 0.18s ease;
+}
+.nav-group.open .nav-caret { transform: rotate(180deg); }
+.nav-sub { display: none; padding: 2px 0 6px 12px; }
+.nav-group.open .nav-sub { display: block; }
+.nav-subitem {
+    width: 100%;
+    display: block;
+    background: transparent;
+    border: 0;
+    color: #9fb0cc;
+    padding: 8px 12px;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 13px;
+    text-align: left;
+    margin-bottom: 2px;
+}
+.nav-subitem:hover { background: rgba(255, 255, 255, 0.04); color: #e8eefc; }
+.nav-subitem.active {
+    color: #fff;
+    background: rgba(37, 99, 235, 0.35);
+    box-shadow: 0 0 16px rgba(37, 99, 235, 0.25);
+    font-weight: 600;
+}
+
+.main {
+    flex: 1 1 auto;
+    min-width: 0;
+    max-width: 100%;
+    padding: 16px 16px 24px;
+    overflow-x: hidden;
+}
+
+.topbar {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 12px;
+    flex-wrap: nowrap;
+    background: linear-gradient(180deg, rgba(22, 31, 54, 0.78), rgba(16, 24, 43, 0.62));
+    border: 1px solid rgba(59, 130, 246, 0.16);
+    border-radius: 16px;
+    padding: 10px 12px;
+    backdrop-filter: blur(14px);
+    box-shadow: 0 10px 28px rgba(0, 0, 0, 0.22), inset 0 1px 0 rgba(255, 255, 255, 0.04);
+}
+
+.menu-btn { display: none; }
+
+.overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(2, 6, 23, 0.55);
+    z-index: 30;
+}
+
+.overlay.open { display: block; }
+
+@media (min-width: 769px) {
+    .app { display: flex; }
+    .sidebar {
+        position: relative;
+        transform: none !important;
+        width: 240px;
+        flex: 0 0 240px;
+        inset: auto;
+    }
+    .menu-btn { display: none !important; }
+    .overlay { display: none !important; }
+}
+
+@media (max-width: 768px) {
+    .app { display: block; }
+    .sidebar {
+        position: fixed;
+        inset: 0 auto 0 0;
+        width: min(84vw, 280px);
+        min-width: 0;
+        max-width: min(84vw, 280px);
+        flex: none;
+        z-index: 40;
+        transform: translateX(-110%);
+        transition: transform 0.2s ease;
+    }
+    .sidebar.open { transform: translateX(0); }
+    .menu-btn { display: grid; }
+    .main { padding: 10px; }
+    .topbar { flex-wrap: wrap; }
+    .profile span { display: none; }
+    .top-actions .icon-btn { display: none; }
+}

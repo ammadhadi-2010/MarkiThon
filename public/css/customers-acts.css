@@ -1,0 +1,81 @@
+.cust-wrap { overflow-x: auto; overflow-y: visible; }
+.cust-table tbody tr { transition: background 0.15s ease; }
+.cust-table tbody tr:hover td {
+    background: rgba(37, 99, 235, 0.1);
+}
+.cust-check { width: 40px; text-align: center; vertical-align: middle; }
+.cust-check input {
+    appearance: none;
+    width: 16px; height: 16px; margin: 0;
+    border: 2px solid #60a5fa;
+    border-radius: 4px;
+    background: #0b1120;
+    vertical-align: middle;
+    cursor: pointer;
+}
+.cust-check input:checked {
+    background: #2563eb;
+    box-shadow: inset 0 0 0 3px #0b1120;
+}
+.cust-st {
+    display: inline-flex; align-items: center; gap: 6px;
+    border-radius: 999px; padding: 5px 12px; font-size: 11px; font-weight: 800;
+}
+.cust-st::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: currentColor; }
+.cust-st.on {
+    background: rgba(34, 197, 94, 0.18); color: #4ade80;
+    box-shadow: 0 0 12px rgba(34, 197, 94, 0.25);
+}
+.cust-st.off {
+    background: rgba(251, 146, 60, 0.12); color: #fb923c;
+    border: 1px solid rgba(251, 146, 60, 0.45);
+}
+.cust-acts { display: flex; align-items: center; gap: 6px; flex-wrap: nowrap; position: relative; }
+.cust-ico {
+    width: 32px; height: 32px; border-radius: 50%;
+    display: grid; place-items: center; cursor: pointer;
+    border: 1px solid rgba(59, 130, 246, 0.3);
+    background: rgba(16, 25, 44, 0.95);
+    color: #93c5fd;
+    box-shadow: 0 0 0 1px rgba(37, 99, 235, 0.08);
+    transition: transform 0.15s ease, box-shadow 0.15s ease, filter 0.15s ease;
+}
+.cust-ico svg { width: 14px; height: 14px; }
+.cust-ico.view { color: #7dd3fc; }
+.cust-ico.edit { color: #93c5fd; }
+.cust-ico.call { color: #4ade80; border-color: rgba(34, 197, 94, 0.4); }
+.cust-ico.wa { color: #2dd4bf; border-color: rgba(45, 212, 191, 0.4); }
+.cust-ico.more { color: #60a5fa; }
+.cust-ico.more svg { fill: currentColor; stroke: none; }
+.cust-ico:hover {
+    transform: scale(1.12);
+    filter: brightness(1.08);
+    box-shadow: 0 0 16px rgba(59, 130, 246, 0.45);
+}
+.cust-ico.call:hover { box-shadow: 0 0 16px rgba(34, 197, 94, 0.45); }
+.cust-ico.wa:hover { box-shadow: 0 0 16px rgba(45, 212, 191, 0.45); }
+.cust-more { position: relative; display: inline-flex; }
+.cust-more.open .cust-ico.more {
+    transform: scale(1.12);
+    box-shadow: 0 0 18px rgba(59, 130, 246, 0.55);
+    border-color: #60a5fa;
+}
+.cust-drop {
+    display: none;
+    min-width: 220px;
+    padding: 8px;
+    border-radius: 14px;
+    background: rgba(15, 23, 42, 0.96);
+    border: 1px solid rgba(59, 130, 246, 0.35);
+    box-shadow: 0 16px 40px rgba(2, 6, 23, 0.55), 0 0 24px rgba(37, 99, 235, 0.25);
+    z-index: 90;
+}
+.cust-more.open .cust-drop { display: grid; gap: 2px; }
+.cust-drop button {
+    text-align: left; border: 0; cursor: pointer;
+    background: transparent; color: #e2e8f0;
+    border-radius: 10px; padding: 9px 12px; font-weight: 700; font-size: 13px;
+}
+.cust-drop button:hover { background: rgba(37, 99, 235, 0.22); }
+.cust-drop button.danger { color: #f87171; }
+.cust-drop button.danger:hover { background: rgba(239, 68, 68, 0.16); }

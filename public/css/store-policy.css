@@ -1,0 +1,15 @@
+.os-policy-note { margin: 0 0 8px; color: #8b9bb8; font-size: 13px; }
+.os-policy-grid { display: grid; gap: 8px; margin-bottom: 12px; }
+.os-point { display: grid; grid-template-columns: 1fr 1.4fr; gap: 8px; }
+.os-point input, #osPolicyForm input, #osPolicyForm textarea {
+    width: 100%;
+    box-sizing: border-box;
+}
+#osPolicyForm { display: grid; gap: 10px; }
+#osPolicyCard .os-save-btn { justify-self: start; }
+.os-story-row, .os-story-lines { display: grid; gap: 8px; margin-bottom: 12px; }
+.os-story-row { grid-template-columns: 1fr 170px; }
+.os-story-row input, .os-story-row select, .os-story-lines input { width: 100%; box-sizing: border-box; }
+@media (max-width: 700px) {
+    .os-point, .os-story-row { grid-template-columns: 1fr; }
+}

@@ -1,0 +1,62 @@
+.sa-pills { display: flex; gap: 8px; overflow-x: auto; margin: 12px 0; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
+.sa-pills::-webkit-scrollbar { display: none; }
+.sa-pill-btn {
+    flex: 0 0 auto; border: 1px solid var(--sa-line); background: #121a2e; color: #d5deef;
+    border-radius: 999px; padding: 8px 12px; cursor: pointer;
+}
+.sa-pill-btn.is-on { background: #2563eb; border-color: #2563eb; color: white; box-shadow: 0 0 14px rgba(37, 99, 235, 0.4); }
+.sa-prod-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; }
+.sa-prod { display: flex; flex-direction: column; gap: 8px; padding: 10px; }
+.sa-prod h3 { margin: 0; font-size: 15px; line-height: 1.3; }
+.sa-prod-photo { position: relative; height: 148px; border-radius: 12px; overflow: hidden; }
+.sa-cover-sheet { background: linear-gradient(160deg, #f8fafc, #cbd5e1 46%, #64748b); }
+.sa-cover-lawn { background: linear-gradient(160deg, #fecaca, #ef4444 42%, #7f1d1d); }
+.sa-cover-curtain { background: linear-gradient(160deg, #99f6e4, #0f766e 48%, #134e4a); }
+.sa-cover-khaddar { background: linear-gradient(160deg, #e7e5e4, #78716c 48%, #44403c); }
+.sa-cover-pillow { background: linear-gradient(160deg, #fce7f3, #e11d48 40%, #881337); }
+.sa-cover-cotton { background: linear-gradient(160deg, #fbcfe8, #fb7185 46%, #9f1239); }
+.sa-cover-towel { background: linear-gradient(160deg, #bfdbfe, #2563eb 50%, #1e3a8a); }
+.sa-cover-dress { background: linear-gradient(160deg, #334155, #1e293b 40%, #0f172a); }
+.sa-cover-wedding { background: linear-gradient(160deg, #fef3c7, #f59e0b 42%, #fff7ed); }
+.sa-cover-silk { background: linear-gradient(160deg, #ddd6fe, #7c3aed 48%, #4c1d95); }
+.sa-tag { position: absolute; top: 10px; left: 10px; border-radius: 8px; padding: 3px 8px; font-size: 11px; font-weight: 700; color: white; }
+.sa-tag.is-featured { background: #7c3aed; }
+.sa-tag.is-new { background: #16a34a; }
+.sa-tag.is-sale { background: #dc2626; }
+.sa-heart {
+    position: absolute; top: 8px; right: 8px; width: 30px; height: 30px; border: 0; border-radius: 50%;
+    display: grid; place-items: center; background: rgba(15, 23, 42, 0.45); color: white; cursor: pointer;
+}
+.sa-heart.is-on { color: #fb7185; }
+.sa-prod-shop { display: flex; gap: 8px; align-items: center; }
+.sa-prod-shop span {
+    width: 26px; height: 26px; border-radius: 50%; display: grid; place-items: center;
+    background: #2563eb; color: white; font-size: 11px; font-weight: 700;
+}
+.sa-prod-shop strong { font-size: 13px; }
+.sa-prod-price { display: flex; flex-wrap: wrap; gap: 6px; align-items: baseline; margin: 0; }
+.sa-prod-price strong { font-size: 16px; }
+.sa-prod-price span, .sa-prod-price s { color: #64748b; font-size: 12px; }
+.sa-prod-price em { background: rgba(220, 38, 38, 0.22); color: #fca5a5; font-style: normal; font-size: 11px; border-radius: 6px; padding: 2px 6px; }
+.sa-prod-foot { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.sa-prod-foot .sa-actions { margin-left: auto; }
+.sa-prod .sa-pill.is-published { background: rgba(22, 163, 74, 0.22); color: #4ade80; }
+.sa-prod .sa-pill.is-hidden { background: rgba(124, 58, 237, 0.22); color: #d8b4fe; }
+.sa-tick { display: inline-flex; }
+.sa-tick input { width: 16px; height: 16px; accent-color: #2563eb; }
+.sa-bulk {
+    position: sticky; bottom: 8px; z-index: 4; display: flex; flex-wrap: wrap; gap: 8px; align-items: center;
+    margin-top: 14px; padding: 12px; background: #10182c; border: 1px solid var(--sa-line); border-radius: 14px;
+}
+.sa-bulk div { display: flex; flex-direction: column; margin-right: auto; }
+.sa-bulk-go { border: 0; border-radius: 8px; padding: 8px 12px; color: white; cursor: pointer; }
+.sa-bulk-go.is-publish { background: #16a34a; }
+.sa-bulk-go.is-hide { background: #7c3aed; }
+.sa-bulk-go.is-delete { background: #dc2626; }
+.sa-bulk-go.is-all { background: transparent; border: 1px solid #2563eb; color: #93c5fd; }
+@media (max-width: 700px) {
+    .sa-prod-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+    .sa-prod { padding: 8px; gap: 6px; }
+    .sa-prod-photo { height: 88px; }
+    .sa-prod h3 { font-size: 12px; }
+}

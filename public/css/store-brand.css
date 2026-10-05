@@ -1,0 +1,70 @@
+.os-step-pill {
+    background: rgba(37, 99, 235, 0.18);
+    border: 1px solid rgba(59, 130, 246, 0.28);
+    color: #93c5fd;
+    border-radius: 999px;
+    padding: 4px 10px;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.04em;
+}
+.os-brand-media {
+    display: grid;
+    grid-template-columns: 0.85fr 1.15fr;
+    gap: 12px;
+    margin-bottom: 14px;
+}
+.os-brand-label {
+    margin: 0 0 8px;
+    color: #93c5fd;
+    font-size: 12px;
+    font-weight: 700;
+}
+.os-drop {
+    min-height: 140px;
+    border-radius: 16px;
+    border: 1px dashed rgba(59, 130, 246, 0.35);
+    background: #10192c;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 12px;
+    cursor: pointer;
+    overflow: hidden;
+    position: relative;
+}
+.os-drop.on { border-color: #60a5fa; box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.18); }
+.os-drop img {
+    max-width: 100%;
+    max-height: 110px;
+    object-fit: contain;
+    border-radius: 12px;
+}
+#osCoverDrop img {
+    width: 100%;
+    max-height: 120px;
+    object-fit: cover;
+}
+.os-drop-hint { color: #8b9bb8; font-size: 12px; text-align: center; }
+.os-drop-btn { z-index: 1; }
+.os-wa-label {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+.os-wa-label svg { width: 16px; height: 16px; color: #22c55e; }
+.os-brand-fields textarea {
+    width: 100%;
+    background: #10192c;
+    border: 1px solid rgba(59, 130, 246, 0.22);
+    color: #e2e8f0;
+    border-radius: 10px;
+    padding: 9px 11px;
+    font: inherit;
+    resize: vertical;
+}
+@media (max-width: 1023px) {
+    .os-brand-media { grid-template-columns: 1fr; }
+}

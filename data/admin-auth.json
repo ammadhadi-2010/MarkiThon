@@ -1,0 +1,11 @@
+{
+  "users": [
+    {
+      "id": "admin-1",
+      "role": "admin",
+      "name": "Super Admin",
+      "email": "admin@markithon.com",
+      "password": "$2a$10$h18oLVS6ILUfp4OnoxHZqezcx1Uuh7Fi9vamzUPhVvFILyBcywxDa"
+    }
+  ]
+}

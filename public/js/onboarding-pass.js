@@ -29,6 +29,7 @@ function bindObPassword() {
     const box = document.getElementById('obPassForm');
     if (!save || !box || save.dataset.bound) return;
     save.dataset.bound = '1';
+    if (typeof bindPasswordToggles === 'function') bindPasswordToggles(box);
     save.addEventListener('click', async () => {
         const currentPassword = document.getElementById('obCurrentPass').value;
         const newPassword = document.getElementById('obNewPass').value;

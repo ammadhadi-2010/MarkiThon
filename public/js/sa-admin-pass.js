@@ -97,4 +97,5 @@ function saMountAdminPass() {
     const form = document.getElementById('saAdminPassForm');
     if (form) form.addEventListener('submit', saAdminPassSubmit);
     saLoadAdminProfile();
+    if (typeof bindPasswordToggles === 'function') bindPasswordToggles(document.getElementById('viewRoot') || document);
 }

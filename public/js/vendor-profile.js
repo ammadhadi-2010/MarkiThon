@@ -209,6 +209,7 @@ function bindVendorProfile() {
         location.assign('/vendor/login');
     });
     disableAutofill(root);
+    if (typeof bindPasswordToggles === 'function') bindPasswordToggles(root);
     vpLoadProfile();
 }
 

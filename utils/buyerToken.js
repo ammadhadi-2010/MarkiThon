@@ -23,17 +23,19 @@ function readBuyerToken(header) {
 function publicBuyer(row) {
     const buyer = row.toJSON ? row.toJSON() : row;
     const prefs = buyer.preferences || {};
-    const shopkeeper = buyer.role === 'shopkeeper';
+    const roleRaw = String(buyer.role || 'buyer').toLowerCase();
+    const isVendor = roleRaw === 'shopkeeper' || roleRaw === 'vendor' || prefs.isVendor === true;
     return {
         id: buyer.id,
-        role: shopkeeper ? 'shopkeeper' : 'customer',
+        role: isVendor ? 'shopkeeper' : 'customer',
+        isVendor,
         name: buyer.name,
         email: buyer.email || '',
         phone: buyer.phone || '',
         authProvider: buyer.authProvider,
         imageUrl: prefs.avatar || '',
         verified: Boolean(prefs.verified) || buyer.authProvider === 'google',
-        subtitle: shopkeeper ? 'Shopkeeper' : 'Customer',
+        subtitle: isVendor ? 'Vendor' : 'Customer',
         preferences: prefs
     };
 }

@@ -75,6 +75,8 @@ router.get('/signup', sendCustomerSignup);
 router.get('/forgot-password', sendCustomerForgot);
 router.get('/vendor/login', sendVendorLogin);
 router.get('/vendor/register', sendVendorRegister);
+router.get('/vendor/dashboard', sendAdminApp);
+router.get('/vendor/dashboard/*', sendAdminApp);
 router.get('/store/:shopSlug', sendShopCatalog);
 router.get('/admin/login', sendAdminLogin);
 router.get('/admin', sendPlatformAdmin);

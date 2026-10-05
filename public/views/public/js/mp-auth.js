@@ -62,6 +62,40 @@ function mpApplyBuyerSession(data) {
     }
 }
 
+function mpIsVendorRole(user) {
+    if (!user) return false;
+    const role = String(user.role || '').toLowerCase();
+    return user.isVendor === true
+        || role === 'vendor'
+        || role === 'shopkeeper';
+}
+
+function mpHasVendorSession() {
+    if (mpIsVendorRole(mpBuyer)) return true;
+    try {
+        return Boolean(
+            localStorage.getItem('mtAuthToken:vendor')
+            || (typeof authToken === 'function' && authToken('vendor'))
+        );
+    } catch (error) {
+        return false;
+    }
+}
+
+function mpOpenVendorEntry() {
+    mpCloseProfileMenu();
+    if (!mpBuyer && !mpHasVendorSession()) {
+        if (typeof mpOpenAuth === 'function') mpOpenAuth('login');
+        else location.assign('/login');
+        return;
+    }
+    if (mpHasVendorSession()) {
+        location.assign('/vendor/dashboard');
+        return;
+    }
+    location.assign('/vendor/register');
+}
+
 function mpPaintAuth() {
     const slot = document.getElementById('mpAuthSlot');
     if (!slot) return;
@@ -83,6 +117,8 @@ function mpPaintAuth() {
     });
     const lang = slot.querySelector('[data-mp-lang]');
     if (lang) lang.addEventListener('click', () => mpCloseProfileMenu());
+    const vendorBtn = slot.querySelector('[data-mp-vendor-entry]');
+    if (vendorBtn) vendorBtn.addEventListener('click', mpOpenVendorEntry);
     slot.querySelector('#mpLogout').addEventListener('click', mpLogoutBuyer);
 }
 
@@ -91,6 +127,7 @@ function mpEnsureAuthShell() {
     document.body.insertAdjacentHTML('beforeend', mpAuthModalMarkup() + mpAccountDrawerMarkup());
     mpBindAuthModal();
     mpBindAccountDrawer();
+    if (typeof bindPasswordToggles === 'function') bindPasswordToggles(document.getElementById('mpAuthModal'));
 }
 
 function mpSetAuthError(message) {

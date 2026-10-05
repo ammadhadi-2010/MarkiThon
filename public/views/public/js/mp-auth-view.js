@@ -60,7 +60,7 @@ function mpProfileMenuMarkup(buyer) {
             </div>
             <p class="mp-menu-label">Manage</p>
             <div class="mp-menu-links">
-                <a href="/app">My Shop / Vendor Account</a>
+                <button type="button" id="mpVendorEntry" data-mp-vendor-entry>My Shop / Vendor Account</button>
             </div>
             <button type="button" class="mp-signout" id="mpLogout">Sign out</button>
         </div>`;

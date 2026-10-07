@@ -8,10 +8,14 @@ exports.orders = async (req, res) => {
     }
 };
 
-exports.createOrder = (req, res) => {
-    const row = createOrder(req.body || {});
-    if (!row) return res.status(400).json({ message: 'Enter the customer, shop, and total.' });
-    res.status(201).json({ message: 'Order added to the admin list.', order: row });
+exports.createOrder = async (req, res) => {
+    try {
+        const row = await createOrder(req.body || {});
+        if (!row) return res.status(400).json({ message: 'Enter the customer, shop, and total.' });
+        res.status(201).json({ message: 'Order saved.', order: row });
+    } catch (error) {
+        res.status(500).json({ message: 'Could not save the order.' });
+    }
 };
 
 exports.updateOrder = async (req, res) => {

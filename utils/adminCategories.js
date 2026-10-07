@@ -3,7 +3,6 @@ const path = require('path');
 const Product = require('../models/Product');
 
 const flagFile = path.join(__dirname, '../data/admin-category-flags.json');
-const catalogFile = path.join(__dirname, '../data/platform-products.json');
 
 function readJson(target, fallback) {
     try {
@@ -47,10 +46,8 @@ async function listCategories() {
         const products = await Product.findAll({ attributes: ['category'], raw: true });
         products.forEach((row) => add(row.category));
     } catch (error) {
-        counts.Other = counts.Other || 0;
+        /* empty catalog when products are unavailable */
     }
-    const catalog = readJson(catalogFile, []);
-    if (Array.isArray(catalog)) catalog.forEach((row) => add(row.category));
     return Object.keys(counts).sort((a, b) => counts[b] - counts[a] || a.localeCompare(b)).map((name) => {
         const id = 'cat-' + slugify(name);
         const flag = flags[id] || {};

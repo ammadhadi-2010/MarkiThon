@@ -5,29 +5,13 @@ const file = path.join(__dirname, '../data/admin-tickets.json');
 const types = ['Customer', 'Shopkeeper', 'Order', 'System'];
 const priorities = ['High', 'Medium', 'Low'];
 const statuses = ['Pending', 'In Progress', 'Resolved', 'Escalated'];
-const seed = [
-    ['tkt-1025', 'MP-1025', 'Customer', 'Product not received', 'Ayesha Khan', 'High', 'Pending', '2025-09-16T10:24:00', ''],
-    ['tkt-1024', 'MP-1024', 'Shopkeeper', 'Shop suspended', 'Zain Textiles', 'High', 'In Progress', '2025-09-16T09:12:00', ''],
-    ['tkt-1023', 'MP-1023', 'Order', 'Wrong item received', 'Usman Ali', 'Medium', 'In Progress', '2025-09-15T17:43:00', 'MK-10014'],
-    ['tkt-1022', 'MP-1022', 'Customer', 'Refund request', 'Sana Fatima', 'Medium', 'Pending', '2025-09-15T14:17:00', ''],
-    ['tkt-1021', 'MP-1021', 'Shopkeeper', 'Product removal request', 'Royal Fabrics', 'Low', 'Resolved', '2025-09-14T11:36:00', ''],
-    ['tkt-1020', 'MP-1020', 'System', 'Website not working', 'Admin', 'High', 'In Progress', '2025-09-14T10:42:00', ''],
-    ['tkt-1019', 'MP-1019', 'Order', 'Delivery delay', 'Zain Sheikh', 'Medium', 'In Progress', '2025-09-13T20:15:00', 'MK-10014'],
-    ['tkt-1018', 'MP-1018', 'Customer', 'Return request', 'Hina Butt', 'Low', 'Resolved', '2025-09-13T18:22:00', ''],
-    ['tkt-1017', 'MP-1017', 'Shopkeeper', 'Commission issue', 'Modern Textiles', 'Medium', 'In Progress', '2025-09-12T16:30:00', ''],
-    ['tkt-1016', 'MP-1016', 'Shopkeeper', 'Account blocked', 'Tahir Mehmood', 'Low', 'Resolved', '2025-09-12T15:15:00', ''],
-    ['tkt-1015', 'MP-1015', 'Customer', 'Payment not received', 'Ammad Hadi Stor', 'High', 'Escalated', '2025-09-11T12:05:00', ''],
-    ['tkt-1014', 'MP-1014', 'System', 'Checkout error', 'Admin', 'Medium', 'Escalated', '2025-09-11T09:40:00', '']
-].map(([id, number, type, subject, from, priority, status, createdAt, orderNumber]) => ({
-    id, number, type, subject, from, priority, status, createdAt, orderNumber
-}));
 
 function readTickets() {
     try {
         const rows = JSON.parse(fs.readFileSync(file, 'utf8'));
-        return Array.isArray(rows) ? rows : seed.map((row) => ({ ...row }));
+        return Array.isArray(rows) ? rows : [];
     } catch (error) {
-        return seed.map((row) => ({ ...row }));
+        return [];
     }
 }
 
@@ -60,7 +44,7 @@ function present(row) {
 
 function listTickets() {
     const rows = readTickets();
-    if (!fs.existsSync(file)) writeTickets(rows);
+    if (!fs.existsSync(file)) writeTickets([]);
     return rows.map(present).sort((a, b) => String(b.createdAt).localeCompare(String(a.createdAt)));
 }
 

@@ -1,40 +1,47 @@
-const fs = require('fs');
-const path = require('path');
+const VendorAccount = require('../models/VendorAccount');
+const { updateLiveShop, buildLiveShop } = require('./adminShopProfile');
 
-const file = path.join(__dirname, '../data/platform-applications.json');
-const seed = [
-    { id: 'app-alnoor', name: 'Al-Noor Fabrics', wait: '2h ago', status: 'pending' },
-    { id: 'app-modern', name: 'Modern Textiles', wait: '5h ago', status: 'pending' },
-    { id: 'app-fashion', name: 'Fashion Hub', wait: '1d ago', status: 'pending' }
-];
+function waitLabel(date) {
+    const at = new Date(date).getTime();
+    if (!at) return 'Just now';
+    const mins = Math.max(0, Math.round((Date.now() - at) / 60000));
+    if (mins < 60) return mins + 'm ago';
+    const hours = Math.round(mins / 60);
+    if (hours < 48) return hours + 'h ago';
+    return Math.round(hours / 24) + 'd ago';
+}
 
-function readQueue() {
-    try {
-        const rows = JSON.parse(fs.readFileSync(file, 'utf8'));
-        return Array.isArray(rows) ? rows : seed.map((row) => ({ ...row }));
-    } catch (error) {
-        return seed.map((row) => ({ ...row }));
+async function listApplications() {
+    const rows = await VendorAccount.findAll({
+        where: { status: 'Pending Admin Approval' },
+        order: [['createdAt', 'ASC']]
+    });
+    return rows.map((row) => ({
+        id: row.id,
+        name: row.shopName,
+        owner: row.ownerName,
+        wait: waitLabel(row.createdAt),
+        status: 'pending'
+    }));
+}
+
+async function decideApplication(id, status) {
+    if (status !== 'approved' && status !== 'rejected') return null;
+    const vendor = await VendorAccount.findByPk(id);
+    if (!vendor) return null;
+    const next = status === 'approved' ? 'Active' : 'Suspended';
+    vendor.status = next;
+    await vendor.save();
+    const live = await buildLiveShop();
+    if (live && live.name === vendor.shopName) {
+        await updateLiveShop({ status: status === 'approved' ? 'Active' : 'Suspended' });
     }
-}
-
-function writeQueue(rows) {
-    fs.mkdirSync(path.dirname(file), { recursive: true });
-    fs.writeFileSync(file, JSON.stringify(rows, null, 2));
-}
-
-function listApplications() {
-    const rows = readQueue();
-    if (!fs.existsSync(file)) writeQueue(rows);
-    return rows;
-}
-
-function decideApplication(id, status) {
-    const rows = listApplications();
-    const hit = rows.find((row) => row.id === id);
-    if (!hit) return null;
-    hit.status = status;
-    writeQueue(rows);
-    return hit;
+    return {
+        id: vendor.id,
+        name: vendor.shopName,
+        wait: waitLabel(vendor.createdAt),
+        status: status === 'approved' ? 'approved' : 'rejected'
+    };
 }
 
 module.exports = { listApplications, decideApplication };

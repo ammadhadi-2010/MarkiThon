@@ -16,12 +16,12 @@ function saActivity(items) {
 
 function saApprovals(rows) {
     const list = rows.map((row) => `<li>
-        <div><strong>${saText(row.name)}</strong><div class="sa-muted">Pending approval · ${saText(row.wait)}</div></div>
+        <div><strong>${saText(row.name)}</strong><div class="sa-muted">Pending approval · ${saText(row.wait)}${row.owner ? ' · ' + saText(row.owner) : ''}</div></div>
         <div>
             <button class="sa-approve" type="button" data-decide="${row.id}" data-status="approved">Approve</button>
             <button class="sa-reject" type="button" data-decide="${row.id}" data-status="rejected">Reject</button>
         </div>
-    </li>`).join('') || '<li>No shops are waiting for approval.</li>';
+    </li>`).join('') || '<li>No vendors registered for approval yet.</li>';
     return `<section class="sa-card"><div class="sa-head"><h3>Shop Approvals</h3></div><ul class="sa-feed">${list}</ul></section>`;
 }
 

@@ -8,10 +8,16 @@ exports.products = async (req, res) => {
     }
 };
 
-exports.createProduct = (req, res) => {
-    const row = createProduct(req.body || {});
-    if (!row) return res.status(400).json({ message: 'Enter the product title, shop, category, and price.' });
-    res.status(201).json({ message: 'Product added.', product: row });
+exports.createProduct = async (req, res) => {
+    try {
+        const row = await createProduct(req.body || {});
+        if (!row) {
+            return res.status(400).json({ message: 'Enter the product title, category, price, and stock.' });
+        }
+        res.status(201).json({ message: 'Product added.', product: row });
+    } catch (error) {
+        res.status(500).json({ message: 'Could not create the product.' });
+    }
 };
 
 exports.updateProduct = async (req, res) => {

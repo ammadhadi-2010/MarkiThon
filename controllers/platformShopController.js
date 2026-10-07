@@ -20,10 +20,18 @@ exports.shopOne = async (req, res) => {
     }
 };
 
-exports.createShop = (req, res) => {
-    const row = createManagedShop(req.body || {});
-    if (!row) return res.status(400).json({ message: 'Enter the shop name, owner, and phone.' });
-    res.status(201).json({ message: 'Shop added for approval.', shop: row });
+exports.createShop = async (req, res) => {
+    try {
+        const row = await createManagedShop(req.body || {});
+        if (!row) {
+            return res.status(400).json({
+                message: 'Enter the shop name, owner, and phone. Email must be unique if provided.'
+            });
+        }
+        res.status(201).json({ message: 'Shopkeeper added for approval.', shop: row });
+    } catch (error) {
+        res.status(500).json({ message: 'Could not create the shopkeeper account.' });
+    }
 };
 
 exports.updateShop = async (req, res) => {

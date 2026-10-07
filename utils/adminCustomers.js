@@ -4,22 +4,21 @@ const RetailCustomer = require('../models/RetailCustomer');
 const BuyerAccount = require('../models/BuyerAccount');
 const StoreOrder = require('../models/StoreOrder');
 
-const file = path.join(__dirname, '../data/admin-customers.json');
 const flagFile = path.join(__dirname, '../data/admin-customer-flags.json');
 const statuses = ['Active', 'Inactive'];
 
-function readJson(target, fallback) {
+function readFlags() {
     try {
-        const data = JSON.parse(fs.readFileSync(target, 'utf8'));
-        return data == null ? fallback : data;
+        const data = JSON.parse(fs.readFileSync(flagFile, 'utf8'));
+        return data && typeof data === 'object' ? data : {};
     } catch (error) {
-        return fallback;
+        return {};
     }
 }
 
-function writeJson(target, data) {
-    fs.mkdirSync(path.dirname(target), { recursive: true });
-    fs.writeFileSync(target, JSON.stringify(data, null, 2));
+function saveFlags(flags) {
+    fs.mkdirSync(path.dirname(flagFile), { recursive: true });
+    fs.writeFileSync(flagFile, JSON.stringify(flags, null, 2));
 }
 
 function digits(value) {
@@ -82,7 +81,7 @@ function shape(row, hit) {
         history: hit.history,
         createdAt: row.createdAt,
         fresh: fresh(row.createdAt),
-        locked: row.locked !== false
+        locked: true
     };
 }
 
@@ -121,8 +120,7 @@ async function liveCustomers() {
             address,
             city: row.city || '',
             status: row.status || 'Active',
-            createdAt: row.createdAt,
-            locked: true
+            createdAt: row.createdAt
         }, spendFor(phone, name, stats)));
     });
     buyers.forEach((row) => {
@@ -136,64 +134,24 @@ async function liveCustomers() {
             address: '',
             city: '',
             status: 'Active',
-            createdAt: row.createdAt,
-            locked: true
+            createdAt: row.createdAt
         }, spendFor(phone, norm(row.name), stats)));
-    });
-    Object.keys(stats.byPhone).forEach((phone) => {
-        if (seenPhone.has(phone)) return;
-        const hit = stats.byPhone[phone];
-        rows.push(shape({
-            id: 'ordc-' + phone,
-            name: hit.name || 'Customer',
-            phone: hit.phone,
-            address: '',
-            city: '',
-            status: 'Active',
-            createdAt: hit.history[0] ? hit.history[0].createdAt : '',
-            locked: true
-        }, hit));
-    });
-    Object.keys(stats.byName).forEach((name) => {
-        if (seenName.has(name)) return;
-        const hit = stats.byName[name];
-        rows.push(shape({
-            id: 'ordn-' + name.replace(/\s+/g, '-'),
-            name: hit.name || 'Customer',
-            phone: '',
-            address: '',
-            city: '',
-            status: 'Active',
-            createdAt: hit.history[0] ? hit.history[0].createdAt : '',
-            locked: true
-        }, hit));
     });
     return rows;
 }
 
-function applyFlag(row, flag) {
-    if (!flag || !flag.status) return row;
-    return { ...row, status: flag.status };
-}
-
 async function listCustomers() {
-    const flags = readJson(flagFile, {});
+    const flags = readFlags();
     let live = [];
     try {
         live = await liveCustomers();
     } catch (error) {
         live = [];
     }
-    const liveIds = new Set(live.map((row) => row.id));
-    const extras = readJson(file, []).filter((row) => !liveIds.has(row.id)).map((row) => ({
-        ...row,
-        orders: row.orders || 0,
-        spent: row.spent || 0,
-        history: row.history || [],
-        fresh: fresh(row.createdAt),
-        locked: false
-    }));
-    return live.map((row) => applyFlag(row, flags[row.id])).concat(extras.map((row) => applyFlag(row, flags[row.id])));
+    return live.map((row) => {
+        const flag = flags[row.id];
+        return flag && flag.status ? { ...row, status: flag.status } : row;
+    });
 }
 
 function cleanCustomer(body) {
@@ -206,22 +164,26 @@ function cleanCustomer(body) {
     return { name, phone, city, address, status };
 }
 
-function createCustomer(body) {
+async function createCustomer(body) {
     const clean = cleanCustomer(body);
     if (!clean) return null;
-    const rows = readJson(file, []);
-    const row = {
-        id: 'cus-' + Date.now(),
-        ...clean,
-        orders: 0,
-        spent: 0,
-        history: [],
-        createdAt: new Date().toISOString(),
-        locked: false
-    };
-    rows.unshift(row);
-    writeJson(file, rows);
-    return { ...row, fresh: true };
+    const row = await RetailCustomer.create({
+        name: clean.name,
+        phone: clean.phone,
+        address: clean.address,
+        city: clean.city,
+        status: clean.status,
+        ShopId: 1
+    });
+    return shape({
+        id: 'ret-' + row.id,
+        name: row.name,
+        phone: row.phone || '',
+        address: row.address || '',
+        city: row.city || '',
+        status: row.status || 'Active',
+        createdAt: row.createdAt
+    }, bucket());
 }
 
 async function updateCustomer(id, body) {
@@ -229,18 +191,18 @@ async function updateCustomer(id, body) {
     if (!status) return null;
     const current = (await listCustomers()).find((row) => row.id === id);
     if (!current) return { missing: true };
-    if (current.locked) {
-        const flags = readJson(flagFile, {});
-        flags[id] = { status };
-        writeJson(flagFile, flags);
-        return { ...current, status, locked: true };
+    const retailId = String(id).startsWith('ret-') ? String(id).slice(4) : '';
+    if (retailId) {
+        const retail = await RetailCustomer.findByPk(retailId);
+        if (retail) {
+            await retail.update({ status });
+            return { ...current, status, locked: true };
+        }
     }
-    const rows = readJson(file, []);
-    const index = rows.findIndex((row) => row.id === id);
-    if (index < 0) return { missing: true };
-    rows[index] = { ...rows[index], status };
-    writeJson(file, rows);
-    return { ...rows[index], status, locked: false };
+    const flags = readFlags();
+    flags[id] = { status };
+    saveFlags(flags);
+    return { ...current, status, locked: true };
 }
 
 module.exports = { listCustomers, createCustomer, updateCustomer };

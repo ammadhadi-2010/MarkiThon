@@ -18,8 +18,6 @@ async function nextNumber() {
 
 exports.listOrders = async (req, res) => {
     try {
-        const { ensureStoreOrders } = require('../utils/storeOrderSeed');
-        await ensureStoreOrders();
         const rows = await StoreOrder.findAll({ order: [['createdAt', 'DESC']] });
         res.status(200).json({ orders: rows.map(pack), statuses: STATUSES });
     } catch (error) {

@@ -99,7 +99,7 @@ function saPaintTickets() {
         </div>
         <section class="sa-card sa-shop-board"><div class="sa-scroll"><table class="sa-table sa-shop-table sa-ticket-table">
             <thead><tr><th>#</th><th>Ticket #</th><th>Type</th><th>Subject</th><th>From</th><th>Priority</th><th>Status</th><th>Date</th><th>Action</th></tr></thead>
-            <tbody>${slice.map((row, index) => saTicketRow(row, (saTicketPage - 1) * SA_TICKET_SIZE + index)).join('') || '<tr><td colspan="9">No tickets match these filters.</td></tr>'}</tbody>
+            <tbody>${slice.map((row, index) => saTicketRow(row, (saTicketPage - 1) * SA_TICKET_SIZE + index)).join('') || `<tr><td colspan="9">${saTicketRows.length ? 'No tickets match these filters.' : 'No support tickets yet.'}</td></tr>`}</tbody>
         </table></div>${saTicketPager(saTicketShown.length)}</section>
         <p class="sa-note-line" id="saTicketNote">${saText(saTicketFlash)}</p>
         <p class="sa-muted">Ticket updates stay in this support list. Shop orders are not changed.</p>`;

@@ -1,8 +1,7 @@
 const VendorAccount = require('../models/VendorAccount');
-const { publicVendor, ensureDefaultVendor } = require('./vendorProfile');
+const { publicVendor } = require('./vendorProfile');
 
 async function listVendors() {
-    await ensureDefaultVendor();
     const rows = await VendorAccount.findAll({ order: [['createdAt', 'DESC']] });
     return rows.map(publicVendor);
 }

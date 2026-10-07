@@ -58,7 +58,7 @@ function saPaintCategories() {
             ${saCatSide(saCatRows)}
             <section class="sa-card sa-shop-board"><div class="sa-scroll"><table class="sa-table sa-shop-table sa-cat-table">
                 <thead><tr><th>#</th><th>Category Name</th><th>Slug</th><th>Products</th><th>Status</th><th>Actions</th></tr></thead>
-                <tbody>${slice.map((row, index) => saCatRow(row, (saCatPage - 1) * SA_CAT_SIZE + index)).join('') || '<tr><td colspan="6">No categories match this list.</td></tr>'}</tbody>
+                <tbody>${slice.map((row, index) => saCatRow(row, (saCatPage - 1) * SA_CAT_SIZE + index)).join('') || `<tr><td colspan="6">${saCatRows.length ? 'No categories match this list.' : 'No categories yet — add products to create them.'}</td></tr>`}</tbody>
             </table></div>${saCatPager(shown.length)}</section>
         </div>
         <p class="sa-note-line" id="saCatNote">${saText(saCatFlash)}</p>

@@ -4,6 +4,7 @@ const ShopProfile = require('../models/ShopProfile');
 const StoreOrder = require('../models/StoreOrder');
 const RetailCustomer = require('../models/RetailCustomer');
 const BuyerAccount = require('../models/BuyerAccount');
+const VendorAccount = require('../models/VendorAccount');
 const RetailBill = require('../models/RetailBill');
 const Sale = require('../models/Sale');
 
@@ -74,6 +75,20 @@ async function categoryShares() {
 }
 
 async function recentShops() {
+    const vendors = await VendorAccount.findAll({
+        attributes: ['shopName', 'ownerName', 'status', 'createdAt'],
+        order: [['createdAt', 'DESC']],
+        limit: 5
+    });
+    if (vendors.length) {
+        return vendors.map((row) => ({
+            name: row.shopName,
+            owner: row.ownerName,
+            status: row.status === 'Active' ? 'Active' : (row.status === 'Suspended' ? 'Suspended' : 'Pending'),
+            products: 0,
+            joined: dayLabel(new Date(row.createdAt))
+        }));
+    }
     const [profiles, counts] = await Promise.all([
         ShopProfile.findAll({
             attributes: ['shopName', 'ownerName', 'isSetupCompleted', 'createdAt', 'ShopId'],
@@ -165,10 +180,11 @@ async function platformSnapshot() {
     const today = dayStart(new Date());
     const yesterday = new Date(today);
     yesterday.setDate(today.getDate() - 1);
-    const [shops, active, freshShops, products, orders, buyers, customers, series, categories, shopRows, orderRows, productRows, customerRows, freshProducts, ordersToday, ordersYesterday, freshBuyers, freshRetail] = await Promise.all([
-        ShopProfile.count(),
-        ShopProfile.count({ where: { isSetupCompleted: true } }),
-        ShopProfile.count({ where: { createdAt: { [Op.gte]: month } } }),
+    const [shops, active, pendingVendors, freshShops, products, orders, buyers, customers, series, categories, shopRows, orderRows, productRows, customerRows, freshProducts, ordersToday, ordersYesterday, freshBuyers, freshRetail] = await Promise.all([
+        VendorAccount.count(),
+        VendorAccount.count({ where: { status: 'Active' } }),
+        VendorAccount.count({ where: { status: 'Pending Admin Approval' } }),
+        VendorAccount.count({ where: { createdAt: { [Op.gte]: month } } }),
         Product.count(),
         StoreOrder.count(),
         BuyerAccount.count(),
@@ -185,12 +201,28 @@ async function platformSnapshot() {
         BuyerAccount.count({ where: { createdAt: { [Op.gte]: month } } }),
         RetailCustomer.count({ where: { createdAt: { [Op.gte]: month } } })
     ]);
+    const profileCount = await ShopProfile.count();
+    const shopTotal = Math.max(shops, profileCount);
     const todaySales = series.length ? series[series.length - 1].current : 0;
     return {
-        shops, active, freshShops, products, orders,
+        shops: shopTotal,
+        active,
+        pending: pendingVendors,
+        freshShops,
+        products,
+        orders,
         customers: buyers + customers,
-        todaySales, series, categories, shopRows, orderRows, productRows, customerRows,
-        freshProducts, ordersToday, ordersYesterday, freshCustomers: freshBuyers + freshRetail
+        todaySales,
+        series,
+        categories,
+        shopRows,
+        orderRows,
+        productRows,
+        customerRows,
+        freshProducts,
+        ordersToday,
+        ordersYesterday,
+        freshCustomers: freshBuyers + freshRetail
     };
 }
 

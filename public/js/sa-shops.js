@@ -99,7 +99,7 @@ function saPaintShops() {
         </div>
         <section class="sa-card sa-shop-board"><div class="sa-scroll"><table class="sa-table sa-shop-table">
             <thead><tr><th>Shop / Owner</th><th>Contact</th><th>Package</th><th>Status</th><th>Actions</th></tr></thead>
-            <tbody>${slice.map((item) => saShopRow(item.row, item.index)).join('') || '<tr><td colspan="5">No shops match these filters.</td></tr>'}</tbody>
+            <tbody>${slice.map((item) => saShopRow(item.row, item.index)).join('') || `<tr><td colspan="5">${saShopRows.length ? 'No shops match these filters.' : 'No vendors registered yet.'}</td></tr>`}</tbody>
         </table></div>${saShopPager(matched.length)}</section>
         <div id="saVendors"></div>
         <p class="sa-note-line" id="saShopNote"></p>`;

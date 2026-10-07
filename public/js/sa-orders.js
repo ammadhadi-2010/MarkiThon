@@ -117,7 +117,7 @@ function saPaintOrders() {
         </div>
         <section class="sa-card sa-shop-board"><div class="sa-scroll"><table class="sa-table sa-shop-table sa-order-table">
             <thead><tr><th>#</th><th>Order ID</th><th>Customer</th><th>Shop</th><th>Total Amount</th><th>Status</th><th>Date</th><th>Actions</th></tr></thead>
-            <tbody>${slice.map((row, index) => saOrderRow(row, (saOrderPage - 1) * SA_ORDER_SIZE + index)).join('') || '<tr><td colspan="8">No orders match these filters.</td></tr>'}</tbody>
+            <tbody>${slice.map((row, index) => saOrderRow(row, (saOrderPage - 1) * SA_ORDER_SIZE + index)).join('') || `<tr><td colspan="8">${saOrderRows.length ? 'No orders match these filters.' : 'No marketplace orders yet.'}</td></tr>`}</tbody>
         </table></div>${saOrderPager(saOrderShown.length)}</section>
         <p class="sa-note-line" id="saOrderNote">${saText(saOrderFlash)}</p>
         <p class="sa-muted">Status changes stay in this admin list. Shop bills are not changed.</p>`;

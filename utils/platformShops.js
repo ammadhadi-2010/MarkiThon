@@ -1,47 +1,29 @@
-const fs = require('fs');
-const path = require('path');
+const VendorAccount = require('../models/VendorAccount');
+const Product = require('../models/Product');
+const StoreOrder = require('../models/StoreOrder');
 const { buildLiveShop, updateLiveShop } = require('./adminShopProfile');
+const { hashPassword } = require('./authCrypto');
+const { nextShopkeeperId } = require('./vendorProfile');
 
-const file = path.join(__dirname, '../data/platform-shops.json');
-const seed = [
-    ['shop-ammad', 'Ammad Hadi Stor', 'Ammad Ul Hadi', '+92 300 7012010', 'Standard', 6, 'Active'],
-    ['shop-zain', 'Zain Textiles', 'Zain Khan', '+92 300 1234567', 'Standard', 3, 'Active'],
-    ['shop-royal', 'Royal Fabrics', 'Bilal Ahmed', '+92 333 9876543', 'Premium', 12, 'Active'],
-    ['shop-sana', 'Sana Collection', 'Sana Fatima', '+92 321 7654321', 'Standard', 3, 'Pending'],
-    ['shop-fabric', 'Fabric World', 'Usman Ali', '+92 345 4455667', 'Premium', 6, 'Active'],
-    ['shop-pillow', 'Luxury Pillow Set', 'Hina Butt', '+92 300 7788999', 'Standard', 3, 'Active'],
-    ['shop-cotton', 'Cotton King', 'Tahir Mehmood', '+92 333 7788990', 'Premium', 12, 'Active'],
-    ['shop-modern', 'Modern Textiles', 'Rabia Noor', '+92 304 5566778', 'Standard', 3, 'Active'],
-    ['shop-fashion', 'Fashion Hub', 'Nadia Malik', '+92 311 4556677', 'Premium', 6, 'Pending'],
-    ['shop-trendi', 'Trendi Fashion', 'Asif Raza', '+92 345 6677889', 'Standard', 3, 'Suspended']
-].map(([id, name, owner, phone, pack, months, status]) => ({
-    id, name, owner, phone, package: pack, months, status
-}));
-
-function readDirectory() {
-    try {
-        const rows = JSON.parse(fs.readFileSync(file, 'utf8'));
-        return Array.isArray(rows) ? rows : seed.map((row) => ({ ...row }));
-    } catch (error) {
-        return seed.map((row) => ({ ...row }));
-    }
+function mapStatus(vendorStatus) {
+    if (vendorStatus === 'Active') return 'Active';
+    if (vendorStatus === 'Suspended') return 'Suspended';
+    return 'Pending';
 }
 
-function writeDirectory(rows) {
-    fs.mkdirSync(path.dirname(file), { recursive: true });
-    fs.writeFileSync(file, JSON.stringify(rows, null, 2));
-}
-
-function directory() {
-    const rows = readDirectory();
-    if (!fs.existsSync(file)) writeDirectory(rows);
-    return rows;
-}
-
-async function listManagedShops() {
-    const live = await buildLiveShop();
-    const rows = directory().filter((row) => !live || row.name !== live.name);
-    return live ? [live, ...rows] : rows;
+function vendorToShop(vendor) {
+    const row = vendor.toJSON ? vendor.toJSON() : vendor;
+    return {
+        id: row.id,
+        name: row.shopName,
+        owner: row.ownerName,
+        phone: row.phone || '',
+        package: 'Standard',
+        months: 3,
+        status: mapStatus(row.status),
+        email: row.email || '',
+        shopkeeperId: row.shopkeeperId || ''
+    };
 }
 
 function cleanShop(body) {
@@ -56,39 +38,80 @@ function cleanShop(body) {
     return { name, owner, phone, package: pack, months, status };
 }
 
-function createManagedShop(body) {
+function vendorStatusFromShop(status) {
+    if (status === 'Active') return 'Active';
+    if (status === 'Suspended') return 'Suspended';
+    return 'Pending Admin Approval';
+}
+
+async function listManagedShops() {
+    const [vendors, live] = await Promise.all([
+        VendorAccount.findAll({ order: [['createdAt', 'DESC']] }),
+        buildLiveShop()
+    ]);
+    const rows = vendors.map(vendorToShop);
+    if (!live) return rows;
+    const match = rows.find((row) => row.name === live.name);
+    if (!match) return [live, ...rows];
+    return rows.map((row) => (row.id === match.id
+        ? { ...live, id: row.id, email: row.email, shopkeeperId: row.shopkeeperId }
+        : row));
+}
+
+async function createManagedShop(body) {
     const next = cleanShop(body);
     if (!next) return null;
-    const rows = directory();
-    next.id = 'shop-' + Date.now();
-    next.status = 'Pending';
-    rows.push(next);
-    writeDirectory(rows);
-    return next;
+    const email = String((body && body.email) || '').trim().toLowerCase()
+        || ('shop' + Date.now() + '@markithon.local');
+    const existing = await VendorAccount.findOne({ where: { email } });
+    if (existing) return null;
+    const vendor = await VendorAccount.create({
+        shopkeeperId: await nextShopkeeperId(),
+        shopName: next.name,
+        ownerName: next.owner,
+        email,
+        phone: next.phone,
+        address: String((body && body.address) || 'Address pending').trim() || 'Address pending',
+        password: await hashPassword(String((body && body.password) || 'ChangeMe@123')),
+        status: 'Pending Admin Approval'
+    });
+    return vendorToShop(vendor);
 }
 
 async function updateManagedShop(id, body) {
     if (id === 'live-shop') {
-        const shop = await updateLiveShop(body || {});
-        return shop || null;
+        return updateLiveShop(body || {});
     }
-    const rows = directory();
-    const hit = rows.find((row) => row.id === id);
-    if (!hit) return null;
-    const next = cleanShop({ ...hit, ...body });
+    const vendor = await VendorAccount.findByPk(id);
+    if (!vendor) return null;
+    const next = cleanShop({
+        name: vendor.shopName,
+        owner: vendor.ownerName,
+        phone: vendor.phone,
+        package: 'Standard',
+        months: 3,
+        status: mapStatus(vendor.status),
+        ...body
+    });
     if (!next) return null;
-    Object.assign(hit, next);
-    writeDirectory(rows);
-    return hit;
+    await vendor.update({
+        shopName: next.name,
+        ownerName: next.owner,
+        phone: next.phone,
+        status: vendorStatusFromShop(next.status)
+    });
+    const live = await buildLiveShop();
+    if (live && live.name === vendor.shopName && body && body.status) {
+        await updateLiveShop({ status: next.status });
+    }
+    return vendorToShop(vendor);
 }
 
 async function findManagedShop(id) {
     const shop = (await listManagedShops()).find((row) => row.id === id);
     if (!shop) return null;
     const metrics = { tracked: false, products: 0, orders: 0, sales: 0 };
-    if (shop.id === 'live-shop') {
-        const Product = require('../models/Product');
-        const StoreOrder = require('../models/StoreOrder');
+    if (shop.id === 'live-shop' || shop.name === ((await buildLiveShop()) || {}).name) {
         const where = { ShopId: 1 };
         const [products, orders, sales] = await Promise.all([
             Product.count({ where }),

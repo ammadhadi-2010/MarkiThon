@@ -1,10 +1,8 @@
 const RetailCustomer = require('../models/RetailCustomer');
-const { ensureDemoCustomers } = require('../utils/customerSeed');
 const { packCustomer, customerStats, customerAreas, applyCustomerPatch } = require('../utils/customerPack');
 
 exports.listCustomerHub = async (req, res) => {
     try {
-        await ensureDemoCustomers();
         const rows = await RetailCustomer.findAll({
             order: [['lastOrderAt', 'DESC'], ['id', 'DESC']]
         });

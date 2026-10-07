@@ -27,19 +27,23 @@ function saSalesChart(series) {
 }
 
 function saDonut(categories, products) {
-    const rows = categories.length ? categories : [{ name: 'No products yet', total: 1 }];
-    const total = categories.reduce((sum, row) => sum + row.total, 0);
+    if (!categories.length) {
+        return `<div class="sa-donut-wrap">
+            <div class="sa-donut" style="background:#1e293b"><span><strong>0</strong>Products</span></div>
+            <ul class="sa-cat"><li>No products available</li></ul>
+        </div>`;
+    }
+    const total = categories.reduce((sum, row) => sum + row.total, 0) || 1;
     let cursor = 0;
-    const stops = rows.map((row, index) => {
+    const stops = categories.map((row, index) => {
         const start = cursor;
-        const share = total ? (row.total / total) * 100 : 100;
-        cursor += share;
+        cursor += (row.total / total) * 100;
         return SA_COLORS[index % SA_COLORS.length] + ' ' + start + '% ' + cursor + '%';
     }).join(', ');
-    const list = (categories.length ? categories : []).map((row, index) => {
-        const share = total ? Math.round((row.total / total) * 100) : 0;
+    const list = categories.map((row, index) => {
+        const share = Math.round((row.total / total) * 100);
         return `<li><span><i class="sa-swatch" style="background:${SA_COLORS[index % SA_COLORS.length]}"></i>${row.name}</span><span>${share}%</span></li>`;
-    }).join('') || '<li>No categories yet</li>';
+    }).join('');
     return `<div class="sa-donut-wrap">
         <div class="sa-donut" style="background:conic-gradient(${stops})"><span><strong>${products}</strong>Products</span></div>
         <ul class="sa-cat">${list}</ul>

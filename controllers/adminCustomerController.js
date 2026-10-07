@@ -8,10 +8,14 @@ exports.customers = async (req, res) => {
     }
 };
 
-exports.createCustomer = (req, res) => {
-    const row = createCustomer(req.body || {});
-    if (!row) return res.status(400).json({ message: 'Enter the customer name.' });
-    res.status(201).json({ message: 'Customer added to the admin list.', customer: row });
+exports.createCustomer = async (req, res) => {
+    try {
+        const row = await createCustomer(req.body || {});
+        if (!row) return res.status(400).json({ message: 'Enter the customer name.' });
+        res.status(201).json({ message: 'Customer saved.', customer: row });
+    } catch (error) {
+        res.status(500).json({ message: 'Could not save the customer.' });
+    }
 };
 
 exports.updateCustomer = async (req, res) => {

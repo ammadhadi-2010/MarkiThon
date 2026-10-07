@@ -7,7 +7,7 @@ function saShopsTable(shops) {
     const rows = shops.map((shop) => `<tr>
         <td>${saText(shop.name)}</td><td>${saText(shop.owner)}</td><td>${saStatus(shop.status)}</td>
         <td>${shop.products}</td><td>${shop.joined}</td>
-    </tr>`).join('') || '<tr><td colspan="5">No shops yet.</td></tr>';
+    </tr>`).join('') || '<tr><td colspan="5">No vendors registered yet.</td></tr>';
     return `<div class="sa-scroll"><table class="sa-table">
         <thead><tr><th>Shop Name</th><th>Owner</th><th>Status</th><th>Products</th><th>Joined</th></tr></thead>
         <tbody>${rows}</tbody>
@@ -18,7 +18,7 @@ function saProductsTable(products) {
     const rows = (products || []).map((item) => `<tr>
         <td>${saText(item.title)}</td><td>${saText(item.category)}</td>
         <td>${saMoney(item.price)}</td><td>${saStatus(item.status)}</td>
-    </tr>`).join('') || '<tr><td colspan="4">No products yet.</td></tr>';
+    </tr>`).join('') || '<tr><td colspan="4">No products available.</td></tr>';
     return `<div class="sa-scroll"><table class="sa-table">
         <thead><tr><th>Product</th><th>Category</th><th>Price</th><th>Status</th></tr></thead>
         <tbody>${rows}</tbody>

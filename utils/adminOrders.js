@@ -3,22 +3,21 @@ const path = require('path');
 const StoreOrder = require('../models/StoreOrder');
 const ShopProfile = require('../models/ShopProfile');
 
-const file = path.join(__dirname, '../data/admin-orders.json');
 const flagFile = path.join(__dirname, '../data/admin-order-flags.json');
 const statuses = ['New', 'Confirmed', 'Processing', 'Dispatched', 'Completed', 'Cancelled'];
 
-function readJson(target, fallback) {
+function readFlags() {
     try {
-        const data = JSON.parse(fs.readFileSync(target, 'utf8'));
-        return data == null ? fallback : data;
+        const data = JSON.parse(fs.readFileSync(flagFile, 'utf8'));
+        return data && typeof data === 'object' ? data : {};
     } catch (error) {
-        return fallback;
+        return {};
     }
 }
 
-function writeJson(target, data) {
-    fs.mkdirSync(path.dirname(target), { recursive: true });
-    fs.writeFileSync(target, JSON.stringify(data, null, 2));
+function saveFlags(flags) {
+    fs.mkdirSync(path.dirname(flagFile), { recursive: true });
+    fs.writeFileSync(flagFile, JSON.stringify(flags, null, 2));
 }
 
 function labelFor(status) {
@@ -69,22 +68,18 @@ async function liveOrders() {
     }));
 }
 
-function applyFlag(row, flag) {
-    if (!flag || !flag.status) return row;
-    return shape({ ...row, status: flag.status });
-}
-
 async function listOrders() {
-    const flags = readJson(flagFile, {});
+    const flags = readFlags();
     let live = [];
     try {
         live = await liveOrders();
     } catch (error) {
         live = [];
     }
-    const liveIds = new Set(live.map((row) => row.id));
-    const extras = readJson(file, []).filter((row) => !liveIds.has(String(row.id)));
-    return live.map((row) => applyFlag(row, flags[row.id])).concat(extras.map((row) => applyFlag(shape(row), flags[row.id])));
+    return live.map((row) => {
+        const flag = flags[row.id];
+        return flag && flag.status ? shape({ ...row, status: flag.status }) : row;
+    });
 }
 
 function cleanOrder(body) {
@@ -97,21 +92,35 @@ function cleanOrder(body) {
     return { customer, shop, phone, total, status, note: String(body.note || '').trim().slice(0, 180) };
 }
 
-function createOrder(body) {
+async function createOrder(body) {
     const clean = cleanOrder(body);
     if (!clean) return null;
-    const rows = readJson(file, []);
-    const row = shape({
-        id: 'ord-' + Date.now(),
-        number: 'MK-' + String(Date.now()).slice(-6),
-        ...clean,
+    const stamp = Date.now();
+    const row = await StoreOrder.create({
+        orderNumber: 'MK-' + String(stamp).slice(-6),
+        customerName: clean.customer,
+        customerPhone: clean.phone,
         items: [],
-        createdAt: new Date().toISOString(),
-        locked: false
+        itemCount: 0,
+        total: clean.total,
+        status: clean.status,
+        note: clean.note,
+        details: { shopLabel: clean.shop },
+        ShopId: 1
     });
-    rows.unshift(row);
-    writeJson(file, rows);
-    return row;
+    return shape({
+        id: String(row.id),
+        number: row.orderNumber,
+        customer: row.customerName,
+        phone: row.customerPhone || '',
+        shop: clean.shop || 'Ammad Hadi Stor',
+        total: Number(row.total) || 0,
+        status: row.status || 'New',
+        note: row.note || '',
+        items: [],
+        createdAt: row.createdAt,
+        locked: true
+    });
 }
 
 async function updateOrder(id, body) {
@@ -119,18 +128,15 @@ async function updateOrder(id, body) {
     if (!status) return null;
     const current = (await listOrders()).find((row) => row.id === id);
     if (!current) return { missing: true };
-    if (current.locked) {
-        const flags = readJson(flagFile, {});
-        flags[id] = { status };
-        writeJson(flagFile, flags);
+    const order = await StoreOrder.findByPk(id);
+    if (order) {
+        await order.update({ status });
         return shape({ ...current, status, locked: true });
     }
-    const rows = readJson(file, []);
-    const index = rows.findIndex((row) => row.id === id);
-    if (index < 0) return { missing: true };
-    rows[index] = { ...rows[index], status };
-    writeJson(file, rows);
-    return shape(rows[index]);
+    const flags = readFlags();
+    flags[id] = { status };
+    saveFlags(flags);
+    return shape({ ...current, status, locked: true });
 }
 
 module.exports = { listOrders, createOrder, updateOrder };

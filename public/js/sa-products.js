@@ -93,7 +93,7 @@ function saPaintProducts() {
             <select id="saProdSort">${saShopOptions([['Newest', 'Added Date (Newest)'], ['Oldest', 'Added Date (Oldest)']], saProdSort)}</select>
         </div>
         ${saProdPills(saProdRows)}
-        <div class="sa-prod-grid">${matched.map(saProdCard).join('') || '<p class="sa-muted">No products match these filters.</p>'}</div>
+        <div class="sa-prod-grid">${matched.map(saProdCard).join('') || `<p class="sa-muted">${saProdRows.length ? 'No products match these filters.' : 'No products available.'}</p>`}</div>
         <div class="sa-bulk">
             <div><strong>Bulk Actions</strong><span class="sa-muted" id="saProdCount">${saProdPick.size} Products selected</span></div>
             <button class="sa-bulk-go is-publish" type="button" data-prod-bulk="Published">Publish</button>

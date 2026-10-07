@@ -39,9 +39,14 @@ async function saDecide(id, status) {
     const response = await fetch('/api/platform/applications/' + id, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
         body: JSON.stringify({ status })
     });
-    if (!response.ok) return;
+    if (!response.ok) {
+        const data = await response.json().catch(() => ({}));
+        window.alert(data.message || 'Could not update the application.');
+        return;
+    }
     saData = null;
     await saLoad(location.hash.slice(1) || 'dashboard');
 }
@@ -49,7 +54,11 @@ async function saDecide(id, status) {
 async function saLoad(page) {
     const active = page || 'dashboard';
     if (!saData) {
-        const response = await fetch('/api/platform/overview');
+        const response = await fetch('/api/platform/overview', { credentials: 'include' });
+        if (!response.ok) {
+            document.getElementById('saView').innerHTML = '<section class="sa-card"><h2>Could not load dashboard data.</h2><p class="sa-muted">Sign in again or check the API connection.</p></section>';
+            return;
+        }
         saData = await response.json();
     }
     saPaintNav(active);

@@ -91,7 +91,7 @@ function saPaintCustomers() {
         </div>
         <section class="sa-card sa-shop-board"><div class="sa-scroll"><table class="sa-table sa-shop-table sa-cust-table">
             <thead><tr><th>#</th><th>Customer</th><th>Phone / WhatsApp</th><th>City</th><th>Total Orders</th><th>Total Spent</th><th>Status</th><th>Actions</th></tr></thead>
-            <tbody>${slice.map((row, index) => saCustRow(row, (saCustPage - 1) * SA_CUST_SIZE + index)).join('') || '<tr><td colspan="8">No customers match these filters.</td></tr>'}</tbody>
+            <tbody>${slice.map((row, index) => saCustRow(row, (saCustPage - 1) * SA_CUST_SIZE + index)).join('') || `<tr><td colspan="8">${saCustRows.length ? 'No customers match these filters.' : 'No customers registered yet.'}</td></tr>`}</tbody>
         </table></div>${saCustPager(saCustShown.length)}</section>
         <p class="sa-note-line" id="saCustNote">${saText(saCustFlash)}</p>
         <p class="sa-muted">Totals are read from marketplace orders. Shopkeeper customer records are not changed.</p>`;

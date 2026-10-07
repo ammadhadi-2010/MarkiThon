@@ -50,37 +50,20 @@ function mpIsShopVendor(user) {
 
 function mpVendorGo(href) {
     if (typeof mpCloseProfileMenu === 'function') mpCloseProfileMenu();
-    const target = String(href || '').trim() || '/vendor/register';
+    const target = String(href || '').trim() || '/settings';
     requestAnimationFrame(() => location.assign(target));
 }
 
 function mpOpenVendorEntry() {
-    if (mpHasVendorSession() || mpIsVendorRole(typeof mpBuyer !== 'undefined' ? mpBuyer : null)) {
-        mpVendorGo('/settings');
-        return;
-    }
-    if (typeof mpBuyer === 'undefined' || !mpBuyer) {
-        if (typeof mpCloseProfileMenu === 'function') mpCloseProfileMenu();
-        if (typeof mpOpenAuth === 'function') mpOpenAuth('login');
-        else location.assign('/login');
-        return;
-    }
-    mpVendorGo('/vendor/register');
+    mpVendorGo('/settings');
 }
 
-function mpManageMenuMarkup(user) {
-    if (mpHasVendorSession() || mpIsShopVendor(user)) {
-        return `
-            <p class="mp-menu-label">Manage</p>
-            <div class="mp-menu-links">
-                <a href="/settings" data-mp-go="/settings">Store Settings &amp; Inventory</a>
-                <a href="/dashboard" data-mp-go="/dashboard">Dashboard</a>
-            </div>`;
-    }
+function mpManageMenuMarkup() {
     return `
             <p class="mp-menu-label">Manage</p>
             <div class="mp-menu-links">
-                <a href="/vendor/register" data-mp-go="/vendor/register">Register as Vendor / Create Shop</a>
+                <a href="/settings" data-mp-go="/settings">Store Settings</a>
+                <a href="/dashboard" data-mp-go="/dashboard">Dashboard</a>
             </div>`;
 }
 
@@ -111,9 +94,9 @@ function mpQuickLinksMarkup(user) {
     return `
             <p class="mp-menu-label">Quick</p>
             <div class="mp-menu-links">
-                <button type="button" data-mp-account="settings">Profile</button>
+                <a href="/settings" data-mp-go="/settings">Profile</a>
                 <button type="button" data-mp-account="wallet">Wallet</button>
-                <button type="button" data-mp-account="settings">Settings</button>
+                <a href="/settings" data-mp-go="/settings">Settings</a>
                 <a href="/contact" data-mp-go="/contact">Help</a>
             </div>`;
 }
@@ -129,9 +112,6 @@ function mpProfileMenuMarkup(user) {
     const pillAvatar = user.imageUrl
         ? `<img class="mp-pill-avatar mp-pill-photo" src="${mpEscAttr(user.imageUrl)}" alt="">`
         : `<span class="mp-pill-avatar">${letter}</span>`;
-    const viewAction = shopkeeper
-        ? 'data-mp-go="/settings"'
-        : 'data-mp-account="settings"';
     return `
         <button type="button" class="mp-pill" id="mpAuthMenuBtn" aria-label="Account menu" aria-expanded="false" aria-haspopup="true">
             ${pillAvatar}
@@ -147,7 +127,7 @@ function mpProfileMenuMarkup(user) {
                 </div>
             </div>
             <div class="mp-menu-actions">
-                <button type="button" class="mp-menu-view" ${viewAction}>View Profile</button>
+                <button type="button" class="mp-menu-view" data-mp-go="/settings">View Profile</button>
                 ${mpVerifyMarkup(user)}
             </div>
             ${mpQuickLinksMarkup(user)}
@@ -155,7 +135,7 @@ function mpProfileMenuMarkup(user) {
             <div class="mp-menu-links">
                 <button type="button" class="mp-menu-lang" data-mp-lang="en">Language <span>English</span></button>
             </div>
-            ${mpManageMenuMarkup(user)}
+            ${mpManageMenuMarkup()}
             <button type="button" class="mp-signout" id="mpLogout">Sign out</button>
         </div>`;
 }

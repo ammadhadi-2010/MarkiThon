@@ -28,7 +28,7 @@ function mpFooterMarkup() {
             <a href="/mission" data-foot-link="company-mission">Our Mission</a>
             <a href="/careers" data-foot-link="company-careers">Careers</a>
             <a href="/contact" data-foot-link="company-contact">Contact Us</a>
-            <a href="/app" data-foot-link="company-become">Become a Shopkeeper</a>
+            <a href="/settings" data-foot-link="company-become">Become a Shopkeeper</a>
             <a href="/terms" data-foot-link="company-terms">Terms &amp; Conditions</a>
         </div>
         <div>
@@ -41,9 +41,9 @@ function mpFooterMarkup() {
         </div>
         <div>
             <h4>For Shopkeepers</h4>
-            <a href="/app" data-foot-link="shopkeepers-open">Open Your Shop</a>
-            <a href="/app" data-foot-link="shopkeepers-login">Login</a>
-            <a href="/app" data-foot-link="shopkeepers-register">Shopkeeper Registration</a>
+            <a href="/settings" data-foot-link="shopkeepers-open">Store Settings</a>
+            <a href="/vendor/login" data-foot-link="shopkeepers-login">Login</a>
+            <a href="/dashboard" data-foot-link="shopkeepers-register">Dashboard</a>
             <a href="/about" data-foot-link="shopkeepers-pricing">Pricing</a>
         </div>
         <div>

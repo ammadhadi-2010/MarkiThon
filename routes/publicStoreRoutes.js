@@ -31,7 +31,7 @@ function sendVendorLogin(req, res) {
 }
 
 function sendVendorRegister(req, res) {
-    res.sendFile(path.join(__dirname, '../public/vendor-register.html'));
+    res.redirect(302, '/settings');
 }
 
 function sendCustomerLogin(req, res) {
@@ -75,6 +75,7 @@ router.get('/signup', sendCustomerSignup);
 router.get('/forgot-password', sendCustomerForgot);
 router.get('/vendor/login', sendVendorLogin);
 router.get('/vendor/register', sendVendorRegister);
+router.get('/vendor-register.html', sendVendorRegister);
 router.get('/vendor/dashboard', sendAdminApp);
 router.get('/vendor/dashboard/*', sendAdminApp);
 router.get('/store/:shopSlug', sendShopCatalog);

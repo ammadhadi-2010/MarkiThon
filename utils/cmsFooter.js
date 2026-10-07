@@ -11,7 +11,7 @@ const GROUPS = [
         ['mission', 'Our Mission', '/mission'],
         ['careers', 'Careers', '/careers'],
         ['contact', 'Contact Us', '/contact'],
-        ['become', 'Become a Shopkeeper', '/app'],
+        ['become', 'Become a Shopkeeper', '/settings'],
         ['terms', 'Terms & Conditions', '/terms']
     ]],
     ['support', 'Help & Support', [
@@ -22,9 +22,9 @@ const GROUPS = [
         ['support', 'Contact Support', '/contact']
     ]],
     ['shopkeepers', 'For Shopkeepers', [
-        ['open', 'Open Your Shop', '/app'],
-        ['login', 'Login', '/app'],
-        ['register', 'Shopkeeper Registration', '/app'],
+        ['open', 'Store Settings', '/settings'],
+        ['login', 'Login', '/vendor/login'],
+        ['register', 'Dashboard', '/dashboard'],
         ['pricing', 'Pricing', '/about']
     ]]
 ];

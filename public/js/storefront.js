@@ -8,14 +8,6 @@ function escapeHtml(value) {
         .replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 }
 
-function mapHref(shop) {
-    if (shop.storeLocation && /^https?:\/\//i.test(shop.storeLocation)) return shop.storeLocation;
-    if (shop.latitude && shop.longitude) {
-        return 'https://maps.google.com/maps?q=' + shop.latitude + ',' + shop.longitude;
-    }
-    return shop.storeLocation || '#';
-}
-
 function waDigits(phone) {
     let digits = String(phone || '').replace(/\D/g, '');
     if (digits.startsWith('00')) digits = digits.slice(2);
@@ -123,7 +115,6 @@ async function loadStorefront() {
         : [...new Set(sfProducts.map((p) => p.category).filter(Boolean))];
     document.title = (sfShop.shopName || 'Ammad Hadi Stor') + ' — MarkiThon';
     document.getElementById('sfRoot').innerHTML = storefrontMarkup(sfShop, cats);
-    if (typeof mpBindAuth === 'function') mpBindAuth();
     if (typeof applySfTheme === 'function') applySfTheme(sfShop);
     bindSfHero();
     document.querySelectorAll('.sf-chip').forEach((btn) => {

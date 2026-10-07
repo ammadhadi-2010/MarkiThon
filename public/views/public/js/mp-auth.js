@@ -1,79 +1,28 @@
-const MP_BUYER_KEY = 'mpBuyerToken';
-let mpBuyer = null;
-
-function mpBuyerToken() {
-    return localStorage.getItem(MP_BUYER_KEY) || '';
-}
-
-async function mpBuyerFetch(path, options) {
-    const headers = { 'Content-Type': 'application/json' };
-    const token = mpBuyerToken();
-    if (token) headers.Authorization = 'Bearer ' + token;
-    const res = await fetch('/api/buyers' + path, Object.assign({}, options, { headers }));
-    const data = await res.json().catch(() => ({}));
-    if (!res.ok) throw new Error(data.message || 'Request failed.');
-    return data;
-}
-
-async function mpLoadBuyer() {
-    if (!mpBuyerToken()) {
-        mpBuyer = null;
-        return;
-    }
-    try {
-        mpBuyer = (await mpBuyerFetch('/me')).buyer;
-    } catch (error) {
-        localStorage.removeItem(MP_BUYER_KEY);
-        mpBuyer = null;
-    }
-}
-
 function mpCloseProfileMenu() {
     const menu = document.getElementById('mpAuthMenu');
     const trigger = document.getElementById('mpAuthMenuBtn');
+    const badge = document.getElementById('sfShopBadge');
     if (!menu) return;
     menu.classList.remove('is-open');
     menu.hidden = true;
     if (trigger) trigger.setAttribute('aria-expanded', 'false');
+    if (badge) badge.setAttribute('aria-expanded', 'false');
 }
 
 function mpToggleProfileMenu() {
     const menu = document.getElementById('mpAuthMenu');
     const trigger = document.getElementById('mpAuthMenuBtn');
-    if (!menu || !trigger) return;
+    const badge = document.getElementById('sfShopBadge');
+    if (!menu) return;
     const open = menu.hidden || !menu.classList.contains('is-open');
     if (open) {
         menu.hidden = false;
         requestAnimationFrame(() => menu.classList.add('is-open'));
-        trigger.setAttribute('aria-expanded', 'true');
+        if (trigger) trigger.setAttribute('aria-expanded', 'true');
+        if (badge) badge.setAttribute('aria-expanded', 'true');
     } else {
         mpCloseProfileMenu();
     }
-}
-
-function mpApplyBuyerSession(data) {
-    localStorage.setItem(MP_BUYER_KEY, data.token);
-    mpBuyer = data.buyer;
-    mpCloseAuth();
-    mpPaintAuth();
-    if (typeof mpPaintHearts === 'function') mpPaintHearts(document);
-    if (location.pathname.indexOf('/profile/orders') === 0 && typeof mpMountOrders === 'function') {
-        mpMountOrders((location.pathname.split('/')[3]) || '');
-    }
-}
-
-function mpVendorMenuUser() {
-    if (mpBuyer) return mpBuyer;
-    if (!mpHasVendorSession()) return null;
-    const shopName = (typeof sfShop !== 'undefined' && sfShop && sfShop.shopName) || 'Shopkeeper';
-    return {
-        name: shopName,
-        role: 'shopkeeper',
-        isVendor: true,
-        hasShop: true,
-        subtitle: 'Vendor',
-        verified: true
-    };
 }
 
 function mpBindProfileMenu(slot) {
@@ -90,15 +39,15 @@ function mpBindProfileMenu(slot) {
             if (typeof mpOpenAccount === 'function') mpOpenAccount(btn.getAttribute('data-mp-account'));
         });
     });
-    const lang = slot.querySelector('[data-mp-lang]');
-    if (lang) lang.addEventListener('click', () => mpCloseProfileMenu());
-    slot.querySelectorAll('[data-mp-vendor-go]').forEach((link) => {
+    slot.querySelectorAll('[data-mp-go]').forEach((link) => {
         link.addEventListener('click', (event) => {
             event.preventDefault();
             event.stopPropagation();
-            mpVendorGo(link.getAttribute('href'));
+            mpVendorGo(link.getAttribute('data-mp-go') || link.getAttribute('href'));
         });
     });
+    const lang = slot.querySelector('[data-mp-lang]');
+    if (lang) lang.addEventListener('click', () => mpCloseProfileMenu());
     const legacy = slot.querySelector('[data-mp-vendor-entry]');
     if (legacy) legacy.addEventListener('click', mpOpenVendorEntry);
     const out = slot.querySelector('#mpLogout');
@@ -108,7 +57,7 @@ function mpBindProfileMenu(slot) {
 function mpPaintAuth() {
     const slot = document.getElementById('mpAuthSlot');
     if (!slot) return;
-    const sessionUser = mpVendorMenuUser();
+    const sessionUser = typeof mpMenuSessionUser === 'function' ? mpMenuSessionUser() : mpBuyer;
     if (!sessionUser) {
         slot.innerHTML = mpGuestPillMarkup();
         slot.querySelector('#mpAuthOpen').addEventListener('click', () => mpOpenAuth('login'));
@@ -226,6 +175,7 @@ function mpLogoutBuyer() {
     localStorage.removeItem('mtAuthToken:vendor');
     localStorage.removeItem('mtAuthToken');
     mpBuyer = null;
+    mpVendor = null;
     mpCloseProfileMenu();
     mpPaintAuth();
     if (typeof mpCloseAccount === 'function') mpCloseAccount();
@@ -238,11 +188,11 @@ async function mpBindAuth() {
     if (!window.mpAuthDocBound) {
         window.mpAuthDocBound = true;
         document.addEventListener('click', (event) => {
-            if (event.target.closest('#mpAuthSlot')) return;
+            if (event.target.closest('#mpAuthSlot, #sfShopBadge, #mpAuthMenu')) return;
             mpCloseProfileMenu();
         });
     }
-    await mpLoadBuyer();
+    await Promise.all([mpLoadBuyer(), mpLoadVendor()]);
     mpPaintAuth();
-    if (!mpBuyer && typeof mpPromptGoogleOneTap === 'function') mpPromptGoogleOneTap();
+    if (!mpBuyer && !mpVendor && typeof mpPromptGoogleOneTap === 'function') mpPromptGoogleOneTap();
 }

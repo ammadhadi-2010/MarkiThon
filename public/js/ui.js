@@ -108,6 +108,7 @@ function pathForView(name) {
     if (name === 'settings') return '/settings';
     if (name === 'dashboard') return '/dashboard';
     if (name === 'inventory') return '/inventory';
+    if (name === 'expenses') return '/expenses';
     return '/app';
 }
 
@@ -120,6 +121,7 @@ function viewFromPath(path) {
         return 'settings';
     }
     if (raw === '/inventory' || raw.indexOf('/inventory/') === 0) return 'inventory';
+    if (raw === '/expenses' || raw.indexOf('/expenses/') === 0) return 'expenses';
     if (raw === '/dashboard' || raw.indexOf('/dashboard/') === 0
         || raw === '/app' || raw.indexOf('/app/') === 0
         || raw === '/vendor/dashboard' || raw.indexOf('/vendor/dashboard/') === 0) {

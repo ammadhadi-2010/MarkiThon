@@ -30,6 +30,7 @@ function mpIsVendorRole(user) {
 
 function mpHasVendorSession() {
     if (mpIsVendorRole(typeof mpBuyer !== 'undefined' ? mpBuyer : null)) return true;
+    if (typeof mpVendor !== 'undefined' && mpVendor) return true;
     try {
         return Boolean(
             localStorage.getItem('mtAuthToken:vendor')
@@ -64,32 +65,72 @@ function mpOpenVendorEntry() {
     mpVendorGo('/vendor/register');
 }
 
-function mpManageMenuMarkup(buyer) {
-    if (mpIsShopVendor(buyer)) {
+function mpManageMenuMarkup(user) {
+    if (mpIsShopVendor(user)) {
         return `
             <p class="mp-menu-label">Manage</p>
             <div class="mp-menu-links">
-                <a href="/dashboard" data-mp-vendor-go="dashboard">Dashboard</a>
-                <a href="/settings" data-mp-vendor-go="settings">Store Settings</a>
+                <a href="/dashboard" data-mp-go="/dashboard">Inventory / Store Dashboard</a>
+                <a href="/settings" data-mp-go="/settings">Store Settings</a>
             </div>`;
     }
     return `
             <p class="mp-menu-label">Manage</p>
             <div class="mp-menu-links">
-                <a href="/vendor/register" data-mp-vendor-go="register">Register as Vendor / Create Shop</a>
+                <a href="/vendor/register" data-mp-go="/vendor/register">Register as Vendor / Create Shop</a>
             </div>`;
 }
 
-function mpProfileMenuMarkup(buyer) {
-    const name = mpEscAttr(buyer.name || 'Customer');
-    const letter = (buyer.name || 'C').trim().charAt(0).toUpperCase() || 'C';
-    const shopkeeper = mpIsShopVendor(buyer);
-    const badge = mpEscAttr(buyer.subtitle || (shopkeeper ? 'Vendor' : 'Customer'));
-    const avatar = mpMenuAvatar(buyer);
-    const pillAvatar = buyer.imageUrl
-        ? `<img class="mp-pill-avatar mp-pill-photo" src="${mpEscAttr(buyer.imageUrl)}" alt="">`
+function mpVerifyMarkup(user) {
+    const shopkeeper = mpIsShopVendor(user);
+    if (shopkeeper) {
+        if (user.verified || user.isApproved || user.status === 'Active') {
+            return '<button type="button" class="mp-menu-verify is-ok" disabled>Verified</button>';
+        }
+        if (user.status === 'Pending Admin Approval' || user.verifyState === 'pending') {
+            return '<button type="button" class="mp-menu-verify is-pending" disabled>Pending Approval</button>';
+        }
+        return '<button type="button" class="mp-menu-verify is-pending" disabled>Unverified</button>';
+    }
+    if (user.verified) {
+        return '<button type="button" class="mp-menu-verify is-ok" data-mp-account="settings">Verified</button>';
+    }
+    return '<button type="button" class="mp-menu-verify" data-mp-account="settings">Verify now</button>';
+}
+
+function mpQuickLinksMarkup(user) {
+    if (mpIsShopVendor(user)) {
+        return `
+            <p class="mp-menu-label">Quick</p>
+            <div class="mp-menu-links">
+                <a href="/settings" data-mp-go="/settings">Profile</a>
+                <a href="/expenses" data-mp-go="/expenses">Wallet</a>
+                <a href="/settings" data-mp-go="/settings">Settings</a>
+                <a href="/contact" data-mp-go="/contact">Help</a>
+            </div>`;
+    }
+    return `
+            <p class="mp-menu-label">Quick</p>
+            <div class="mp-menu-links">
+                <button type="button" data-mp-account="settings">Profile</button>
+                <button type="button" data-mp-account="wallet">Wallet</button>
+                <button type="button" data-mp-account="settings">Settings</button>
+                <a href="/contact" data-mp-go="/contact">Help</a>
+            </div>`;
+}
+
+function mpProfileMenuMarkup(user) {
+    const shopkeeper = mpIsShopVendor(user);
+    const name = mpEscAttr(user.name || (shopkeeper ? 'Shopkeeper' : 'Customer'));
+    const letter = String(user.name || 'C').trim().charAt(0).toUpperCase() || 'C';
+    const badge = mpEscAttr(user.subtitle || (shopkeeper ? 'Shopkeeper' : 'Customer'));
+    const avatar = mpMenuAvatar(user);
+    const pillAvatar = user.imageUrl
+        ? `<img class="mp-pill-avatar mp-pill-photo" src="${mpEscAttr(user.imageUrl)}" alt="">`
         : `<span class="mp-pill-avatar">${letter}</span>`;
-    const verifyLabel = buyer.verified ? 'Verified' : 'Verify now';
+    const viewAction = shopkeeper
+        ? 'data-mp-go="/settings"'
+        : 'data-mp-account="settings"';
     return `
         <button type="button" class="mp-pill" id="mpAuthMenuBtn" aria-label="Account menu" aria-expanded="false" aria-haspopup="true">
             ${pillAvatar}
@@ -101,25 +142,19 @@ function mpProfileMenuMarkup(buyer) {
                 ${avatar}
                 <div>
                     <strong>${name}</strong>
-                    <span class="mp-role">${badge}</span>
+                    <span class="mp-role${shopkeeper ? ' is-vendor' : ''}">${badge}</span>
                 </div>
             </div>
             <div class="mp-menu-actions">
-                <button type="button" class="mp-menu-view" data-mp-account="settings">View Profile</button>
-                <button type="button" class="mp-menu-verify${buyer.verified ? ' is-ok' : ''}" data-mp-account="settings">${verifyLabel}</button>
+                <button type="button" class="mp-menu-view" ${viewAction}>View Profile</button>
+                ${mpVerifyMarkup(user)}
             </div>
-            <p class="mp-menu-label">Quick</p>
-            <div class="mp-menu-links">
-                <button type="button" data-mp-account="settings">Profile</button>
-                <button type="button" data-mp-account="wallet">Wallet</button>
-                <button type="button" data-mp-account="settings">Settings</button>
-                <a href="/contact">Help</a>
-            </div>
+            ${mpQuickLinksMarkup(user)}
             <p class="mp-menu-label">Account</p>
             <div class="mp-menu-links">
                 <button type="button" class="mp-menu-lang" data-mp-lang="en">Language <span>English</span></button>
             </div>
-            ${mpManageMenuMarkup(buyer)}
+            ${mpManageMenuMarkup(user)}
             <button type="button" class="mp-signout" id="mpLogout">Sign out</button>
         </div>`;
 }

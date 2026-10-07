@@ -3,11 +3,17 @@
     width: 100%;
     min-height: 400px;
     height: clamp(400px, 36vw, 520px);
-    overflow: hidden;
+    overflow: visible;
     background: #0b1120;
     border-bottom: 1px solid rgba(59, 130, 246, 0.22);
 }
-.sf-slider,
+.sf-slider {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    border-radius: 0;
+    z-index: 0;
+}
 .sf-slide {
     position: absolute;
     inset: 0;
@@ -95,6 +101,8 @@
     top: calc(100% + 8px);
     right: 0;
     left: auto;
+    max-height: min(85vh, 520px);
+    z-index: 9999;
 }
 .sf-shop-badge .sf-logo,
 .sf-shop-badge .sf-mark {

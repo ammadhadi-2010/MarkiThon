@@ -94,6 +94,18 @@ function storefrontHeroMarkup(shop, logo, socials) {
         </section>`;
 }
 
+function storefrontNavMarkup() {
+    return `
+        <header class="sf-nav">
+            <a class="sf-nav-brand" href="/" aria-label="MarkiThon marketplace home">
+                <img class="sf-nav-logo" src="/assets/logo.png" alt="MarkiThon">
+            </a>
+            <div class="sf-nav-utils">
+                <div class="mp-auth" id="mpAuthSlot"></div>
+            </div>
+        </header>`;
+}
+
 function storefrontMarkup(shop, categories) {
     const assets = shop.themeAssets || {};
     const logoSrc = assets.logo || shop.imageUrl;
@@ -109,6 +121,7 @@ function storefrontMarkup(shop, categories) {
     const themeId = shop.themeId || 'standard-retail';
     return `
         <div class="sf-shell" data-sf-theme="${escapeHtml(themeId)}">
+        ${storefrontNavMarkup()}
         ${storefrontHeroMarkup(shop, logo, socials)}
         ${typeof storefrontShowcaseMarkup === 'function' ? storefrontShowcaseMarkup(shop) : ''}
         <div class="sf-filters" id="sfFilters">${chips}</div>

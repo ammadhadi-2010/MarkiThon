@@ -5,6 +5,44 @@ body {
     background: #0b1120;
     color: #e2e8f0;
 }
+.sf-nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 10px 16px;
+    background: rgba(22, 31, 54, 0.96);
+    border-bottom: 1px solid rgba(59, 130, 246, 0.2);
+    position: sticky;
+    top: 0;
+    z-index: 30;
+}
+.sf-nav-brand {
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    color: inherit;
+    min-width: 0;
+}
+.sf-nav-logo {
+    height: 40px;
+    width: auto;
+    max-width: 140px;
+    object-fit: contain;
+    display: block;
+}
+.sf-nav-utils {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-left: auto;
+    position: relative;
+}
+.sf-nav .mp-auth { position: relative; }
+@media (max-width: 760px) {
+    .sf-nav { padding: 8px 12px; }
+    .sf-nav-logo { height: 32px; max-width: 110px; }
+}
 .sf-head {
     display: flex;
     gap: 14px;

@@ -117,6 +117,7 @@ async function loadStorefront() {
     document.getElementById('sfRoot').innerHTML = storefrontMarkup(sfShop, cats);
     if (typeof applySfTheme === 'function') applySfTheme(sfShop);
     bindSfHero();
+    if (typeof mpBindAuth === 'function') mpBindAuth();
     document.querySelectorAll('.sf-chip').forEach((btn) => {
         btn.classList.toggle('on', btn.getAttribute('data-sfcat') === sfCategory
             || (sfCategory === 'All' && btn.getAttribute('data-sfcat') === 'All'));

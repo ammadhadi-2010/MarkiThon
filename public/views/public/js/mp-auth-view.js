@@ -19,10 +19,71 @@ function mpMenuAvatar(buyer) {
     return `<span class="mp-pill-avatar">${letter}</span>`;
 }
 
+function mpIsVendorRole(user) {
+    if (!user) return false;
+    const role = String(user.role || '').toLowerCase();
+    return user.isVendor === true
+        || user.hasShop === true
+        || role === 'vendor'
+        || role === 'shopkeeper';
+}
+
+function mpHasVendorSession() {
+    if (mpIsVendorRole(typeof mpBuyer !== 'undefined' ? mpBuyer : null)) return true;
+    try {
+        return Boolean(
+            localStorage.getItem('mtAuthToken:vendor')
+            || (typeof authToken === 'function' && authToken('vendor'))
+        );
+    } catch (error) {
+        return false;
+    }
+}
+
+function mpIsShopVendor(buyer) {
+    return mpIsVendorRole(buyer) || mpHasVendorSession();
+}
+
+function mpVendorGo(href) {
+    if (typeof mpCloseProfileMenu === 'function') mpCloseProfileMenu();
+    const target = String(href || '').trim() || '/vendor/register';
+    requestAnimationFrame(() => location.assign(target));
+}
+
+function mpOpenVendorEntry() {
+    if (mpHasVendorSession() || mpIsVendorRole(typeof mpBuyer !== 'undefined' ? mpBuyer : null)) {
+        mpVendorGo('/vendor/dashboard');
+        return;
+    }
+    if (typeof mpBuyer === 'undefined' || !mpBuyer) {
+        if (typeof mpCloseProfileMenu === 'function') mpCloseProfileMenu();
+        if (typeof mpOpenAuth === 'function') mpOpenAuth('login');
+        else location.assign('/login');
+        return;
+    }
+    mpVendorGo('/vendor/register');
+}
+
+function mpManageMenuMarkup(buyer) {
+    if (mpIsShopVendor(buyer)) {
+        return `
+            <p class="mp-menu-label">Manage</p>
+            <div class="mp-menu-links">
+                <a href="/vendor/dashboard" data-mp-vendor-go="dashboard">My Shop / Vendor Account</a>
+                <a href="/app" data-mp-vendor-go="inventory">Manage Inventory &amp; POS</a>
+            </div>`;
+    }
+    return `
+            <p class="mp-menu-label">Manage</p>
+            <div class="mp-menu-links">
+                <a href="/vendor/register" data-mp-vendor-go="register">Register as Vendor / Create Shop</a>
+            </div>`;
+}
+
 function mpProfileMenuMarkup(buyer) {
     const name = mpEscAttr(buyer.name || 'Customer');
     const letter = (buyer.name || 'C').trim().charAt(0).toUpperCase() || 'C';
-    const shopkeeper = buyer.role === 'shopkeeper';
+    const shopkeeper = mpIsShopVendor(buyer);
     const badge = mpEscAttr(buyer.subtitle || (shopkeeper ? 'Vendor' : 'Customer'));
     const avatar = mpMenuAvatar(buyer);
     const pillAvatar = buyer.imageUrl
@@ -58,10 +119,7 @@ function mpProfileMenuMarkup(buyer) {
             <div class="mp-menu-links">
                 <button type="button" class="mp-menu-lang" data-mp-lang="en">Language <span>English</span></button>
             </div>
-            <p class="mp-menu-label">Manage</p>
-            <div class="mp-menu-links">
-                <button type="button" id="mpVendorEntry" data-mp-vendor-entry>My Shop / Vendor Account</button>
-            </div>
+            ${mpManageMenuMarkup(buyer)}
             <button type="button" class="mp-signout" id="mpLogout">Sign out</button>
         </div>`;
 }

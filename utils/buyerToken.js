@@ -29,6 +29,7 @@ function publicBuyer(row) {
         id: buyer.id,
         role: isVendor ? 'shopkeeper' : 'customer',
         isVendor,
+        hasShop: isVendor || Boolean(prefs.hasShop),
         name: buyer.name,
         email: buyer.email || '',
         phone: buyer.phone || '',

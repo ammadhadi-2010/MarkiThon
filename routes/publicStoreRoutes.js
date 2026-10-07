@@ -7,7 +7,7 @@ const SKIP = new Set([
     'app', 'dashboard', 'market', 'views', 'components', 'online-store', 'customers',
     'about', 'contact', 'blog', 'product', 'store', 'admin', 'profile',
     'mission', 'careers', 'terms', 'privacy', 'faqs', 'delivery', 'returns',
-    'vendor', 'login', 'signup', 'forgot-password'
+    'vendor', 'login', 'signup', 'forgot-password', 'settings', 'store-settings', 'inventory'
 ]);
 
 function sendMarketplace(req, res) {
@@ -92,6 +92,12 @@ router.get('/online-store/products', sendAdminApp);
 router.get('/online-store/products/edit/:id', sendAdminApp);
 router.get('/dashboard', sendAdminApp);
 router.get('/dashboard/*', sendAdminApp);
+router.get('/settings', sendAdminApp);
+router.get('/settings/*', sendAdminApp);
+router.get('/store-settings', sendAdminApp);
+router.get('/store-settings/*', sendAdminApp);
+router.get('/inventory', sendAdminApp);
+router.get('/inventory/*', sendAdminApp);
 router.get('/:shopSlug', sendShopCatalog);
 
 module.exports = router;

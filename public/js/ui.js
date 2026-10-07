@@ -103,15 +103,35 @@ function refreshLinkedView(name) {
     run().catch((error) => showToast(error.message));
 }
 
-function syncAdminPath(name) {
-    if (name === 'customers') {
-        if (location.pathname !== '/customers') {
-            history.pushState({ view: 'customers' }, '', '/customers');
-        }
-        return;
+function pathForView(name) {
+    if (name === 'customers') return '/customers';
+    if (name === 'settings') return '/settings';
+    if (name === 'dashboard') return '/dashboard';
+    if (name === 'inventory') return '/inventory';
+    return '/app';
+}
+
+function viewFromPath(path) {
+    const raw = String(path || '');
+    if (raw === '/customers' || raw.indexOf('/customers/') === 0
+        || raw.indexOf('/online-store/customers') === 0) return 'customers';
+    if (raw === '/settings' || raw.indexOf('/settings/') === 0
+        || raw === '/store-settings' || raw.indexOf('/store-settings/') === 0) {
+        return 'settings';
     }
-    if (location.pathname === '/customers' || location.pathname.indexOf('/online-store/customers') === 0) {
-        history.pushState({ view: name }, '', '/app');
+    if (raw === '/inventory' || raw.indexOf('/inventory/') === 0) return 'inventory';
+    if (raw === '/dashboard' || raw.indexOf('/dashboard/') === 0
+        || raw === '/app' || raw.indexOf('/app/') === 0
+        || raw === '/vendor/dashboard' || raw.indexOf('/vendor/dashboard/') === 0) {
+        return 'dashboard';
+    }
+    return '';
+}
+
+function syncAdminPath(name) {
+    const next = pathForView(name);
+    if (location.pathname !== next) {
+        history.pushState({ view: name }, '', next);
     }
 }
 
@@ -122,15 +142,22 @@ function bootAdminPath() {
         showView('customers', { skipPath: true });
         return;
     }
-    if (path === '/customers' || path.indexOf('/customers/') === 0) {
-        showView('customers', { skipPath: true });
+    const view = viewFromPath(path);
+    if (view) {
+        showView(view, { skipPath: true });
+        return;
+    }
+    showView('dashboard', { skipPath: true });
+    if (location.pathname === '/' || location.pathname === '/index.html') {
+        history.replaceState({ view: 'dashboard' }, '', '/dashboard');
     }
 }
 
 function renderNav() {
     const nav = document.getElementById('sidebarNav');
+    const active = viewFromPath(location.pathname) || 'dashboard';
     nav.innerHTML = NAV_ITEMS.map(([id, label]) => `
-        <button class="nav-item${id === 'suppliers' ? ' active' : ''}" data-view="${id}" type="button">
+        <button class="nav-item${id === active ? ' active' : ''}" data-view="${id}" type="button">
             ${label}
         </button>
     `).join('');
@@ -148,9 +175,7 @@ document.addEventListener('DOMContentLoaded', () => {
     disableAutofill(document);
     bootAdminPath();
     window.addEventListener('popstate', () => {
-        const path = String(location.pathname || '');
-        if (path === '/customers' || path.indexOf('/customers/') === 0) {
-            showView('customers', { skipPath: true });
-        }
+        const view = viewFromPath(location.pathname) || 'dashboard';
+        showView(view, { skipPath: true });
     });
 });

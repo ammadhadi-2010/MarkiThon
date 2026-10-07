@@ -21,7 +21,7 @@ authBindForm('authForm', async (form) => {
             password: form.authPassword.value
         });
         authSaveToken('vendor', data.token);
-        location.assign('/app');
+        location.assign('/dashboard');
     } catch (error) {
         if (error.status === 403) {
             const ok = document.getElementById('authOk');
@@ -62,7 +62,7 @@ document.getElementById('authBioBtn').addEventListener('click', async () => {
             type: assertion.type
         });
         authSaveToken('vendor', data.token);
-        location.assign('/app');
+        location.assign('/dashboard');
     } catch (err) {
         error.textContent = err.message || 'Thumb scan login failed.';
         error.classList.add('show');

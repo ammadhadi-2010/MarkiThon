@@ -52,7 +52,7 @@ function mpVendorGo(href) {
 
 function mpOpenVendorEntry() {
     if (mpHasVendorSession() || mpIsVendorRole(typeof mpBuyer !== 'undefined' ? mpBuyer : null)) {
-        mpVendorGo('/vendor/dashboard');
+        mpVendorGo('/settings');
         return;
     }
     if (typeof mpBuyer === 'undefined' || !mpBuyer) {
@@ -69,8 +69,7 @@ function mpManageMenuMarkup(buyer) {
         return `
             <p class="mp-menu-label">Manage</p>
             <div class="mp-menu-links">
-                <a href="/vendor/dashboard" data-mp-vendor-go="dashboard">My Shop / Vendor Account</a>
-                <a href="/app" data-mp-vendor-go="inventory">Manage Inventory &amp; POS</a>
+                <a href="/settings" data-mp-vendor-go="settings">Store Settings</a>
             </div>`;
     }
     return `

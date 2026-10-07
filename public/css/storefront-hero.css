@@ -27,41 +27,50 @@
     display: block;
 }
 .sf-shop-badge {
-    position: relative;
-    top: auto;
+    position: absolute;
+    top: 14px;
+    right: 14px;
     left: auto;
-    z-index: 3;
+    z-index: 5;
     display: flex;
-    gap: 12px;
-    align-items: flex-start;
-    max-width: min(440px, 100%);
-    margin-left: auto;
-    padding: 10px 12px;
-    border-radius: 16px;
-    background: rgba(22, 31, 54, 0.88);
+    gap: 10px;
+    align-items: center;
+    max-width: min(360px, calc(100% - 28px));
+    margin: 0;
+    padding: 8px 12px;
+    border-radius: 14px;
+    background: rgba(15, 23, 42, 0.72);
     border: 1px solid rgba(129, 140, 248, 0.4);
     box-shadow:
         0 10px 28px rgba(15, 23, 42, 0.45),
         0 0 18px rgba(37, 99, 235, 0.16);
     backdrop-filter: blur(14px);
 }
+.sf-shop-badge .sf-logo,
+.sf-shop-badge .sf-mark {
+    width: 42px;
+    height: 42px;
+    border-radius: 12px;
+    flex: 0 0 42px;
+}
 .sf-shop-badge h1 {
-    margin: 2px 0 4px;
-    font-size: 18px;
+    margin: 0 0 2px;
+    font-size: 16px;
     line-height: 1.15;
     color: #f8fafc;
 }
-.sf-shop-badge p { margin: 0; color: #c9d6ee; font-size: 12px; }
+.sf-shop-badge .sf-kicker { margin: 0 0 1px; font-size: 10px; }
+.sf-shop-badge p { margin: 0; color: #c9d6ee; font-size: 11px; line-height: 1.3; }
 .sf-social {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
-    gap: 8px;
-    margin-top: 8px;
+    gap: 6px;
+    margin-top: 6px;
 }
 .sf-social-ico {
-    width: 30px;
-    height: 30px;
+    width: 26px;
+    height: 26px;
     border-radius: 999px;
     display: grid;
     place-items: center;
@@ -74,8 +83,7 @@
     background: rgba(37, 99, 235, 0.48);
     color: #fff;
 }
-.sf-social-ico svg { width: 15px; height: 15px; display: block; }
-.sf-social-empty { color: #8b9bb8; font-size: 12px; }
+.sf-social-ico svg { width: 13px; height: 13px; display: block; }
 .sf-hero-arrow {
     position: absolute;
     top: 50%;
@@ -121,10 +129,17 @@
 @media (max-width: 700px) {
     .sf-hero { height: auto; min-height: 320px; }
     .sf-shop-badge {
-        max-width: 100%;
-        width: 100%;
-        margin-left: 0;
-        padding: 10px;
+        top: 10px;
+        right: 10px;
+        max-width: min(280px, calc(100% - 20px));
+        padding: 7px 10px;
+        gap: 8px;
     }
-    .sf-shop-badge h1 { font-size: 16px; }
+    .sf-shop-badge .sf-logo,
+    .sf-shop-badge .sf-mark {
+        width: 36px;
+        height: 36px;
+        flex-basis: 36px;
+    }
+    .sf-shop-badge h1 { font-size: 14px; }
 }

@@ -43,19 +43,18 @@ function storefrontSocialMarkup(shop) {
     const rows = [
         ['facebook', 'Facebook', shop.facebookPage],
         ['instagram', 'Instagram', shop.instagramHandle],
-        ['whatsapp', 'WhatsApp', shop.whatsappNumber || shop.phoneNumber],
         ['tiktok', 'TikTok', shop.tiktokHandle || shop.tiktokUrl],
         ['youtube', 'YouTube', shop.youtubeChannel]
     ];
-    const links = rows.map(([kind, label, value]) => {
+    return rows.map(([kind, label, value]) => {
         const href = sfSocialHref(kind, value);
         if (!href) return '';
         return `<a class="sf-social-ico" href="${escapeHtml(href)}" target="_blank" rel="noopener" aria-label="${label}" title="${label}">${sfSocialIcon(kind)}</a>`;
     }).filter(Boolean).join('');
-    return links || '<span class="sf-social-empty">Social links coming soon</span>';
 }
 
 function storefrontShopCardMarkup(shop, logo, socials) {
+    const socialRow = socials ? `<div class="sf-social">${socials}</div>` : '';
     return `
         <div class="sf-shop-badge">
             ${logo}
@@ -63,12 +62,12 @@ function storefrontShopCardMarkup(shop, logo, socials) {
                 <p class="sf-kicker">MarkiThon Store</p>
                 <h1>${escapeHtml(shop.shopName || 'Ammad Hadi Stor')}</h1>
                 <p>${escapeHtml(shop.shopAddress || shop.marketName || '')}</p>
-                <div class="sf-social">${socials}</div>
+                ${socialRow}
             </div>
         </div>`;
 }
 
-function storefrontHeroMarkup(shop) {
+function storefrontHeroMarkup(shop, logo, socials) {
     const slides = storefrontHeroSlides(shop);
     const frames = slides.length
         ? slides.map((url, i) => `
@@ -89,6 +88,7 @@ function storefrontHeroMarkup(shop) {
     return `
         <section class="sf-hero" id="sfHero">
             <div class="sf-slider">${frames}</div>
+            ${storefrontShopCardMarkup(shop, logo, socials)}
             ${arrows}
             ${dots}
         </section>`;
@@ -109,8 +109,7 @@ function storefrontMarkup(shop, categories) {
     const themeId = shop.themeId || 'standard-retail';
     return `
         <div class="sf-shell" data-sf-theme="${escapeHtml(themeId)}">
-        <header class="sf-top">${storefrontShopCardMarkup(shop, logo, socials)}</header>
-        ${storefrontHeroMarkup(shop)}
+        ${storefrontHeroMarkup(shop, logo, socials)}
         ${typeof storefrontShowcaseMarkup === 'function' ? storefrontShowcaseMarkup(shop) : ''}
         <div class="sf-filters" id="sfFilters">${chips}</div>
         <section id="sfGridTop" class="sf-grid" hidden></section>

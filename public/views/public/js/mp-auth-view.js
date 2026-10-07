@@ -69,6 +69,7 @@ function mpManageMenuMarkup(buyer) {
         return `
             <p class="mp-menu-label">Manage</p>
             <div class="mp-menu-links">
+                <a href="/dashboard" data-mp-vendor-go="dashboard">Dashboard</a>
                 <a href="/settings" data-mp-vendor-go="settings">Store Settings</a>
             </div>`;
     }

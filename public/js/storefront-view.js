@@ -53,17 +53,26 @@ function storefrontSocialMarkup(shop) {
     }).filter(Boolean).join('');
 }
 
+function storefrontBrandOverlay() {
+    return `
+        <a class="sf-brand-overlay" href="/" aria-label="MarkiThon marketplace home">
+            <img class="sf-brand-logo" src="/assets/logo.png" alt="">
+            <strong>MarkiThon</strong>
+        </a>`;
+}
+
 function storefrontShopCardMarkup(shop, logo, socials) {
     const socialRow = socials ? `<div class="sf-social">${socials}</div>` : '';
     return `
-        <div class="sf-shop-badge">
+        <div class="sf-shop-badge" id="sfShopBadge" role="button" tabindex="0" aria-label="Account menu" aria-haspopup="true" aria-expanded="false">
             ${logo}
-            <div>
+            <div class="sf-shop-meta">
                 <p class="sf-kicker">MarkiThon Store</p>
                 <h1>${escapeHtml(shop.shopName || 'Ammad Hadi Stor')}</h1>
                 <p>${escapeHtml(shop.shopAddress || shop.marketName || '')}</p>
                 ${socialRow}
             </div>
+            <div class="mp-auth sf-badge-auth" id="mpAuthSlot"></div>
         </div>`;
 }
 
@@ -88,22 +97,11 @@ function storefrontHeroMarkup(shop, logo, socials) {
     return `
         <section class="sf-hero" id="sfHero">
             <div class="sf-slider">${frames}</div>
+            ${storefrontBrandOverlay()}
             ${storefrontShopCardMarkup(shop, logo, socials)}
             ${arrows}
             ${dots}
         </section>`;
-}
-
-function storefrontNavMarkup() {
-    return `
-        <header class="sf-nav">
-            <a class="sf-nav-brand" href="/" aria-label="MarkiThon marketplace home">
-                <img class="sf-nav-logo" src="/assets/logo.png" alt="MarkiThon">
-            </a>
-            <div class="sf-nav-utils">
-                <div class="mp-auth" id="mpAuthSlot"></div>
-            </div>
-        </header>`;
 }
 
 function storefrontMarkup(shop, categories) {
@@ -121,7 +119,6 @@ function storefrontMarkup(shop, categories) {
     const themeId = shop.themeId || 'standard-retail';
     return `
         <div class="sf-shell" data-sf-theme="${escapeHtml(themeId)}">
-        ${storefrontNavMarkup()}
         ${storefrontHeroMarkup(shop, logo, socials)}
         ${typeof storefrontShowcaseMarkup === 'function' ? storefrontShowcaseMarkup(shop) : ''}
         <div class="sf-filters" id="sfFilters">${chips}</div>

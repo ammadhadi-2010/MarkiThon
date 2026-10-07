@@ -62,23 +62,32 @@ function mpApplyBuyerSession(data) {
     }
 }
 
-function mpPaintAuth() {
-    const slot = document.getElementById('mpAuthSlot');
-    if (!slot) return;
-    if (!mpBuyer) {
-        slot.innerHTML = mpGuestPillMarkup();
-        slot.querySelector('#mpAuthOpen').addEventListener('click', () => mpOpenAuth('login'));
-        return;
+function mpVendorMenuUser() {
+    if (mpBuyer) return mpBuyer;
+    if (!mpHasVendorSession()) return null;
+    const shopName = (typeof sfShop !== 'undefined' && sfShop && sfShop.shopName) || 'Shopkeeper';
+    return {
+        name: shopName,
+        role: 'shopkeeper',
+        isVendor: true,
+        hasShop: true,
+        subtitle: 'Vendor',
+        verified: true
+    };
+}
+
+function mpBindProfileMenu(slot) {
+    const trigger = slot.querySelector('#mpAuthMenuBtn');
+    if (trigger) {
+        trigger.addEventListener('click', (event) => {
+            event.stopPropagation();
+            mpToggleProfileMenu();
+        });
     }
-    slot.innerHTML = mpProfileMenuMarkup(mpBuyer);
-    slot.querySelector('#mpAuthMenuBtn').addEventListener('click', (event) => {
-        event.stopPropagation();
-        mpToggleProfileMenu();
-    });
     slot.querySelectorAll('[data-mp-account]').forEach((btn) => {
         btn.addEventListener('click', () => {
             mpCloseProfileMenu();
-            mpOpenAccount(btn.getAttribute('data-mp-account'));
+            if (typeof mpOpenAccount === 'function') mpOpenAccount(btn.getAttribute('data-mp-account'));
         });
     });
     const lang = slot.querySelector('[data-mp-lang]');
@@ -92,7 +101,23 @@ function mpPaintAuth() {
     });
     const legacy = slot.querySelector('[data-mp-vendor-entry]');
     if (legacy) legacy.addEventListener('click', mpOpenVendorEntry);
-    slot.querySelector('#mpLogout').addEventListener('click', mpLogoutBuyer);
+    const out = slot.querySelector('#mpLogout');
+    if (out) out.addEventListener('click', mpLogoutBuyer);
+}
+
+function mpPaintAuth() {
+    const slot = document.getElementById('mpAuthSlot');
+    if (!slot) return;
+    const sessionUser = mpVendorMenuUser();
+    if (!sessionUser) {
+        slot.innerHTML = mpGuestPillMarkup();
+        slot.querySelector('#mpAuthOpen').addEventListener('click', () => mpOpenAuth('login'));
+        if (typeof sfWireShopBadgeAuth === 'function') sfWireShopBadgeAuth();
+        return;
+    }
+    slot.innerHTML = mpProfileMenuMarkup(sessionUser);
+    mpBindProfileMenu(slot);
+    if (typeof sfWireShopBadgeAuth === 'function') sfWireShopBadgeAuth();
 }
 
 function mpEnsureAuthShell() {
@@ -198,6 +223,8 @@ function mpBindAuthModal() {
 
 function mpLogoutBuyer() {
     localStorage.removeItem(MP_BUYER_KEY);
+    localStorage.removeItem('mtAuthToken:vendor');
+    localStorage.removeItem('mtAuthToken');
     mpBuyer = null;
     mpCloseProfileMenu();
     mpPaintAuth();

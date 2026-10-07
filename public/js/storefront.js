@@ -72,6 +72,30 @@ function openWhatsAppOrder(product) {
     window.open('https://wa.me/' + phone + '?text=' + encodeURIComponent(text), '_blank', 'noopener');
 }
 
+function sfWireShopBadgeAuth() {
+    const badge = document.getElementById('sfShopBadge');
+    if (!badge || badge.dataset.authBound === '1') return;
+    badge.dataset.authBound = '1';
+    const toggle = (event) => {
+        if (event.target.closest('a.sf-social-ico, #mpAuthMenu, .mp-auth-menu a, .mp-auth-menu button')) return;
+        event.preventDefault();
+        event.stopPropagation();
+        const loggedIn = typeof mpBuyer !== 'undefined' && mpBuyer;
+        const vendor = typeof mpHasVendorSession === 'function' && mpHasVendorSession();
+        if (!loggedIn && !vendor) {
+            if (typeof mpOpenAuth === 'function') mpOpenAuth('login');
+            return;
+        }
+        if (typeof mpToggleProfileMenu === 'function') mpToggleProfileMenu();
+        const menu = document.getElementById('mpAuthMenu');
+        badge.setAttribute('aria-expanded', menu && !menu.hidden && menu.classList.contains('is-open') ? 'true' : 'false');
+    };
+    badge.addEventListener('click', toggle);
+    badge.addEventListener('keydown', (event) => {
+        if (event.key === 'Enter' || event.key === ' ') toggle(event);
+    });
+}
+
 function bindSfHero() {
     const root = document.getElementById('sfHero');
     if (!root || root.dataset.bound === '1') return;
@@ -117,7 +141,11 @@ async function loadStorefront() {
     document.getElementById('sfRoot').innerHTML = storefrontMarkup(sfShop, cats);
     if (typeof applySfTheme === 'function') applySfTheme(sfShop);
     bindSfHero();
-    if (typeof mpBindAuth === 'function') mpBindAuth();
+    if (typeof mpBindAuth === 'function') {
+        Promise.resolve(mpBindAuth()).then(() => {
+            if (typeof sfWireShopBadgeAuth === 'function') sfWireShopBadgeAuth();
+        });
+    }
     document.querySelectorAll('.sf-chip').forEach((btn) => {
         btn.classList.toggle('on', btn.getAttribute('data-sfcat') === sfCategory
             || (sfCategory === 'All' && btn.getAttribute('data-sfcat') === 'All'));

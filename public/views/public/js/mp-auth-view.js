@@ -10,8 +10,8 @@ function mpGuestPillMarkup() {
 }
 
 function mpMenuAvatar(buyer) {
-    const name = buyer.name || 'Customer';
-    const letter = name.trim().charAt(0).toUpperCase() || 'C';
+    const name = buyer.name || buyer.shopName || 'A';
+    const letter = name.trim().charAt(0).toUpperCase() || 'A';
     const image = mpEscAttr(buyer.imageUrl || (buyer.preferences && buyer.preferences.avatar) || '');
     if (image) {
         return `<img class="mp-pill-avatar mp-pill-photo" src="${image}" alt="" width="40" height="40">`;
@@ -62,7 +62,7 @@ function mpManageMenuMarkup() {
     return `
             <p class="mp-menu-label">Manage</p>
             <div class="mp-menu-links">
-                <a href="/settings" data-mp-go="/settings">Store Settings</a>
+                <a href="/settings" data-mp-go="/settings">Online Store Settings</a>
                 <a href="/dashboard" data-mp-go="/dashboard">Dashboard</a>
             </div>`;
 }
@@ -85,28 +85,27 @@ function mpQuickLinksMarkup(user) {
         return `
             <p class="mp-menu-label">Quick</p>
             <div class="mp-menu-links">
-                <a href="/settings" data-mp-go="/settings">Profile</a>
                 <a href="/expenses" data-mp-go="/expenses">Wallet</a>
-                <a href="/settings" data-mp-go="/settings">Settings</a>
                 <a href="/contact" data-mp-go="/contact">Help</a>
             </div>`;
     }
     return `
             <p class="mp-menu-label">Quick</p>
             <div class="mp-menu-links">
-                <a href="/settings" data-mp-go="/settings">Profile</a>
                 <button type="button" data-mp-account="wallet">Wallet</button>
-                <a href="/settings" data-mp-go="/settings">Settings</a>
                 <a href="/contact" data-mp-go="/contact">Help</a>
             </div>`;
 }
 
 function mpProfileMenuMarkup(user) {
-    const shopkeeper = mpHasVendorSession() || mpIsShopVendor(user);
-    const displayName = user.name || user.shopName || (shopkeeper ? 'Shopkeeper' : 'Customer');
+    const shopkeeper = mpHasVendorSession() || mpIsShopVendor(user)
+        || Boolean(user && (user.isVendor || user.hasShop || user.shopName));
+    const displayName = user.shopName || user.name || user.ownerName || 'Shopkeeper';
     const name = mpEscAttr(displayName);
-    const letter = String(displayName).trim().charAt(0).toUpperCase() || (shopkeeper ? 'S' : 'C');
-    const badge = mpEscAttr(user.subtitle || (shopkeeper ? 'Vendor / Shopkeeper' : 'Customer'));
+    const letter = String(displayName).trim().charAt(0).toUpperCase() || 'S';
+    const badge = mpEscAttr(shopkeeper
+        ? (user.subtitle === 'Vendor' ? 'Vendor' : 'Shopkeeper')
+        : (user.subtitle || 'Account'));
     const avatarUser = Object.assign({}, user, { name: displayName, imageUrl: user.imageUrl || '' });
     const avatar = mpMenuAvatar(avatarUser);
     const pillAvatar = user.imageUrl
@@ -127,7 +126,7 @@ function mpProfileMenuMarkup(user) {
                 </div>
             </div>
             <div class="mp-menu-actions">
-                <button type="button" class="mp-menu-view" data-mp-go="/settings">View Profile</button>
+                <button type="button" class="mp-menu-view" data-mp-go="/settings">Profile Settings</button>
                 ${mpVerifyMarkup(user)}
             </div>
             ${mpQuickLinksMarkup(user)}

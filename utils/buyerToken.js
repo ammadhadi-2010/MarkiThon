@@ -36,7 +36,7 @@ function publicBuyer(row) {
         authProvider: buyer.authProvider,
         imageUrl: prefs.avatar || '',
         verified: Boolean(prefs.verified) || buyer.authProvider === 'google',
-        subtitle: isVendor ? 'Vendor' : 'Customer',
+        subtitle: isVendor ? 'Shopkeeper' : 'Account',
         preferences: prefs
     };
 }

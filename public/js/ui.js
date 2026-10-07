@@ -9,7 +9,7 @@ const NAV_ITEMS = [
     ['suppliers', 'Suppliers'],
     ['reports', 'Reports'],
     ['expenses', 'Expenses'],
-    ['settings', 'Settings']
+    ['settings', 'Profile Settings']
 ];
 
 function showToast(message) {

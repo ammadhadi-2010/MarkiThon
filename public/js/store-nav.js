@@ -1,5 +1,5 @@
 const STORE_NAV = [
-    ['settings', 'Store Settings'],
+    ['settings', 'Online Store Settings'],
     ['products', 'Products'],
     ['orders', 'Orders']
 ];

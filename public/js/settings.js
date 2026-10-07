@@ -4,6 +4,8 @@ function applyShopProfile(row) {
     if (shop && row.shopName) shop.textContent = row.shopName;
     const owner = document.querySelector('.profile strong');
     if (owner && row.ownerName) owner.textContent = row.ownerName;
+    const role = document.querySelector('.profile span');
+    if (role) role.textContent = 'Shopkeeper';
     const avatar = document.querySelector('.profile .avatar');
     if (avatar && row.ownerName) avatar.textContent = String(row.ownerName).trim().charAt(0).toUpperCase();
     const title = document.querySelector('title');

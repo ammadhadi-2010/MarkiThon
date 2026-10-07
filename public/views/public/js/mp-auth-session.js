@@ -118,7 +118,7 @@ function mpMapVendorUser(vendor) {
         role: 'shopkeeper',
         isVendor: true,
         hasShop: true,
-        subtitle: 'Vendor / Shopkeeper',
+        subtitle: 'Shopkeeper',
         status: status || (approved ? 'Active' : 'Pending Admin Approval'),
         isApproved: approved,
         verified: approved,
@@ -181,7 +181,22 @@ function mpMenuSessionUser() {
     }
     const asVendor = mpBuyerAsVendor();
     if (asVendor) return asVendor;
-    return mpBuyer || null;
+    if (mpBuyer && typeof sfShop !== 'undefined' && sfShop && sfShop.shopName) {
+        return mpOverlayStorefront(mpMapVendorUser({
+            shopName: sfShop.shopName,
+            ownerName: mpBuyer.name || '',
+            imageUrl: (sfShop.themeAssets && sfShop.themeAssets.logo) || sfShop.imageUrl || mpBuyer.imageUrl || '',
+            email: mpBuyer.email || '',
+            phone: mpBuyer.phone || '',
+            status: sfShop.isApproved ? 'Active' : 'Pending Admin Approval',
+            isApproved: Boolean(sfShop.isApproved)
+        }));
+    }
+    if (!mpBuyer) return null;
+    return Object.assign({}, mpBuyer, {
+        name: mpBuyer.name || mpBuyer.email || 'Account',
+        subtitle: mpBuyer.subtitle && mpBuyer.subtitle !== 'Customer' ? mpBuyer.subtitle : 'Account'
+    });
 }
 
 function mpApplyBuyerSession(data) {

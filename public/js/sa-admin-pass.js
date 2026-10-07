@@ -45,6 +45,7 @@ async function saAdminProfileSubmit(event) {
         if (data.user) {
             document.getElementById('saAdminName').value = data.user.name || '';
             document.getElementById('saAdminEmail').value = data.user.email || '';
+            saAdminUser = data.user;
         }
         if (note) note.textContent = 'Admin profile saved.';
         if (typeof saPaintTop === 'function') saPaintTop();

@@ -29,15 +29,38 @@ function saPaintNav(active) {
         </div>`;
 }
 
+let saAdminUser = null;
+
+function saAdminInitial(user) {
+    const name = String((user && (user.name || user.email)) || 'Admin').trim();
+    return (name[0] || 'A').toUpperCase();
+}
+
 function saPaintTop() {
+    const user = saAdminUser || {};
+    const label = user.name || 'Admin';
+    const role = user.role === 'admin' ? 'Super Admin' : (user.role || 'Super Admin');
+    const initial = saAdminInitial(user);
     document.getElementById('saTop').innerHTML = `
         <button class="sa-menu" id="saMenu" type="button">Menu</button>
         <input class="sa-search" id="saSearch" type="search" placeholder="Search shops, products, customers, orders..." autocomplete="off">
         <div class="sa-who">
-            <div class="sa-avatar" title="Admin">A</div>
-            <div><strong>Admin</strong><div class="sa-muted">Super Admin</div></div>
+            <div class="sa-avatar" title="${saText(label)}">${saText(initial)}</div>
+            <div><strong>${saText(label)}</strong><div class="sa-muted">${saText(role)}</div></div>
             <button class="sa-cms-copy" id="saLogout" type="button">Sign Out</button>
         </div>`;
     const out = document.getElementById('saLogout');
     if (out) out.addEventListener('click', () => typeof saLogoutAdmin === 'function' && saLogoutAdmin());
+}
+
+async function saLoadAdminWho() {
+    try {
+        const response = await fetch('/api/auth/admin/me', { credentials: 'include' });
+        if (!response.ok) return;
+        const data = await response.json();
+        saAdminUser = data.user || null;
+        if (typeof saPaintTop === 'function' && document.getElementById('saTop')) saPaintTop();
+    } catch (error) {
+        /* Keep default admin label until next paint. */
+    }
 }

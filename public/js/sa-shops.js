@@ -54,8 +54,12 @@ function saShopRow(row, index) {
     const eye = saSvg('<path d="M2 12s4-6 10-6 10 6 10 6-4 6-10 6S2 12 2 12z"/><circle cx="12" cy="12" r="2.5"/>');
     const pen = saSvg('<path d="M4 20h4L18 10l-4-4L4 16v4z"/>');
     const more = saSvg('<circle cx="6" cy="12" r="1.2" fill="currentColor"/><circle cx="12" cy="12" r="1.2" fill="currentColor"/><circle cx="18" cy="12" r="1.2" fill="currentColor"/>');
+    const tone = SA_SHOP_COLORS[index % SA_SHOP_COLORS.length];
+    const logo = row.imageUrl
+        ? `<span class="sa-shop-logo"><img src="${saText(row.imageUrl)}" alt=""></span>`
+        : `<span class="sa-shop-logo" style="background:${tone}">${saShopInitials(row.name)}</span>`;
     return `<tr>
-        <td><div class="sa-shop-who"><span class="sa-shop-logo" style="background:${SA_SHOP_COLORS[index % SA_SHOP_COLORS.length]}">${saShopInitials(row.name)}</span><span><strong>${saText(row.name)}</strong><small>${saText(row.owner)}</small></span></div></td>
+        <td><div class="sa-shop-who">${logo}<span><strong>${saText(row.name)}</strong><small>${saText(row.owner)}</small></span></div></td>
         <td><span class="sa-contact">${saText(row.phone)} ${link}</span></td>
         <td class="sa-pack"><strong>${saText(row.package)}</strong><small>(${row.months} months)</small></td>
         <td>${saStatus(row.status)}</td>

@@ -4,9 +4,16 @@
 .sa-pro-actions button {
     border: 0; border-radius: 10px; padding: 8px 12px; cursor: pointer; color: white;
 }
-.sa-pro-actions [data-pro="Active"] { background: #16a34a; }
-.sa-pro-actions [data-pro="Suspended"] { background: #dc2626; }
+.sa-pro-actions button:disabled { opacity: 0.45; cursor: not-allowed; }
+.sa-pro-actions [data-pro="Active"], .sa-pro-actions .sa-pro-approve { background: #16a34a; }
+.sa-pro-actions [data-pro="Suspended"], .sa-pro-actions .sa-pro-suspend { background: #dc2626; }
 .sa-pro-actions #saEditPack { background: #2563eb; }
+.sa-pro-title { display: flex; align-items: center; gap: 14px; margin: 8px 0 4px; }
+.sa-pro-title h1 { margin: 0; font-size: 1.45rem; }
+.sa-pro-logo { width: 56px; height: 56px; border-radius: 14px; font-size: 1.1rem; overflow: hidden; flex-shrink: 0; }
+.sa-pro-logo img, .sa-shop-logo img {
+    width: 100%; height: 100%; object-fit: cover; display: block;
+}
 .sa-pro-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 12px; }
 .sa-pro-row { display: flex; justify-content: space-between; gap: 12px; padding: 8px 0; border-top: 1px solid var(--sa-line); }
 .sa-pro-row span { color: #93a0bd; }

@@ -31,36 +31,65 @@ function saProPackLabel(shop, profile) {
     return pack + ' / ' + cycle + pay;
 }
 
-async function saProSave(shop, patch) {
-    const response = await fetch('/api/platform/shops/' + encodeURIComponent(shop.id), {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
-        body: JSON.stringify(patch)
-    });
-    const data = await response.json();
-    if (!response.ok) {
-        const note = document.getElementById('saProNote');
-        if (note) note.textContent = data.message || 'Could not update this shop.';
-        return;
+function saProLogo(shop, profile) {
+    const name = profile.storeName || shop.name || 'S';
+    const src = profile.imageUrl || shop.imageUrl || '';
+    const color = (typeof SA_SHOP_COLORS !== 'undefined' ? SA_SHOP_COLORS : ['#2563eb'])[0];
+    const initials = typeof saShopInitials === 'function'
+        ? saShopInitials(name)
+        : String(name).slice(0, 2).toUpperCase();
+    if (src) {
+        return `<span class="sa-shop-logo sa-pro-logo"><img src="${saText(src)}" alt=""></span>`;
     }
-    saMountShopPage(shop.id);
+    return `<span class="sa-shop-logo sa-pro-logo" style="background:${color}">${saText(initials)}</span>`;
+}
+
+async function saProSave(shop, patch, noteText) {
+    const note = document.getElementById('saProNote');
+    if (note) note.textContent = noteText || 'Saving…';
+    document.querySelectorAll('.sa-pro-actions button').forEach((btn) => { btn.disabled = true; });
+    try {
+        const response = await fetch('/api/platform/shops/' + encodeURIComponent(shop.id), {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'include',
+            body: JSON.stringify(patch)
+        });
+        const data = await response.json().catch(() => ({}));
+        if (!response.ok) {
+            if (note) note.textContent = data.message || 'Could not update this shop.';
+            document.querySelectorAll('.sa-pro-actions button').forEach((btn) => { btn.disabled = false; });
+            return;
+        }
+        if (note) note.textContent = data.message || 'Shop updated.';
+        await saMountShopPage(shop.id);
+    } catch (error) {
+        if (note) note.textContent = 'Could not reach the server.';
+        document.querySelectorAll('.sa-pro-actions button').forEach((btn) => { btn.disabled = false; });
+    }
 }
 
 function saPaintShopPage(shop, metrics) {
     const profile = shop.profile || {};
     const sub = profile.subscription || {};
     const metric = (value) => (metrics.tracked ? value : 'Not tracked');
+    const pack = sub.selectedPackage || shop.package || 'Basic';
     document.getElementById('saView').innerHTML = `
         <div class="sa-pro-top">
             <a class="sa-back" href="/admin#shops">← Back to Shops List</a>
             <div class="sa-pro-actions">
-                <button type="button" data-pro="Active">Approve</button>
-                <button type="button" data-pro="Suspended">Suspend</button>
+                <button type="button" class="sa-pro-approve" data-pro="Active"${shop.status === 'Active' ? ' disabled' : ''}>Approve</button>
+                <button type="button" class="sa-pro-suspend" data-pro="Suspended"${shop.status === 'Suspended' ? ' disabled' : ''}>Suspend</button>
                 <button type="button" id="saEditPack">Edit Package</button>
             </div>
         </div>
-        <h1>${saText(profile.storeName || shop.name)}</h1>
+        <div class="sa-pro-title">
+            ${saProLogo(shop, profile)}
+            <div>
+                <h1>${saText(profile.storeName || shop.name)}</h1>
+                <p class="sa-muted">${saText(profile.ownerName || shop.owner)} · ${saStatus(shop.status)}</p>
+            </div>
+        </div>
         <p class="sa-note-line" id="saProNote"></p>
         <div class="sa-pro-grid">
             <section class="sa-card"><h3>Store Details</h3>
@@ -70,18 +99,18 @@ function saPaintShopPage(shop, metrics) {
                 ${saProRow('Business Type', profile.businessType)}
                 ${saProRow('Status', shop.status)}
                 ${saProRow('Setup', profile.setup)}
-                ${saProRow('Admin Approval', profile.approved ? 'Approved' : 'Pending')}
+                ${saProRow('Admin Approval', profile.approved || shop.status === 'Active' ? 'Approved' : 'Pending')}
             </section>
             <section class="sa-card"><h3>Owner Profile and CNIC</h3>
                 ${saProRow('Owner Name', profile.ownerName || shop.owner)}
                 ${saProRow('CNIC', profile.cnic)}
-                ${saProRow('Shopkeeper ID', profile.shopkeeperId)}
-                ${saProRow('Vendor Status', profile.vendorStatus)}
+                ${saProRow('Shopkeeper ID', profile.shopkeeperId || shop.shopkeeperId)}
+                ${saProRow('Vendor Status', profile.vendorStatus || shop.status)}
             </section>
             <section class="sa-card"><h3>Contact Channels</h3>
                 ${saProRow('Phone', profile.phone || shop.phone)}
                 <div class="sa-pro-row"><span>WhatsApp</span><strong>${saProWhatsapp(shop, profile)}</strong></div>
-                ${saProRow('Email', profile.email)}
+                ${saProRow('Email', profile.email || shop.email)}
             </section>
             <section class="sa-card sa-pro-map"><h3>Physical Location</h3>
                 ${saProRow('Address', profile.address)}
@@ -99,9 +128,9 @@ function saPaintShopPage(shop, metrics) {
                 <form id="saPackForm" class="sa-pack-form" autocomplete="off" hidden>
                     <label>Package</label>
                     <select id="saPagePack" autocomplete="off">
-                        <option${shop.package === 'Basic' ? ' selected' : ''}>Basic</option>
-                        <option${shop.package === 'Business' ? ' selected' : ''}>Business</option>
-                        <option${shop.package === 'Premium' ? ' selected' : ''}>Premium</option>
+                        <option value="Basic"${pack === 'Basic' ? ' selected' : ''}>Basic</option>
+                        <option value="Business"${pack === 'Business' ? ' selected' : ''}>Business</option>
+                        <option value="Premium"${pack === 'Premium' ? ' selected' : ''}>Premium</option>
                     </select>
                     <label>Billing cycle</label>
                     <select id="saPageCycle" autocomplete="off">
@@ -124,17 +153,22 @@ function saPaintShopPage(shop, metrics) {
         event.preventDefault();
         saProSave(shop, {
             selectedPackage: document.getElementById('saPagePack').value,
+            package: document.getElementById('saPagePack').value,
             billingCycle: document.getElementById('saPageCycle').value
-        });
+        }, 'Saving package…');
     });
     document.querySelectorAll('[data-pro]').forEach((button) => {
-        button.addEventListener('click', () => saProSave(shop, { status: button.dataset.pro }));
+        button.addEventListener('click', () => {
+            if (button.disabled) return;
+            const label = button.dataset.pro === 'Active' ? 'Approving…' : 'Suspending…';
+            saProSave(shop, { status: button.dataset.pro }, label);
+        });
     });
 }
 
 async function saMountShopPage(id) {
     saPaintNav('shops');
-    saPaintTop();
+    if (typeof saPaintTop === 'function') saPaintTop();
     const response = await fetch('/api/platform/shops/' + encodeURIComponent(id), { credentials: 'include' });
     if (!response.ok) {
         document.getElementById('saView').innerHTML = '<section class="sa-card"><h2>Shop not found</h2><p><a class="sa-back" href="/admin#shops">← Back to Shops List</a></p></section>';

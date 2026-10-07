@@ -15,13 +15,25 @@ function mapLink(profile) {
         : '';
 }
 
-async function loadLiveParts() {
-    const [profile, digital, subscription, vendor] = await Promise.all([
+async function resolveVendor(profile, vendorId) {
+    if (vendorId) {
+        const byId = await VendorAccount.findByPk(vendorId);
+        if (byId) return byId;
+    }
+    if (profile && profile.shopName) {
+        const byName = await VendorAccount.findOne({ where: { shopName: profile.shopName } });
+        if (byName) return byName;
+    }
+    return VendorAccount.findOne({ order: [['createdAt', 'ASC']] });
+}
+
+async function loadLiveParts(vendorId) {
+    const [profile, digital, subscription] = await Promise.all([
         ShopProfile.findOne({ where: { ShopId: 1 } }),
         ShopDigitalSetup.findOne({ where: { ShopId: 1 } }),
-        ShopSubscription.findOne({ where: { ShopId: 1 } }),
-        VendorAccount.findOne({ order: [['createdAt', 'ASC']] })
+        ShopSubscription.findOne({ where: { ShopId: 1 } })
     ]);
+    const vendor = await resolveVendor(profile, vendorId);
     return { profile, digital, subscription, vendor };
 }
 
@@ -35,15 +47,20 @@ function presentLiveShop(parts) {
         .filter(Boolean).join(', ');
     let status = 'Pending';
     if (vendor && vendor.status === 'Suspended') status = 'Suspended';
-    else if (approved || profile.isSetupCompleted) status = 'Active';
+    else if (approved || (vendor && vendor.status === 'Active') || profile.isSetupCompleted) {
+        status = 'Active';
+    }
     return {
-        id: 'live-shop',
+        id: vendor ? vendor.id : 'live-shop',
         name: profile.shopName,
         owner: profile.ownerName,
         phone: profile.phoneNumber || '',
         package: pack,
         months: cycle === 'yearly' ? 12 : 1,
         status,
+        email: profile.emailAddress || vendor?.email || '',
+        shopkeeperId: vendor?.shopkeeperId || '',
+        imageUrl: profile.imageUrl || vendor?.imageUrl || '',
         locked: true,
         profile: {
             storeName: profile.shopName,
@@ -64,10 +81,10 @@ function presentLiveShop(parts) {
             latitude: profile.latitude || null,
             longitude: profile.longitude || null,
             website: profile.websiteUrl || digital?.websiteUrl || '',
-            imageUrl: profile.imageUrl || '',
+            imageUrl: profile.imageUrl || vendor?.imageUrl || '',
             coverBanner: (digital && (digital.coverBanner || (Array.isArray(digital.heroBanners) && digital.heroBanners[0]))) || '',
             setup: profile.isSetupCompleted ? 'Completed' : 'Incomplete',
-            approved,
+            approved: approved || (vendor && vendor.status === 'Active'),
             shopkeeperId: vendor?.shopkeeperId || '',
             vendorStatus: vendor?.status || '',
             productTypes: Array.isArray(profile.productTypes) ? profile.productTypes : [],
@@ -86,12 +103,12 @@ function presentLiveShop(parts) {
     };
 }
 
-async function buildLiveShop() {
-    return presentLiveShop(await loadLiveParts());
+async function buildLiveShop(vendorId) {
+    return presentLiveShop(await loadLiveParts(vendorId));
 }
 
-async function updateLiveShop(body) {
-    const parts = await loadLiveParts();
+async function updateLiveShop(body, vendorId) {
+    const parts = await loadLiveParts(vendorId);
     if (!parts.profile) return null;
     const status = String(body.status || '').trim();
     if (['Active', 'Pending', 'Suspended'].includes(status)) {
@@ -103,10 +120,11 @@ async function updateLiveShop(body) {
         await digital.update({ isApproved: approved });
         await parts.profile.update({ isSetupCompleted: approved });
         if (parts.vendor) {
-            const vendorStatus = status === 'Suspended'
-                ? 'Suspended'
-                : (approved ? 'Active' : 'Pending Admin Approval');
-            await parts.vendor.update({ status: vendorStatus });
+            await parts.vendor.update({
+                status: status === 'Suspended'
+                    ? 'Suspended'
+                    : (approved ? 'Active' : 'Pending Admin Approval')
+            });
         }
     }
     if (body.package || body.selectedPackage || body.billingCycle) {
@@ -126,7 +144,7 @@ async function updateLiveShop(body) {
             paymentStatus: (plan?.monthlyPrice || 0) === 0 ? 'free' : (sub.paymentStatus || 'active')
         });
     }
-    return presentLiveShop(await loadLiveParts());
+    return presentLiveShop(await loadLiveParts(parts.vendor && parts.vendor.id));
 }
 
 module.exports = { buildLiveShop, updateLiveShop, presentLiveShop, loadLiveParts };

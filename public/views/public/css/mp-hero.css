@@ -60,6 +60,12 @@
     gap: 8px;
     margin: 0 0 12px;
     color: #fff;
+}
+.mp-slide-brand .mp-logo {
+    height: 36px;
+    width: auto;
+    max-width: 120px;
+    object-fit: contain;
     font-weight: 800;
 }
 .mp-lead { color: #c9d6ee; margin: 0 0 14px; max-width: 460px; }

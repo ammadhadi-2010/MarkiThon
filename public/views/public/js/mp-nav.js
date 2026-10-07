@@ -3,7 +3,7 @@ function mpNavMarkup(page) {
     return `
     <header class="mp-nav">
         <a class="mp-brand" href="/">
-            <span class="mp-mark">M</span>
+            <img class="mp-logo" src="/assets/logo.png" alt="MarkiThon">
             <span>
                 <strong>MarkiThon</strong>
                 <small>Local Shops. Global Reach.</small>

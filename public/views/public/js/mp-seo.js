@@ -30,7 +30,8 @@ function mpCanon(href) {
 function mpSeoImage(url) {
     const value = String(url || '');
     if (/^https?:\/\//i.test(value)) return value;
-    if (/^\/uploads\/banners\/[a-z0-9._-]+$/i.test(value)) return location.origin + value;
+    if (/^\/(assets|uploads|icons)\/[a-z0-9._\/-]+$/i.test(value)) return location.origin + value;
+    if (/^\/favicon\.png$/i.test(value)) return location.origin + value;
     return '';
 }
 
@@ -38,7 +39,7 @@ function mpApplySeo(seo) {
     const title = seo.title || 'MarkiThon';
     const text = seo.description || '';
     const page = seo.canonical || (location.origin + '/');
-    const image = mpSeoImage(seo.ogImage);
+    const image = mpSeoImage(seo.ogImage || '/assets/og-image.jpg');
     const robots = (seo.index === false ? 'noindex' : 'index') + ', ' + (seo.follow === false ? 'nofollow' : 'follow');
     document.title = title;
     mpMeta('description', text);

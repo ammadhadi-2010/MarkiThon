@@ -64,6 +64,14 @@ body {
     font-weight: 800;
     box-shadow: 0 0 18px rgba(59, 130, 246, 0.45);
 }
+.brand-logo {
+    height: 40px;
+    width: auto;
+    max-width: 120px;
+    object-fit: contain;
+    display: block;
+    flex-shrink: 0;
+}
 
 .brand h1 { font-size: 18px; line-height: 1.1; }
 .brand p { font-size: 10px; color: var(--muted); margin-top: 2px; }

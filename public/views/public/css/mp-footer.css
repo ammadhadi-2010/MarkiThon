@@ -39,6 +39,14 @@
     border-top: 1px solid rgba(59, 130, 246, 0.2);
     margin-top: 16px;
 }
+.mp-foot .mp-logo {
+    height: 40px;
+    width: auto;
+    max-width: 140px;
+    object-fit: contain;
+    display: block;
+    margin-bottom: 8px;
+}
 .mp-foot h4 { margin: 0 0 8px; }
 .mp-foot a, .mp-foot p { display: block; color: #dbe4f3; font-size: 13px; margin: 4px 0; }
 .mp-foot h4, .mp-foot strong { color: #f8fafc; }

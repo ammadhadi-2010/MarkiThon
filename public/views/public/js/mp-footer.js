@@ -12,7 +12,7 @@ function mpFooterMarkup() {
     </section>
     <footer class="mp-foot">
         <div>
-            <span class="mp-mark">M</span>
+            <img class="mp-logo" src="/assets/logo.png" alt="MarkiThon">
             <strong>MarkiThon</strong>
             <p>Local shops. Global vibes.</p>
             <p class="mp-social">

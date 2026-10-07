@@ -13,7 +13,7 @@ function mpPdpChromeMarkup() {
     </div>
     <header class="mp-nav mp-pdp-nav">
         <a class="mp-brand" href="/">
-            <span class="mp-mark">M</span>
+            <img class="mp-logo" src="/assets/logo.png" alt="MarkiThon">
             <span>
                 <strong>MarkiThon</strong>
                 <small>Your Store, Online</small>

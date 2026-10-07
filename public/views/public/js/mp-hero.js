@@ -15,7 +15,7 @@ function mpHeroMarkup() {
         <div class="mp-slider" id="mpSlider">${slides}</div>
         <div class="mp-hero-fade"></div>
         <div class="mp-hero-copy">
-            <p class="mp-slide-brand"><span class="mp-mark">M</span><strong>MarkiThon</strong></p>
+            <p class="mp-slide-brand"><img class="mp-logo" src="/assets/logo.png" alt="MarkiThon"><strong>MarkiThon</strong></p>
             <h1 id="mpHeroTitle">${first.title || 'Discover Products From Local Shops'}</h1>
             <p class="mp-lead" id="mpHeroLead">${first.text || ''}</p>
             <a class="mp-shop-now" id="mpHeroCta" href="${first.href || '/#shops'}">${first.cta || 'Shop Now'}</a>

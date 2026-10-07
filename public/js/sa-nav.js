@@ -17,7 +17,7 @@ function saPaintNav(active) {
         `<button class="sa-nav-btn${id === active ? ' is-on' : ''}" data-sa="${id}" type="button">${label}</button>`
     ).join('');
     document.getElementById('saNav').innerHTML = `
-        <div class="sa-brand"><div class="sa-mark">M</div><div><strong>MarkiThon</strong><small>Marketplace Admin Panel</small></div></div>
+        <div class="sa-brand"><img class="sa-logo" src="/assets/logo.png" alt="MarkiThon"><div><strong>MarkiThon</strong><small>Marketplace Admin Panel</small></div></div>
         ${links}
         <h4>Quick Links</h4>
         <a class="sa-link" href="/">View Marketplace</a>

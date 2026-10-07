@@ -19,6 +19,14 @@ button, input { font: inherit; }
     z-index: 20;
 }
 .mp-brand { display: flex; gap: 10px; align-items: center; }
+.mp-logo {
+    height: 40px;
+    width: auto;
+    max-width: 140px;
+    object-fit: contain;
+    display: block;
+    flex-shrink: 0;
+}
 .mp-mark {
     width: 36px;
     height: 36px;
@@ -104,6 +112,7 @@ button, input { font: inherit; }
         padding: 10px 12px;
     }
     .mp-brand { min-width: 0; flex: 1 1 auto; gap: 8px; }
+    .mp-logo { height: 32px; max-width: 110px; }
     .mp-brand small { display: none; }
     .mp-brand strong {
         display: block;

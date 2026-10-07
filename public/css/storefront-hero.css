@@ -66,7 +66,7 @@
     top: 14px;
     right: 14px;
     left: auto;
-    z-index: 6;
+    z-index: 40;
     display: flex;
     gap: 10px;
     align-items: center;
@@ -81,10 +81,12 @@
         0 0 18px rgba(37, 99, 235, 0.16);
     backdrop-filter: blur(14px);
     cursor: pointer;
+    overflow: visible;
 }
 .sf-shop-badge .sf-badge-auth {
     position: absolute;
     inset: 0;
+    overflow: visible;
     pointer-events: none;
 }
 .sf-shop-badge .mp-pill,
@@ -101,7 +103,8 @@
     top: calc(100% + 8px);
     right: 0;
     left: auto;
-    max-height: min(85vh, 520px);
+    max-height: min(90vh, calc(100vh - 24px));
+    overflow-y: auto;
     z-index: 9999;
 }
 .sf-shop-badge .sf-logo,

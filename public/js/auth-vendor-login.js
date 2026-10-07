@@ -21,6 +21,10 @@ authBindForm('authForm', async (form) => {
             password: form.authPassword.value
         });
         authSaveToken('vendor', data.token);
+        if (data.user) {
+            localStorage.setItem('vendor', JSON.stringify(data.user));
+            localStorage.setItem('mtVendorUser', JSON.stringify(data.user));
+        }
         location.assign('/dashboard');
     } catch (error) {
         if (error.status === 403) {
@@ -62,6 +66,10 @@ document.getElementById('authBioBtn').addEventListener('click', async () => {
             type: assertion.type
         });
         authSaveToken('vendor', data.token);
+        if (data.user) {
+            localStorage.setItem('vendor', JSON.stringify(data.user));
+            localStorage.setItem('mtVendorUser', JSON.stringify(data.user));
+        }
         location.assign('/dashboard');
     } catch (err) {
         error.textContent = err.message || 'Thumb scan login failed.';

@@ -19,6 +19,7 @@ function publicVendor(row) {
         address: vendor.address,
         imageUrl: vendor.imageUrl || '',
         status: vendor.status,
+        isApproved: vendor.status === 'Active',
         biometricEnabled: Boolean(vendor.biometricEnabled),
         hasWebAuthn: Boolean(vendor.webauthnCredId)
     };

@@ -57,6 +57,10 @@ function mpBindProfileMenu(slot) {
 function mpPaintAuth() {
     const slot = document.getElementById('mpAuthSlot');
     if (!slot) return;
+    if (typeof mpLoadVendor === 'function' && !mpVendor && typeof mpReadStoredVendor === 'function') {
+        const stored = mpReadStoredVendor();
+        if (stored) mpVendor = stored;
+    }
     const sessionUser = typeof mpMenuSessionUser === 'function' ? mpMenuSessionUser() : mpBuyer;
     if (!sessionUser) {
         slot.innerHTML = mpGuestPillMarkup();
@@ -174,6 +178,8 @@ function mpLogoutBuyer() {
     localStorage.removeItem(MP_BUYER_KEY);
     localStorage.removeItem('mtAuthToken:vendor');
     localStorage.removeItem('mtAuthToken');
+    localStorage.removeItem('vendor');
+    localStorage.removeItem('mtVendorUser');
     mpBuyer = null;
     mpVendor = null;
     mpCloseProfileMenu();

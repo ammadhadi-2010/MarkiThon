@@ -29,11 +29,13 @@ function mpIsVendorRole(user) {
 }
 
 function mpHasVendorSession() {
-    if (mpIsVendorRole(typeof mpBuyer !== 'undefined' ? mpBuyer : null)) return true;
+    if (typeof mpIsVendorLoggedIn === 'function' && mpIsVendorLoggedIn()) return true;
     if (typeof mpVendor !== 'undefined' && mpVendor) return true;
     try {
         return Boolean(
             localStorage.getItem('mtAuthToken:vendor')
+            || localStorage.getItem('vendor')
+            || localStorage.getItem('mtVendorUser')
             || (typeof authToken === 'function' && authToken('vendor'))
         );
     } catch (error) {
@@ -41,8 +43,9 @@ function mpHasVendorSession() {
     }
 }
 
-function mpIsShopVendor(buyer) {
-    return mpIsVendorRole(buyer) || mpHasVendorSession();
+function mpIsShopVendor(user) {
+    if (mpHasVendorSession()) return true;
+    return mpIsVendorRole(user);
 }
 
 function mpVendorGo(href) {
@@ -66,12 +69,12 @@ function mpOpenVendorEntry() {
 }
 
 function mpManageMenuMarkup(user) {
-    if (mpIsShopVendor(user)) {
+    if (mpHasVendorSession() || mpIsShopVendor(user)) {
         return `
             <p class="mp-menu-label">Manage</p>
             <div class="mp-menu-links">
-                <a href="/dashboard" data-mp-go="/dashboard">Inventory / Store Dashboard</a>
-                <a href="/settings" data-mp-go="/settings">Store Settings</a>
+                <a href="/settings" data-mp-go="/settings">Store Settings &amp; Inventory</a>
+                <a href="/dashboard" data-mp-go="/dashboard">Dashboard</a>
             </div>`;
     }
     return `
@@ -82,15 +85,11 @@ function mpManageMenuMarkup(user) {
 }
 
 function mpVerifyMarkup(user) {
-    const shopkeeper = mpIsShopVendor(user);
-    if (shopkeeper) {
-        if (user.verified || user.isApproved || user.status === 'Active') {
+    if (mpHasVendorSession() || mpIsShopVendor(user)) {
+        if (user.verified || user.isApproved === true || user.status === 'Active') {
             return '<button type="button" class="mp-menu-verify is-ok" disabled>Verified</button>';
         }
-        if (user.status === 'Pending Admin Approval' || user.verifyState === 'pending') {
-            return '<button type="button" class="mp-menu-verify is-pending" disabled>Pending Approval</button>';
-        }
-        return '<button type="button" class="mp-menu-verify is-pending" disabled>Unverified</button>';
+        return '<button type="button" class="mp-menu-verify is-pending" disabled>Pending</button>';
     }
     if (user.verified) {
         return '<button type="button" class="mp-menu-verify is-ok" data-mp-account="settings">Verified</button>';
@@ -99,7 +98,7 @@ function mpVerifyMarkup(user) {
 }
 
 function mpQuickLinksMarkup(user) {
-    if (mpIsShopVendor(user)) {
+    if (mpHasVendorSession() || mpIsShopVendor(user)) {
         return `
             <p class="mp-menu-label">Quick</p>
             <div class="mp-menu-links">
@@ -120,11 +119,13 @@ function mpQuickLinksMarkup(user) {
 }
 
 function mpProfileMenuMarkup(user) {
-    const shopkeeper = mpIsShopVendor(user);
-    const name = mpEscAttr(user.name || (shopkeeper ? 'Shopkeeper' : 'Customer'));
-    const letter = String(user.name || 'C').trim().charAt(0).toUpperCase() || 'C';
-    const badge = mpEscAttr(user.subtitle || (shopkeeper ? 'Shopkeeper' : 'Customer'));
-    const avatar = mpMenuAvatar(user);
+    const shopkeeper = mpHasVendorSession() || mpIsShopVendor(user);
+    const displayName = user.name || user.shopName || (shopkeeper ? 'Shopkeeper' : 'Customer');
+    const name = mpEscAttr(displayName);
+    const letter = String(displayName).trim().charAt(0).toUpperCase() || (shopkeeper ? 'S' : 'C');
+    const badge = mpEscAttr(user.subtitle || (shopkeeper ? 'Vendor / Shopkeeper' : 'Customer'));
+    const avatarUser = Object.assign({}, user, { name: displayName, imageUrl: user.imageUrl || '' });
+    const avatar = mpMenuAvatar(avatarUser);
     const pillAvatar = user.imageUrl
         ? `<img class="mp-pill-avatar mp-pill-photo" src="${mpEscAttr(user.imageUrl)}" alt="">`
         : `<span class="mp-pill-avatar">${letter}</span>`;

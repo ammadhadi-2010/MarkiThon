@@ -50,7 +50,7 @@ function paintOsEditPct() {
     const box = document.getElementById('osEditPct');
     if (!box) return;
     if (discount > 0 && online > discount) {
-        box.value = ((online - discount) / online * 100).toFixed(1);
+        box.value = ((discount / online) * 100).toFixed(1);
         return;
     }
     box.value = '0';

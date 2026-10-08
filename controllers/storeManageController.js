@@ -15,8 +15,8 @@ function mapManageProduct(row, stock, images) {
     const min = toNum(p.minWholesaleQty) || 1;
     const online = toNum(p.storeOnlinePrice) > 0 ? toNum(p.storeOnlinePrice) : toNum(p.retailPrice);
     const discount = toNum(p.storeDiscountPrice);
-    const pct = discount > online && discount > 0
-        ? Math.round(((discount - online) / discount) * 100)
+    const pct = discount > 0 && online > discount
+        ? Math.round((discount / online) * 100)
         : 0;
     const gallery = Array.isArray(images) && images.length
         ? images

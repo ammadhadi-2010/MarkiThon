@@ -8,17 +8,25 @@ const MP_PRODUCT_FALLBACK =
     'https://images.unsplash.com/photo-1523381210434-271e8be1f52b?auto=format&fit=crop&w=400&q=80';
 
 function mpPriceParts(item) {
-    let sell = Number(item.salePrice || item.onlineSellingPrice || 0);
-    let original = Number(item.retailPrice || item.originalPrice || item.wasPrice || 0);
-    if (!(sell > 0) && original > 0) sell = original;
-    if (original > 0 && sell > 0 && original < sell) {
-        const swap = original;
-        original = sell;
-        sell = swap;
+    const online = Number(item.onlineSellingPrice != null ? item.onlineSellingPrice : item.retailPrice) || 0;
+    const discount = Number(item.discountPrice || 0) || 0;
+    let pct = Number(item.discountPercent || 0);
+    let finalPrice = Number(item.finalPrice != null ? item.finalPrice : item.salePrice) || 0;
+    if (online > 0 && discount > 0 && discount < online) {
+        finalPrice = Math.max(0, online - discount);
+        if (!(pct > 0)) pct = Math.round((discount / online) * 100);
+    } else if (!(finalPrice > 0) && online > 0) {
+        finalPrice = online;
     }
-    const hasDiscount = original > sell && sell > 0;
-    const off = hasDiscount ? Math.round((1 - sell / original) * 100) : 0;
-    return { sell, original, hasDiscount, off, unit: item.unit || item.stockUnit || 'Pcs' };
+    const hasDiscount = online > 0 && finalPrice > 0 && finalPrice < online;
+    if (hasDiscount && !(pct > 0)) pct = Math.round(((online - finalPrice) / online) * 100);
+    return {
+        online: hasDiscount ? online : finalPrice,
+        finalPrice: hasDiscount ? finalPrice : (finalPrice || online),
+        hasDiscount,
+        off: hasDiscount ? pct : 0,
+        unit: item.unit || item.stockUnit || 'Pcs'
+    };
 }
 
 function mpOffPercent(item) {
@@ -31,18 +39,21 @@ function mpProductCard(item) {
     const id = item.id || 'lawn-suit';
     const count = item.reviews ? `<span>(${item.reviews})</span>` : '';
     const priceHtml = parts.hasDiscount
-        ? `<p class="mp-price">
-                <span class="mp-price-was">Rs. ${parts.original.toLocaleString()}</span>
-                <span class="mp-price-now">Rs. ${parts.sell.toLocaleString()}</span>
-                <span class="mp-price-unit">/ ${mpEscape(parts.unit)}</span>
-           </p>`
-        : `<p class="mp-price">Rs. ${parts.sell.toLocaleString()} / ${mpEscape(parts.unit)}</p>`;
+        ? `<div class="mp-price-block">
+                <div class="mp-price-now">Rs. ${parts.finalPrice.toLocaleString()}</div>
+                <div class="mp-price-sub">
+                    <span class="mp-price-was">Rs. ${parts.online.toLocaleString()}</span>
+                    <span class="mp-price-off">-${parts.off}%</span>
+                </div>
+           </div>`
+        : `<div class="mp-price-block">
+                <div class="mp-price-now is-plain">Rs. ${parts.finalPrice.toLocaleString()}</div>
+           </div>`;
     return `
         <article class="mp-tcard" data-mpopen="${mpEscape(id)}">
             <a href="/product/${mpEscape(id)}">
                 <img src="${mpEscape(img)}" alt="" loading="lazy"
                     onerror="this.onerror=null;this.src='${MP_PRODUCT_FALLBACK}'">
-                ${parts.hasDiscount ? `<span class="mp-off">${parts.off}% OFF</span>` : ''}
             </a>
             <button type="button" class="mp-heart" data-wish="${mpEscape(id)}" aria-label="Wishlist">♡</button>
             <div>

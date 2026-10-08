@@ -8,17 +8,30 @@ function mpParseImages(row) {
 }
 
 function mpMapStoreProduct(row, shopName) {
-    const sale = Number(row.retailPrice || 0);
-    const was = Number(row.wasPrice || 0);
-    const retail = was > sale ? was : sale;
+    const online = Number(row.onlineSellingPrice != null ? row.onlineSellingPrice : row.retailPrice) || 0;
+    const discount = Number(row.discountPrice != null ? row.discountPrice : 0) || 0;
+    let pct = Number(row.discountPercent || 0);
+    let finalPrice = Number(row.finalPrice != null ? row.finalPrice : online) || 0;
+    if (online > 0 && discount > 0 && discount < online) {
+        finalPrice = Math.max(0, online - discount);
+        if (!(pct > 0)) pct = Math.round((discount / online) * 100);
+    } else if (Number(row.wasPrice) > online && online > 0) {
+        finalPrice = online;
+        pct = pct || Math.round(((Number(row.wasPrice) - online) / Number(row.wasPrice)) * 100);
+    }
+    const hasDiscount = online > 0 && finalPrice > 0 && finalPrice < online && pct > 0;
     const tag = row.storeFeatured ? 'best'
-        : (row.storeNewArrival ? 'new' : (row.storeSale || was > sale ? 'sale' : 'best'));
+        : (row.storeNewArrival ? 'new' : (row.storeSale || hasDiscount ? 'sale' : 'best'));
     const images = mpParseImages(row);
     return {
         id: row.id,
         title: row.title || 'Product',
-        salePrice: sale,
-        retailPrice: retail,
+        salePrice: hasDiscount ? finalPrice : online,
+        retailPrice: hasDiscount ? online : online,
+        onlineSellingPrice: online,
+        discountPrice: discount,
+        discountPercent: hasDiscount ? pct : 0,
+        finalPrice: hasDiscount ? finalPrice : online,
         imageUrl: images[0] || '',
         images,
         shopName: shopName || 'Ammad Hadi Stor',
@@ -27,7 +40,7 @@ function mpMapStoreProduct(row, shopName) {
         tag,
         storeFeatured: Boolean(row.storeFeatured),
         storeNewArrival: Boolean(row.storeNewArrival),
-        storeSale: Boolean(row.storeSale) || was > sale,
+        storeSale: Boolean(row.storeSale) || hasDiscount,
         category: row.category || 'Products',
         unit: row.stockUnit || 'Piece',
         variants: [row.stockUnit || 'Standard'],

@@ -81,8 +81,8 @@ function openWhatsAppOrder(product) {
     const phone = waDigits(sfShop && (sfShop.whatsappNumber || sfShop.phoneNumber));
     const parts = typeof sfCardPriceParts === 'function'
         ? sfCardPriceParts(product)
-        : { sell: Number(product.retailPrice || 0) };
-    const price = Number(parts.sell || 0).toLocaleString();
+        : { finalPrice: Number(product.retailPrice || 0) };
+    const price = Number(parts.finalPrice || 0).toLocaleString();
     const text = 'Hi, I want to buy ' + product.title + ' priced at Rs. ' + price + ' from your MarkiThon store.';
     if (!phone) return sfToast('WhatsApp number is not set for this shop.');
     window.open('https://wa.me/' + phone + '?text=' + encodeURIComponent(text), '_blank', 'noopener');

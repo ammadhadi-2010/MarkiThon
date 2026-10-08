@@ -8,6 +8,7 @@ const { packStoreTheme } = require('../utils/storeThemes');
 const { navCategories } = require('../utils/shopCatalog');
 const { activeShopId } = require('../utils/shopScope');
 const { dedupeProducts } = require('../utils/productDedupe');
+const { resolveStorePrice } = require('../utils/storePrice');
 
 function shopSlug(name) {
     return String(name || 'Ammad Hadi Stor').toLowerCase().replace(/[^a-z0-9]+/g, '') || 'ammadhadistor';
@@ -73,13 +74,7 @@ exports.publicShop = async (req, res) => {
         });
         const listed = products.map((row) => {
                 const p = row.toJSON();
-                let retail = Number(p.storeOnlinePrice) > 0 ? p.storeOnlinePrice : p.retailPrice;
-                let was = Number(p.storeDiscountPrice) || 0;
-                if (was > 0 && retail > 0 && was < retail) {
-                    const swap = was;
-                    was = retail;
-                    retail = swap;
-                }
+                const price = resolveStorePrice(p);
                 let gallery = [];
                 try {
                     gallery = typeof p.storeImages === 'string'
@@ -94,11 +89,15 @@ exports.publicShop = async (req, res) => {
                     title: p.storeTitle || p.title,
                     imageUrl,
                     images: gallery.length ? gallery : (imageUrl ? [imageUrl] : []),
-                    retailPrice: retail,
-                    wasPrice: was,
+                    retailPrice: price.finalPrice,
+                    wasPrice: price.hasDiscount ? price.onlineSellingPrice : 0,
+                    onlineSellingPrice: price.onlineSellingPrice,
+                    discountPrice: price.discountPrice,
+                    discountPercent: price.discountPercent,
+                    finalPrice: price.finalPrice,
                     stockUnit: p.stockUnit,
                     category: p.category,
-                    storeSale: Boolean(p.storeSale) || was > Number(retail),
+                    storeSale: Boolean(p.storeSale) || price.hasDiscount,
                     storeFeatured: Boolean(p.storeFeatured),
                     storeNewArrival: Boolean(p.storeNewArrival)
                 };

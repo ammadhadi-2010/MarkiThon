@@ -33,18 +33,27 @@
 .mp-shop-sub { color: #8b9bb8; font-size: 12px; margin: 4px 0; }
 .mp-stars { color: #fbbf24; font-size: 12px; margin: 0; }
 .mp-stars span { color: #8b9bb8; }
-.mp-tcard .mp-price { color: #e2e8f0; font-weight: 700; margin: 6px 0 10px; }
-.mp-tcard .mp-price-was {
-    display: inline-block;
-    margin-right: 6px;
-    text-decoration: line-through;
-    opacity: 0.6;
-    color: #94a3b8;
-    font-size: 12px;
-    font-weight: 500;
+.mp-price-block { margin: 6px 0 10px; }
+.mp-tcard .mp-price-now {
+    color: #f97316;
+    font-weight: 800;
+    font-size: 17px;
+    line-height: 1.2;
 }
-.mp-tcard .mp-price-now { color: #4ade80; font-weight: 800; }
-.mp-tcard .mp-price-unit { color: #93c5fd; font-weight: 600; }
+.mp-tcard .mp-price-now.is-plain { color: #facc15; font-size: 15px; }
+.mp-tcard .mp-price-sub {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 3px;
+    font-size: 12px;
+    color: #94a3b8;
+}
+.mp-tcard .mp-price-was {
+    text-decoration: line-through;
+    opacity: 0.75;
+}
+.mp-tcard .mp-price-off { color: #f97316; font-weight: 700; }
 .mp-off {
     position: absolute;
     top: 10px;
@@ -143,7 +152,8 @@
     .mp-tcard div { padding: 6px 8px 8px; }
     .mp-tcard h3 { font-size: 12px; }
     .mp-shop-sub, .mp-stars { font-size: 11px; }
-    .mp-tcard .mp-price { font-size: 12px; margin: 4px 0 6px; }
+    .mp-tcard .mp-price-now { font-size: 15px; }
+    .mp-price-block { margin: 4px 0 6px; }
     .mp-add { padding: 6px; font-size: 11px; }
     .mp-off { top: 6px; left: 6px; font-size: 10px; padding: 2px 6px; }
     .mp-promo-view { overflow: hidden; }

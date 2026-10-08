@@ -130,42 +130,62 @@ function storefrontMarkup(shop, categories) {
 }
 
 function sfCardPriceParts(product) {
-    let sell = Number(product.retailPrice || product.onlineSellingPrice || product.salePrice || 0);
-    let original = Number(product.wasPrice || product.originalPrice || product.storeDiscountPrice || 0);
-    const pct = Number(product.discountPercent || 0);
-    if (original > 0 && sell > 0 && original < sell) {
-        const swap = original;
-        original = sell;
-        sell = swap;
+    const online = Number(
+        product.onlineSellingPrice != null ? product.onlineSellingPrice
+            : (product.storeOnlinePrice != null ? product.storeOnlinePrice : product.retailPrice)
+    ) || 0;
+    const discount = Number(
+        product.discountPrice != null ? product.discountPrice
+            : (product.storeDiscountPrice != null ? product.storeDiscountPrice : 0)
+    ) || 0;
+    let pct = Number(product.discountPercent || 0);
+    let finalPrice = online;
+    let hasDiscount = false;
+    if (online > 0 && discount > 0 && discount < online) {
+        finalPrice = Math.max(0, online - discount);
+        if (!(pct > 0)) pct = Math.round((discount / online) * 100);
+        hasDiscount = finalPrice < online && pct > 0;
+    } else if (product.finalPrice != null && Number(product.finalPrice) > 0) {
+        finalPrice = Number(product.finalPrice);
+        const was = Number(product.wasPrice || online);
+        hasDiscount = was > finalPrice;
+        if (hasDiscount && !(pct > 0)) pct = Math.round(((was - finalPrice) / was) * 100);
+        return {
+            online: hasDiscount ? was : finalPrice,
+            finalPrice,
+            hasDiscount,
+            off: pct,
+            unit: product.stockUnit || 'Pcs'
+        };
     }
-    if (!(original > sell) && pct > 0 && sell > 0) {
-        original = Math.round(sell / (1 - Math.min(pct, 99) / 100));
-    }
-    const hasDiscount = original > sell && sell > 0;
-    const off = hasDiscount ? Math.round((1 - sell / original) * 100) : 0;
-    return { sell, original, hasDiscount, off, unit: product.stockUnit || 'Pcs' };
+    return {
+        online,
+        finalPrice: hasDiscount ? finalPrice : online,
+        hasDiscount,
+        off: hasDiscount ? pct : 0,
+        unit: product.stockUnit || 'Pcs'
+    };
 }
 
 function storefrontCardMarkup(product) {
     const parts = sfCardPriceParts(product);
-    const unit = escapeHtml(parts.unit);
     const id = escapeHtml(product.id);
-    const badge = parts.hasDiscount
-        ? `<span class="sf-off">${parts.off}% OFF</span>`
-        : '';
     const priceHtml = parts.hasDiscount
-        ? `<p class="sf-price">
-                <span class="sf-price-was">Rs. ${parts.original.toLocaleString()}</span>
-                <span class="sf-price-now">Rs. ${parts.sell.toLocaleString()}</span>
-                <span class="sf-price-unit">/ ${unit}</span>
-           </p>`
-        : `<p class="sf-price">Rs. ${parts.sell.toLocaleString()} / ${unit}</p>`;
+        ? `<div class="sf-price-block">
+                <div class="sf-price-now">Rs. ${parts.finalPrice.toLocaleString()}</div>
+                <div class="sf-price-sub">
+                    <span class="sf-price-was">Rs. ${parts.online.toLocaleString()}</span>
+                    <span class="sf-price-off">-${parts.off}%</span>
+                </div>
+           </div>`
+        : `<div class="sf-price-block">
+                <div class="sf-price-now is-plain">Rs. ${parts.finalPrice.toLocaleString()}</div>
+           </div>`;
     return `
         <article class="sf-card" data-sfopen="${id}">
             <a class="sf-open" href="/product/${id}">
                 <div class="sf-thumb">
                     <img src="${escapeHtml(product.imageUrl || '')}" alt="" onerror="this.style.opacity=0.2">
-                    ${badge}
                 </div>
                 <div class="sf-meta">
                     <h2>${escapeHtml(product.title)}</h2>

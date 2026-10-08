@@ -154,17 +154,25 @@ document.addEventListener('DOMContentLoaded', () => {
     loadStorefront().catch((err) => {
         document.getElementById('sfRoot').innerHTML = '<p class="sf-empty">' + escapeHtml(err.message) + '</p>';
     });
+    function activateSfBanner(node) {
+        if (!node) return;
+        const link = node.getAttribute('data-sfbanner') || 'All';
+        sfCategory = link === 'home' ? 'All' : (link || 'All');
+        document.querySelectorAll('.sf-chip').forEach((btn) => {
+            const key = btn.getAttribute('data-sfcat');
+            btn.classList.toggle('on', key === sfCategory
+                || (sfCategory === 'All' && key === 'All'));
+        });
+        renderSfGrid();
+        document.getElementById('sfGrid')
+            ?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
     document.getElementById('sfRoot').addEventListener('click', (event) => {
         const banner = event.target.closest('[data-sfbanner]');
         if (banner) {
-            const link = banner.getAttribute('data-sfbanner') || 'All';
-            sfCategory = link === 'home' ? 'All' : link;
-            document.querySelectorAll('.sf-chip').forEach((btn) => {
-                btn.classList.toggle('on', btn.getAttribute('data-sfcat') === sfCategory
-                    || (sfCategory === 'All' && btn.getAttribute('data-sfcat') === 'All'));
-            });
-            document.getElementById('sfGrid')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-            renderSfGrid();
+            event.preventDefault();
+            activateSfBanner(banner);
+            return;
         }
         const chip = event.target.closest('[data-sfcat]');
         if (chip) {
@@ -183,5 +191,12 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!wa) return;
         const product = sfProducts.find((p) => String(p.id) === String(wa.getAttribute('data-sfwa')));
         if (product) openWhatsAppOrder(product);
+    });
+    document.getElementById('sfRoot').addEventListener('keydown', (event) => {
+        if (event.key !== 'Enter' && event.key !== ' ') return;
+        const banner = event.target.closest('.sf-promo[data-sfbanner]');
+        if (!banner || event.target.closest('button, a, input')) return;
+        event.preventDefault();
+        activateSfBanner(banner);
     });
 });

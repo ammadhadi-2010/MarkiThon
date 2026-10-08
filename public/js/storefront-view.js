@@ -123,7 +123,7 @@ function storefrontMarkup(shop, categories) {
         ${typeof storefrontShowcaseMarkup === 'function' ? storefrontShowcaseMarkup(shop) : ''}
         <div class="sf-filters" id="sfFilters">${chips}</div>
         <div id="sfBannerSlot" class="sf-banner-slot" hidden></div>
-        <section id="sfGrid" class="sf-grid"></section>
+        <section id="sfGrid" class="sf-grid" aria-label="Products"></section>
         ${bio ? `<footer class="sf-foot">${escapeHtml(bio)}</footer>` : ''}
         </div>`;
 }

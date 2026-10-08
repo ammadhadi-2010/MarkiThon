@@ -14,7 +14,7 @@ function sfPromoDefaults() {
             sub: 'SPECIAL DEAL',
             head: 'Save Up to 30%',
             desc: 'Limited-time offers in store',
-            cta: 'Shop Sale',
+            cta: 'Shop Now',
             link: 'sale',
             imageUrl: ''
         }
@@ -57,16 +57,20 @@ function sfPromoCardMarkup(card) {
     const media = card.imageUrl
         ? `<img class="sf-promo-media" src="${escapeHtml(card.imageUrl)}" alt="" loading="lazy">`
         : '';
+    const cta = card.tone === 'deal'
+        ? `<button type="button" class="sf-promo-cta" data-sfbanner="${escapeHtml(card.link)}">${escapeHtml(card.cta || 'Shop Now')}</button>`
+        : '';
     return `
-        <button type="button" class="sf-promo sf-promo-${escapeHtml(card.tone)}" data-sfbanner="${escapeHtml(card.link)}">
+        <div class="sf-promo sf-promo-${escapeHtml(card.tone)}" data-sfbanner="${escapeHtml(card.link)}" role="button" tabindex="0">
             ${media}
             <span class="sf-promo-copy">
                 <span class="sf-promo-kicker">${escapeHtml(card.sub)}</span>
                 <strong>${escapeHtml(card.head)}</strong>
                 <span class="sf-promo-desc">${escapeHtml(card.desc)}</span>
+                ${cta}
             </span>
             ${sfPromoIcon(card.tone)}
-        </button>`;
+        </div>`;
 }
 
 function storefrontBannerMarkup(shop) {

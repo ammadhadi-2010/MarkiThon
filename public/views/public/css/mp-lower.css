@@ -1,8 +1,9 @@
 .mp-empty { color: #8b9bb8; margin: 0; }
 .mp-tgrid {
     display: grid;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(180px, 210px));
     gap: 12px;
+    justify-content: start;
 }
 .mp-tcard {
     background: #161f36;
@@ -11,6 +12,8 @@
     overflow: hidden;
     position: relative;
     min-width: 0;
+    width: 100%;
+    max-width: 210px;
 }
 .mp-tcard img {
     width: 100%;
@@ -31,16 +34,21 @@
     overflow: hidden;
 }
 .mp-shop-sub { color: #8b9bb8; font-size: 12px; margin: 4px 0; }
-.mp-stars { color: #fbbf24; font-size: 12px; margin: 0; }
-.mp-stars span { color: #8b9bb8; }
+.mp-stars {
+    color: #fbbf24;
+    font-size: 12px;
+    margin: 0;
+    font-weight: 400;
+}
+.mp-stars span { color: #8b9bb8; font-weight: 400; }
 .mp-price-block { margin: 6px 0 10px; }
 .mp-tcard .mp-price-now {
     color: #f97316;
-    font-weight: 800;
-    font-size: 17px;
+    font-weight: 400;
+    font-size: 16px;
     line-height: 1.2;
 }
-.mp-tcard .mp-price-now.is-plain { color: #facc15; font-size: 15px; }
+.mp-tcard .mp-price-now.is-plain { color: #facc15; font-size: 15px; font-weight: 400; }
 .mp-tcard .mp-price-sub {
     display: flex;
     align-items: center;
@@ -53,7 +61,7 @@
     text-decoration: line-through;
     opacity: 0.75;
 }
-.mp-tcard .mp-price-off { color: #f97316; font-weight: 700; }
+.mp-tcard .mp-price-off { color: #f97316; font-weight: 400; }
 .mp-off {
     position: absolute;
     top: 10px;
@@ -146,8 +154,11 @@
         background: rgba(37, 99, 235, 0.35);
         box-shadow: 0 0 12px rgba(37, 99, 235, 0.28);
     }
-    .mp-tgrid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
-    .mp-tcard { border-radius: 12px; }
+    .mp-tgrid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 8px;
+    }
+    .mp-tcard { border-radius: 12px; max-width: none; }
     .mp-tcard img { height: auto; aspect-ratio: 1 / 1; object-fit: contain; background: #f8f9fa; }
     .mp-tcard div { padding: 6px 8px 8px; }
     .mp-tcard h3 { font-size: 12px; }

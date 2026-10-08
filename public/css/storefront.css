@@ -1,10 +1,20 @@
 * { box-sizing: border-box; }
+html, body { min-height: 100%; }
 body {
     margin: 0;
     font-family: Inter, Segoe UI, sans-serif;
     background: #0b1120;
     color: #e2e8f0;
 }
+.sf-page {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+.sf-shell { flex: 1 1 auto; }
+#sfRoot .mp-stay { margin-top: 24px; }
+#sfRoot .mp-foot { margin-top: 0; }
 .sf-head {
     display: flex;
     gap: 14px;

@@ -139,6 +139,16 @@ async function loadStorefront() {
             if (typeof sfWireShopBadgeAuth === 'function') sfWireShopBadgeAuth();
         });
     }
+    if (typeof mpLoadFooter === 'function') mpLoadFooter();
+    const news = document.querySelector('#sfRoot .mp-news');
+    if (news && !news.dataset.bound) {
+        news.dataset.bound = '1';
+        news.addEventListener('submit', (event) => {
+            event.preventDefault();
+            const btn = news.querySelector('button');
+            if (btn) btn.textContent = 'Subscribed';
+        });
+    }
     document.querySelectorAll('.sf-chip').forEach((btn) => {
         btn.classList.toggle('on', btn.getAttribute('data-sfcat') === sfCategory
             || (sfCategory === 'All' && btn.getAttribute('data-sfcat') === 'All'));

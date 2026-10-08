@@ -117,14 +117,18 @@ function storefrontMarkup(shop, categories) {
     }).join('');
     const bio = String(shop.shopDescription || '').trim();
     const themeId = shop.themeId || 'standard-retail';
+    const globalFoot = typeof mpFooterMarkup === 'function' ? mpFooterMarkup() : '';
     return `
+        <div class="sf-page">
         <div class="sf-shell" data-sf-theme="${escapeHtml(themeId)}">
         ${storefrontHeroMarkup(shop, logo, socials)}
         ${typeof storefrontShowcaseMarkup === 'function' ? storefrontShowcaseMarkup(shop) : ''}
         <div class="sf-filters" id="sfFilters">${chips}</div>
         <div id="sfBannerSlot" class="sf-banner-slot" hidden></div>
         <section id="sfGrid" class="sf-grid" aria-label="Products"></section>
-        ${bio ? `<footer class="sf-foot">${escapeHtml(bio)}</footer>` : ''}
+        ${bio ? `<div class="sf-foot">${escapeHtml(bio)}</div>` : ''}
+        </div>
+        ${globalFoot}
         </div>`;
 }
 

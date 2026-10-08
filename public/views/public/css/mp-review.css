@@ -1,4 +1,17 @@
 .mp-review-empty { margin: 0; color: #c9d6ee; }
+.mp-review-stars {
+    display: flex;
+    gap: 2px;
+    margin: 6px 0 8px;
+    line-height: 1;
+}
+.mp-review-stars .mp-star {
+    color: #475569;
+    font-size: 16px;
+}
+.mp-review-stars .mp-star.is-on {
+    color: #fbbf24;
+}
 .mp-modal {
     position: fixed;
     inset: 0;

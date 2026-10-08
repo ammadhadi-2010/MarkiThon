@@ -3,8 +3,14 @@ let mpReviewProductId = '';
 
 function mpReviewCard(item) {
     const stars = Math.max(1, Math.min(5, Number(item.stars) || 0));
-    const marks = '★'.repeat(stars) + '☆'.repeat(5 - stars);
-    return `<article class="mp-review"><strong>${mpEscape(item.reviewerName)}</strong><p>${marks}</p><p>${mpEscape(item.description)}</p></article>`;
+    const marks = [1, 2, 3, 4, 5].map((n) =>
+        `<span class="mp-star${n <= stars ? ' is-on' : ''}" aria-hidden="true">★</span>`
+    ).join('');
+    return `<article class="mp-review">
+        <strong>${mpEscape(item.reviewerName)}</strong>
+        <p class="mp-review-stars" aria-label="${stars} out of 5 stars">${marks}</p>
+        <p>${mpEscape(item.description)}</p>
+    </article>`;
 }
 
 function mpPaintReviewList() {

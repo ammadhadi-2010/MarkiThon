@@ -11,6 +11,8 @@ function osEditBuildPayload() {
     return {
         storeOnlinePrice: Number(document.getElementById('osEditOnline')?.value || 0),
         storeDiscountPrice: Number(document.getElementById('osEditDiscount')?.value || 0),
+        wholesalePrice: Number(document.getElementById('osEditWholesale')?.value || 0),
+        minWholesaleQty: Math.max(1, Number(document.getElementById('osEditMoq')?.value || 10)),
         storePublished: Boolean(document.getElementById('osEditPub')?.checked),
         storeFeatured: Boolean(document.getElementById('osEditFeat')?.checked),
         storeNewArrival: Boolean(document.getElementById('osEditNew')?.checked),

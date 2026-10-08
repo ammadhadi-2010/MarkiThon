@@ -2,12 +2,16 @@ function osPriceField(id, label, opts = {}) {
     const req = opts.required ? ' <span class="os-req">*</span>' : '';
     const extra = opts.readonly ? ' readonly' : '';
     const type = opts.readonly ? 'text' : 'number';
-    const step = opts.readonly ? '' : ' min="0" step="0.01"';
+    const step = opts.readonly ? '' : ` min="${opts.min != null ? opts.min : 0}" step="${opts.step || '0.01'}"`;
+    const ph = opts.placeholder ? ` placeholder="${opts.placeholder}"` : '';
+    const unit = opts.unit != null ? opts.unit : '/ Gaz';
+    const unitAttr = opts.fixedUnit ? '' : ' data-osunit';
+    const value = opts.value != null ? ` value="${opts.value}"` : '';
     return `<div class="field">
         <label for="${id}">${label}${req}</label>
         <div class="os-price-wrap">
-            <input id="${id}" name="${id}" type="${type}"${step}${extra} autocomplete="off">
-            <span class="os-price-unit" data-osunit>/ Gaz</span>
+            <input id="${id}" name="${id}" type="${type}"${step}${extra}${ph}${value} autocomplete="off">
+            <span class="os-price-unit"${unitAttr}>${unit}</span>
         </div>
     </div>`;
 }
@@ -30,6 +34,17 @@ function storeEditPriceMarkup() {
                 <label for="osEditPct">Discount %</label>
                 <input id="osEditPct" name="osEditPct" readonly autocomplete="off">
             </div>
+            ${osPriceField('osEditWholesale', 'Wholesale Price (Per Unit)', {
+                placeholder: 'e.g. 180'
+            })}
+            ${osPriceField('osEditMoq', 'Min Wholesale Quantity (Pcs)', {
+                placeholder: 'e.g. 10',
+                value: '10',
+                step: '1',
+                min: 1,
+                unit: 'Pcs',
+                fixedUnit: true
+            })}
         </div>
     </section>`;
 }
@@ -62,8 +77,15 @@ function fillOsEditPrice(row) {
     if (origEl) origEl.value = orig ? `Rs. ${orig.toLocaleString()}` : '—';
     const online = document.getElementById('osEditOnline');
     const disc = document.getElementById('osEditDiscount');
+    const wholesale = document.getElementById('osEditWholesale');
+    const moq = document.getElementById('osEditMoq');
     if (online) online.value = row.onlinePrice || 0;
     if (disc) disc.value = row.discountPrice || 0;
+    if (wholesale) wholesale.value = row.wholesalePrice != null ? row.wholesalePrice : 0;
+    if (moq) {
+        const qty = Number(row.minWholesaleQty);
+        moq.value = qty > 0 ? qty : 10;
+    }
     paintOsEditUnits(osEditSellUnit(row));
     paintOsEditPct();
 }

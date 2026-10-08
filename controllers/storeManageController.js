@@ -37,6 +37,8 @@ function mapManageProduct(row, stock, images) {
         onlinePrice: online,
         discountPrice: discount,
         discountPct: pct,
+        wholesalePrice: toNum(p.wholesalePrice),
+        minWholesaleQty: min,
         stockMeters: onHand,
         stockStatus: onHand <= min ? 'low' : 'in',
         storeSortOrder: toNum(p.storeSortOrder),
@@ -126,6 +128,10 @@ function patchBody(body) {
     if (body.storeSale !== undefined) data.storeSale = Boolean(body.storeSale);
     if (body.storeOnlinePrice !== undefined) data.storeOnlinePrice = toNum(body.storeOnlinePrice);
     if (body.storeDiscountPrice !== undefined) data.storeDiscountPrice = toNum(body.storeDiscountPrice);
+    if (body.wholesalePrice !== undefined) data.wholesalePrice = toNum(body.wholesalePrice);
+    if (body.minWholesaleQty !== undefined) {
+        data.minWholesaleQty = Math.max(1, toNum(body.minWholesaleQty) || 10);
+    }
     if (body.storeSortOrder !== undefined) data.storeSortOrder = Math.max(0, toNum(body.storeSortOrder));
     if (body.storeDescription !== undefined) {
         data.storeDescription = String(body.storeDescription || '').slice(0, 8000);

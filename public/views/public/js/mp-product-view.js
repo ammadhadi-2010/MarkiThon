@@ -59,14 +59,6 @@ function mpPaintProduct(idOrRow) {
     if (images[0]) main.src = images[0];
     main.alt = row.title;
     document.getElementById('mpThumbs').innerHTML = images.length ? mpThumbButtons(images, 0) : '';
-    document.getElementById('mpColors').innerHTML = mpPdpColors(row).map((pair, i) =>
-        `<button type="button" class="mp-swatch${i === 0 ? ' on' : ''}" style="background:${pair[1]}" aria-label="${mpEscape(pair[0])}" title="${mpEscape(pair[0])}"></button>`
-    ).join('');
-    const sizes = row.variants || ['Single'];
-    const picked = row.sizeOn || sizes[0];
-    document.getElementById('mpSizes').innerHTML = sizes.map((name) =>
-        `<button type="button" class="mp-size${name === picked ? ' on' : ''}">${mpEscape(name)}</button>`
-    ).join('');
     document.getElementById('mpPerks').innerHTML = mpPdpHighlights(row).map((item) =>
         `<div><strong>${mpEscape(item[0])}</strong><span>${mpEscape(item[1])}</span></div>`
     ).join('');

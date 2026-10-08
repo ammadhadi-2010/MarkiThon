@@ -20,10 +20,6 @@ function mpPdpBuyMarkup() {
             <p class="mp-tagline" id="mpTagline"></p>
             <p class="mp-rate" id="mpRate"></p>
             <p class="mp-price" id="mpPPrice"></p>
-            <p class="mp-label">Select Color</p>
-            <div class="mp-colors" id="mpColors"></div>
-            <p class="mp-label">Select Size</p>
-            <div class="mp-sizes" id="mpSizes"></div>
             <p class="mp-label">Quantity</p>
             <div class="mp-step">
                 <button type="button" id="mpQtyMinus" aria-label="Decrease quantity">−</button>

@@ -94,16 +94,6 @@ function mpBindProduct(root, id) {
             if (btn) mpShowSlide(root, btn, row.images.length);
         });
     }
-    root.querySelector('#mpColors')?.addEventListener('click', (event) => {
-        const btn = event.target.closest('.mp-swatch');
-        if (!btn) return;
-        root.querySelectorAll('.mp-swatch').forEach((el) => el.classList.toggle('on', el === btn));
-    });
-    root.querySelector('#mpSizes')?.addEventListener('click', (event) => {
-        const btn = event.target.closest('.mp-size');
-        if (!btn) return;
-        root.querySelectorAll('.mp-size').forEach((el) => el.classList.toggle('on', el === btn));
-    });
     const qtyInput = root.querySelector('#mpQty');
     function qty() {
         const next = Math.max(1, Number(qtyInput && qtyInput.value) || 1);

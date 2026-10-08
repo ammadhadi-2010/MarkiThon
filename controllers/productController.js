@@ -6,6 +6,7 @@ const { applyBlanketFields, isBlanketCategory } = require('../utils/blanketCatal
 const { purgeProductById } = require('../utils/purgeProduct');
 const { activeShopId, sameShop } = require('../utils/shopScope');
 const { applyMobileFields } = require('../utils/mobileCatalog');
+const { findShopProductConflict } = require('../utils/productDedupe');
 
 function blank(value) {
     const text = String(value == null ? '' : value).trim();
@@ -63,6 +64,25 @@ exports.addProduct = async (req, res) => {
         data.ShopId = await activeShopId();
         if (rejectIfInvalid(data, res)) return;
         if (!data.sku) data.sku = `AH-${Date.now().toString(36).toUpperCase()}`;
+        const existing = await findShopProductConflict(data.ShopId, data);
+        if (existing) {
+            await existing.update({
+                ...data,
+                stockMeters: existing.stockMeters,
+                purchasePrice: existing.purchasePrice,
+                wholesalePrice: existing.wholesalePrice,
+                retailPrice: existing.retailPrice,
+                minWholesaleQty: existing.minWholesaleQty
+            });
+            const json = withProductMargins(existing);
+            return res.status(200).json({
+                message: 'Matching product updated instead of creating a duplicate.',
+                product: json,
+                wholesaleProfit: json.wholesaleProfit.amount,
+                retailProfit: json.retailProfit.amount,
+                deduped: true
+            });
+        }
         const opening = Math.max(toNum(req.body.openingStock), 0);
         const product = await Product.create({
             ...data,
@@ -125,6 +145,12 @@ exports.updateProduct = async (req, res) => {
         data.ShopId = shopId;
         if (rejectIfInvalid(data, res)) return;
         if (!data.sku) data.sku = product.sku || `AH-${Date.now().toString(36).toUpperCase()}`;
+        const conflict = await findShopProductConflict(shopId, data, product.id);
+        if (conflict) {
+            return res.status(400).json({
+                message: 'Another product already uses this SKU, barcode, or title. Update that item instead.'
+            });
+        }
         await product.update({
             ...data,
             stockMeters: product.stockMeters,

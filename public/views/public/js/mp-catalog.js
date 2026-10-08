@@ -47,6 +47,22 @@ function mpPreferFeatured(rows) {
     });
 }
 
+function mpDedupeProducts(rows) {
+    const seen = new Set();
+    const out = [];
+    (Array.isArray(rows) ? rows : []).forEach((row) => {
+        const id = row && row.id;
+        const title = String((row && row.title) || '').trim().toLowerCase();
+        const key = id != null && String(id).trim()
+            ? 'id:' + String(id).trim()
+            : (title ? 'title:' + title : '');
+        if (!key || seen.has(key)) return;
+        seen.add(key);
+        out.push(row);
+    });
+    return out;
+}
+
 async function mpFetchShopProducts() {
     const res = await fetch('/api/store/ammadhadistor');
     const data = await res.json().catch(() => ({}));
@@ -88,12 +104,12 @@ async function mpFetchCatalogFallback() {
 
 async function mpLoadCatalog() {
     try {
-        mpLiveProducts = mpPreferFeatured(await mpFetchShopProducts());
+        mpLiveProducts = mpPreferFeatured(mpDedupeProducts(await mpFetchShopProducts()));
         if (mpLiveProducts.length) return mpLiveProducts;
     } catch (error) {
         /* Try catalog fallback. */
     }
-    mpLiveProducts = mpPreferFeatured(await mpFetchCatalogFallback());
+    mpLiveProducts = mpPreferFeatured(mpDedupeProducts(await mpFetchCatalogFallback()));
     return mpLiveProducts;
 }
 

@@ -91,7 +91,9 @@ function inventoryMarkup() {
             </div>
             <p class="wl-hint">Set purchase cost and wholesale/retail selling rates when you receive stock.</p>
             <div class="actions">
-                <button type="submit" form="invForm" class="primary" id="invSave">Save Catalog Product</button>
+                <button type="submit" form="invForm" class="primary inv-save-btn" id="invSave">
+                    <span class="inv-save-label">Save Catalog Product</span>
+                </button>
             </div>
         </div>
     </div>

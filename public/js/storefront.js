@@ -15,6 +15,23 @@ function waDigits(phone) {
     return digits;
 }
 
+function sfDedupeProducts(list) {
+    const seen = new Set();
+    const out = [];
+    (Array.isArray(list) ? list : []).forEach((row) => {
+        const id = row && (row.id || row.product_id || row.productId);
+        const sku = String((row && row.sku) || '').trim().toLowerCase();
+        const title = String((row && (row.title || row.name)) || '').trim().toLowerCase();
+        const key = id != null && String(id).trim()
+            ? 'id:' + String(id).trim()
+            : (sku ? 'sku:' + sku : (title ? 'title:' + title : ''));
+        if (!key || seen.has(key)) return;
+        seen.add(key);
+        out.push(row);
+    });
+    return out;
+}
+
 function sfToast(message) {
     const el = document.getElementById('sfToast');
     el.textContent = message;
@@ -133,7 +150,7 @@ async function loadStorefront() {
     const data = await res.json();
     if (!res.ok) throw new Error(data.message || 'Store not found.');
     sfShop = data.shop;
-    sfProducts = Array.isArray(data.products) ? data.products : [];
+    sfProducts = sfDedupeProducts(data.products);
     sfCategory = readSfFilter();
     const cats = Array.isArray(data.navCategories)
         ? data.navCategories

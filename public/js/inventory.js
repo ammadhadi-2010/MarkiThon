@@ -1,5 +1,17 @@
 let productsCache = [];
+let invSaving = false;
 const INV_TABS = ['basic', 'images'];
+
+function setInvSaveBusy(on) {
+    invSaving = Boolean(on);
+    const btn = document.getElementById('invSave');
+    if (!btn) return;
+    btn.disabled = invSaving;
+    btn.classList.toggle('is-busy', invSaving);
+    btn.setAttribute('aria-busy', invSaving ? 'true' : 'false');
+    const label = btn.querySelector('.inv-save-label');
+    if (label) label.textContent = invSaving ? 'Saving...' : 'Save Catalog Product';
+}
 
 function paintInvConvert() {
     const sell = document.getElementById('invSellUnit');
@@ -178,6 +190,7 @@ async function openProductHistory(productId) {
 
 async function saveProduct(event) {
     event.preventDefault();
+    if (invSaving) return;
     const form = document.getElementById('invForm');
     setInvTab('basic');
     if (form && !form.checkValidity()) {
@@ -185,8 +198,7 @@ async function saveProduct(event) {
         return;
     }
     const id = document.getElementById('invEditId').value;
-    const btn = document.getElementById('invSave');
-    if (btn) btn.disabled = true;
+    setInvSaveBusy(true);
     try {
         const payload = invPayload();
         const data = await offlineSaveProduct(id, payload);
@@ -196,7 +208,7 @@ async function saveProduct(event) {
     } catch (error) {
         showToast(error.message);
     } finally {
-        if (btn) btn.disabled = false;
+        setInvSaveBusy(false);
     }
 }
 

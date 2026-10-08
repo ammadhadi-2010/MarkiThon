@@ -241,3 +241,26 @@
 
 #recvWrap { margin-bottom: 4px; }
 #recvWrap .list-search { margin-bottom: 0; }
+
+.inv-save-btn {
+    position: relative;
+    min-width: 180px;
+}
+.inv-save-btn.is-busy {
+    pointer-events: none;
+    opacity: 0.85;
+}
+.inv-save-btn.is-busy .inv-save-label { visibility: hidden; }
+.inv-save-btn.is-busy::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    margin: auto;
+    width: 16px;
+    height: 16px;
+    border: 2px solid rgba(255, 255, 255, 0.35);
+    border-top-color: #fff;
+    border-radius: 50%;
+    animation: invSpin 0.7s linear infinite;
+}
+@keyframes invSpin { to { transform: rotate(360deg); } }

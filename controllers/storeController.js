@@ -7,6 +7,7 @@ const { packBanner } = require('./storeBannerController');
 const { packStoreTheme } = require('../utils/storeThemes');
 const { navCategories } = require('../utils/shopCatalog');
 const { activeShopId } = require('../utils/shopScope');
+const { dedupeProducts } = require('../utils/productDedupe');
 
 function shopSlug(name) {
     return String(name || 'Ammad Hadi Stor').toLowerCase().replace(/[^a-z0-9]+/g, '') || 'ammadhadistor';
@@ -97,10 +98,11 @@ exports.publicShop = async (req, res) => {
                     storeNewArrival: Boolean(p.storeNewArrival)
                 };
             });
+        const unique = dedupeProducts(listed);
         res.status(200).json({
             shop: shopPayload(profile, digital),
-            products: listed,
-            navCategories: navCategories(profile.shopType, profile.productTypes, listed)
+            products: unique,
+            navCategories: navCategories(profile.shopType, profile.productTypes, unique)
         });
     } catch (error) {
         res.status(500).json({ message: 'Error loading public store', error: error.message });

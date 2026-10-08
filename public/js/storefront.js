@@ -38,13 +38,8 @@ function paintSfBanner() {
     const slot = document.getElementById('sfBannerSlot');
     if (!slot) return;
     const html = typeof storefrontBannerMarkup === 'function' ? storefrontBannerMarkup(sfShop) : '';
-    if (!html) {
-        slot.innerHTML = '';
-        slot.hidden = true;
-        return;
-    }
     slot.innerHTML = html;
-    slot.hidden = false;
+    slot.hidden = !html;
 }
 
 function renderSfGrid() {

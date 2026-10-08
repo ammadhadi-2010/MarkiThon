@@ -46,8 +46,21 @@
 .mp-cat small, .mp-shop p, .mp-prod p { color: #8b9bb8; font-size: 12px; margin: 4px 0 0; }
 .mp-shops {
     display: grid;
-    grid-template-columns: repeat(5, minmax(0, 1fr));
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 12px;
+    align-items: start;
+}
+@media (min-width: 640px) {
+    .mp-shops { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+@media (min-width: 768px) {
+    .mp-shops {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 16px;
+    }
+}
+@media (min-width: 1024px) {
+    .mp-shops { grid-template-columns: repeat(5, minmax(0, 1fr)); }
 }
 .mp-shop, .mp-prod {
     background: #161f36;
@@ -55,6 +68,8 @@
     border-radius: 16px;
     overflow: hidden;
     position: relative;
+    width: 100%;
+    min-width: 0;
 }
 .mp-shop h3 { margin: 0; font-size: 15px; display: flex; align-items: center; gap: 6px; }
 .mp-verified {
@@ -104,9 +119,6 @@
     cursor: pointer;
 }
 .mp-heart.on { color: #f472b6; }
-@media (max-width: 1100px) {
-    .mp-shops { grid-template-columns: repeat(3, minmax(0, 1fr)); }
-}
 @media (max-width: 900px) {
-    .mp-prods, .mp-shops { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .mp-prods { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }

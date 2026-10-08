@@ -162,6 +162,19 @@ function pickRows(rows, ids, limit) {
     return rows.filter((row) => set.has(String(row.id)));
 }
 
+/** Active shops for the homepage: curated order first, then remaining newest-first. */
+function homeShopRows(rows, ids) {
+    const active = (rows || []).filter((row) => row.status === 'Active');
+    const chosen = cleanIds(ids);
+    if (!chosen.length) return active;
+    const set = new Set(chosen);
+    const picked = chosen
+        .map((id) => active.find((row) => String(row.id) === id))
+        .filter(Boolean);
+    const rest = active.filter((row) => !set.has(String(row.id)));
+    return picked.concat(rest);
+}
+
 function writeBannerImage(body) {
     const match = String(body.data || '').match(/^data:image\/(png|jpeg|jpg|webp);base64,([a-z0-9+/=\s]+)$/i);
     if (!match) return '';
@@ -176,4 +189,4 @@ function writeBannerImage(body) {
     return '/uploads/banners/' + name;
 }
 
-module.exports = { readCms, updateCms, pickRows, writeBannerImage };
+module.exports = { readCms, updateCms, pickRows, homeShopRows, writeBannerImage };

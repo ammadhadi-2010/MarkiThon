@@ -1,7 +1,7 @@
 const { listManagedShops } = require('../utils/platformShops');
 const { listProducts } = require('../utils/platformProducts');
 const { listOrders } = require('../utils/adminOrders');
-const { readCms, updateCms, pickRows, writeBannerImage } = require('../utils/adminCms');
+const { readCms, updateCms, pickRows, homeShopRows, writeBannerImage } = require('../utils/adminCms');
 const { listShopkeeperAds } = require('../utils/shopkeeperAds');
 
 function shopPath(row) {
@@ -68,7 +68,7 @@ async function loadCms() {
         shops: shopRows,
         products: productRows,
         shopAds,
-        featuredShops: pickRows(shopRows.filter((row) => row.status === 'Active'), cms.featuredShopIds, 4),
+        featuredShops: homeShopRows(shopRows, cms.featuredShopIds),
         featuredProducts: pickRows(productRows.filter((row) => row.status === 'Published'), cms.featuredProductIds, 4),
         stats: {
             shops: shopRows.length,

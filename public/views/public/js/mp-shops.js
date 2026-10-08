@@ -55,7 +55,7 @@ function mpShopsMarkup() {
 function mpPaintFeaturedShops(rows) {
     const grid = document.getElementById('mpShopGrid');
     if (!grid || !Array.isArray(rows) || !rows.length) return;
-    grid.innerHTML = rows.slice(0, 4).map((row) => mpShopCard({
+    grid.innerHTML = rows.map((row) => mpShopCard({
         name: row.name,
         rating: '4.8',
         tags: row.tags && row.tags.length ? row.tags : [row.category || 'Shop'],

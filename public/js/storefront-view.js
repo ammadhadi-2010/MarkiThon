@@ -104,6 +104,10 @@ function storefrontHeroMarkup(shop, logo, socials) {
         </section>`;
 }
 
+function sfIsWholesaleMode() {
+    return new URLSearchParams(location.search).get('mode') === 'wholesale';
+}
+
 function storefrontMarkup(shop, categories) {
     const assets = shop.themeAssets || {};
     const logoSrc = assets.logo || shop.imageUrl;
@@ -117,11 +121,16 @@ function storefrontMarkup(shop, categories) {
     }).join('');
     const bio = String(shop.shopDescription || '').trim();
     const themeId = shop.themeId || 'standard-retail';
+    const wholesale = sfIsWholesaleMode();
+    const modeBanner = wholesale
+        ? `<div class="sf-wholesale-banner" role="status">Wholesale Mode Active - Displaying Bulk Rates</div>`
+        : '';
     const globalFoot = typeof mpFooterMarkup === 'function' ? mpFooterMarkup() : '';
     return `
-        <div class="sf-page">
+        <div class="sf-page${wholesale ? ' is-wholesale' : ''}">
         <div class="sf-shell" data-sf-theme="${escapeHtml(themeId)}">
         ${storefrontHeroMarkup(shop, logo, socials)}
+        ${modeBanner}
         ${typeof storefrontShowcaseMarkup === 'function' ? storefrontShowcaseMarkup(shop) : ''}
         <div class="sf-filters" id="sfFilters">${chips}</div>
         <div id="sfBannerSlot" class="sf-banner-slot" hidden></div>
@@ -153,19 +162,31 @@ function sfCardPriceParts(product) {
         const was = Number(product.wasPrice || online);
         hasDiscount = was > finalPrice;
         if (hasDiscount && !(pct > 0)) pct = Math.round(((was - finalPrice) / was) * 100);
+    } else {
+        finalPrice = online;
+    }
+    const retailNow = hasDiscount ? finalPrice : online;
+    const retailWas = hasDiscount ? online : online;
+    const wholesale = Number(product.wholesalePrice) || 0;
+    const moq = Math.max(1, Number(product.minWholesaleQty) || 10);
+    if (sfIsWholesaleMode() && wholesale > 0) {
         return {
-            online: hasDiscount ? was : finalPrice,
-            finalPrice,
-            hasDiscount,
-            off: pct,
-            unit: product.stockUnit || 'Pcs'
+            wholesale: true,
+            finalPrice: wholesale,
+            online: retailWas > wholesale ? retailWas : (retailNow > wholesale ? retailNow : 0),
+            hasDiscount: retailWas > wholesale || retailNow > wholesale,
+            off: 0,
+            moq,
+            unit: 'Pcs'
         };
     }
     return {
-        online,
-        finalPrice: hasDiscount ? finalPrice : online,
+        wholesale: false,
+        online: hasDiscount ? retailWas : retailNow,
+        finalPrice: retailNow,
         hasDiscount,
         off: hasDiscount ? pct : 0,
+        moq,
         unit: product.stockUnit || 'Pcs'
     };
 }
@@ -173,20 +194,35 @@ function sfCardPriceParts(product) {
 function storefrontCardMarkup(product) {
     const parts = sfCardPriceParts(product);
     const id = escapeHtml(product.id);
-    const priceHtml = parts.hasDiscount
-        ? `<div class="sf-price-block">
+    const href = sfIsWholesaleMode()
+        ? `/product/${id}?mode=wholesale`
+        : `/product/${id}`;
+    let priceHtml;
+    if (parts.wholesale) {
+        priceHtml = `<div class="sf-price-block is-wholesale">
+                <div class="sf-price-label">Wholesale Rate</div>
+                <div class="sf-price-now">Rs. ${parts.finalPrice.toLocaleString()}</div>
+                ${parts.online > parts.finalPrice
+                    ? `<div class="sf-price-sub"><s class="sf-price-was">Rs. ${parts.online.toLocaleString()}</s></div>`
+                    : ''}
+                <div class="sf-moq">Min Bulk Order: ${parts.moq} Pcs</div>
+           </div>`;
+    } else if (parts.hasDiscount) {
+        priceHtml = `<div class="sf-price-block">
                 <div class="sf-price-now">Rs. ${parts.finalPrice.toLocaleString()}</div>
                 <div class="sf-price-sub">
                     <span class="sf-price-was">Rs. ${parts.online.toLocaleString()}</span>
                     <span class="sf-price-off">-${parts.off}%</span>
                 </div>
-           </div>`
-        : `<div class="sf-price-block">
+           </div>`;
+    } else {
+        priceHtml = `<div class="sf-price-block">
                 <div class="sf-price-now is-plain">Rs. ${parts.finalPrice.toLocaleString()}</div>
            </div>`;
+    }
     return `
         <article class="sf-card" data-sfopen="${id}">
-            <a class="sf-open" href="/product/${id}">
+            <a class="sf-open" href="${href}">
                 <div class="sf-thumb">
                     <img src="${escapeHtml(product.imageUrl || '')}" alt="" onerror="this.style.opacity=0.2">
                 </div>

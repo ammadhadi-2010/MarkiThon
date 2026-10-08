@@ -67,6 +67,8 @@ exports.getPublicProduct = async (req, res) => {
             retailPrice: compare,
             discountPrice: compare > online ? online : 0,
             salePrice: online,
+            wholesalePrice: Number(row.wholesalePrice) || 0,
+            minWholesaleQty: Math.max(1, Number(row.minWholesaleQty) || 10),
             stock,
             stockStatus: stock <= 0 ? 'out' : stock <= 20 ? 'low' : 'in',
             variations: variationList(row),

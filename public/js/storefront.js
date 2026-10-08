@@ -59,7 +59,13 @@ function openWhatsAppOrder(product) {
         ? sfCardPriceParts(product)
         : { finalPrice: Number(product.retailPrice || 0) };
     const price = Number(parts.finalPrice || 0).toLocaleString();
-    const text = 'Hi, I want to buy ' + product.title + ' priced at Rs. ' + price + ' from your MarkiThon store.';
+    const wholesale = typeof sfIsWholesaleMode === 'function' && sfIsWholesaleMode()
+        && Number(product.wholesalePrice) > 0;
+    const moq = Math.max(1, Number(parts.moq || product.minWholesaleQty) || 10);
+    const text = wholesale
+        ? ('Hi! I scanned your Wholesale QR Code and want to place a Bulk Wholesale Order for '
+            + product.title + ' (Qty: ' + moq + ' Pcs) at Rs. ' + price + '/pc.')
+        : ('Hi, I want to buy ' + product.title + ' priced at Rs. ' + price + ' from your MarkiThon store.');
     if (!phone) return sfToast('WhatsApp number is not set for this shop.');
     window.open('https://wa.me/' + phone + '?text=' + encodeURIComponent(text), '_blank', 'noopener');
 }
@@ -194,7 +200,11 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         const card = event.target.closest('[data-sfopen]');
         if (card && !event.target.closest('button, a')) {
-            window.location.href = '/product/' + card.getAttribute('data-sfopen');
+            const id = card.getAttribute('data-sfopen');
+            const mode = typeof sfIsWholesaleMode === 'function' && sfIsWholesaleMode()
+                ? '?mode=wholesale'
+                : '';
+            window.location.href = '/product/' + id + mode;
             return;
         }
         const wa = event.target.closest('[data-sfwa]');

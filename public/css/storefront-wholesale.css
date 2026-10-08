@@ -1,0 +1,36 @@
+.sf-wholesale-banner {
+    margin: 10px 16px 0;
+    padding: 10px 14px;
+    border-radius: 12px;
+    background: linear-gradient(90deg, rgba(88, 28, 135, 0.45), rgba(30, 58, 138, 0.4));
+    border: 1px solid rgba(167, 139, 250, 0.4);
+    color: #e9d5ff;
+    font-size: 13px;
+    font-weight: 700;
+    text-align: center;
+}
+.sf-price-label {
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.04em;
+    color: #c4b5fd;
+    margin-bottom: 2px;
+}
+.sf-moq {
+    margin-top: 6px;
+    display: inline-block;
+    padding: 3px 8px;
+    border-radius: 999px;
+    background: rgba(124, 58, 237, 0.28);
+    border: 1px solid rgba(167, 139, 250, 0.4);
+    color: #ddd6fe;
+    font-size: 11px;
+    font-weight: 700;
+}
+@media (min-width: 720px) {
+    .sf-wholesale-banner {
+        max-width: 1280px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+}

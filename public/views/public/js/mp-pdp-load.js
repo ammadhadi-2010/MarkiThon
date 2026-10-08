@@ -35,6 +35,8 @@ function mpDetailRow(data) {
         desc: data.description || '',
         salePrice: sale,
         retailPrice: Math.max(retail, sale),
+        wholesalePrice: Number(data.wholesalePrice) || 0,
+        minWholesaleQty: Math.max(1, Number(data.minWholesaleQty) || 10),
         stock: Number(data.stock) || 0,
         images,
         category: data.category || 'Products',

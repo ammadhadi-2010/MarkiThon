@@ -95,6 +95,8 @@ exports.publicShop = async (req, res) => {
                     discountPrice: price.discountPrice,
                     discountPercent: price.discountPercent,
                     finalPrice: price.finalPrice,
+                    wholesalePrice: Number(p.wholesalePrice) || 0,
+                    minWholesaleQty: Math.max(1, Number(p.minWholesaleQty) || 10),
                     stockUnit: p.stockUnit,
                     category: p.category,
                     storeSale: Boolean(p.storeSale) || price.hasDiscount,

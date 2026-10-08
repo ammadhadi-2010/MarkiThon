@@ -43,6 +43,10 @@ function mpPaintProduct(idOrRow) {
     const sale = Number(row.salePrice || row.retailPrice || 0);
     const retail = Number(row.retailPrice || sale);
     const off = typeof mpOffPercent === 'function' ? mpOffPercent(row) : 0;
+    const wholesale = Number(row.wholesalePrice) || 0;
+    const moq = Math.max(1, Number(row.minWholesaleQty) || 10);
+    const isWholesale = new URLSearchParams(location.search).get('mode') === 'wholesale'
+        && wholesale > 0;
     const cat = row.category || 'Products';
     document.getElementById('mpCrumb').innerHTML =
         `<a href="/">Home</a><span>›</span><a href="/#categories">${mpEscape(cat)}</a><span>›</span><strong>${mpEscape(row.title)}</strong>`;
@@ -50,8 +54,9 @@ function mpPaintProduct(idOrRow) {
     document.getElementById('mpTagline').textContent = row.tagline || row.desc;
     document.getElementById('mpArrival').hidden = row.tag !== 'new';
     if (typeof mpSetReviews === 'function') mpSetReviews(row.reviewList || []);
-    document.getElementById('mpPPrice').innerHTML =
-        `Rs. ${sale.toLocaleString()}${retail > sale ? ` <s>Rs. ${retail.toLocaleString()}</s>` : ''}${off ? `<em>${off}% OFF</em>` : ''}`;
+    document.getElementById('mpPPrice').innerHTML = isWholesale
+        ? `Wholesale Rate: Rs. ${wholesale.toLocaleString()}${retail > wholesale ? ` <s>Rs. ${retail.toLocaleString()}</s>` : ''}<em>Min Bulk Order: ${moq} Pcs</em>`
+        : `Rs. ${sale.toLocaleString()}${retail > sale ? ` <s>Rs. ${retail.toLocaleString()}</s>` : ''}${off ? `<em>${off}% OFF</em>` : ''}`;
     document.getElementById('mpFeat').textContent = row.featureLine || 'Soft · Durable · Ready to ship';
     const images = Array.isArray(row.images) ? row.images : [];
     document.getElementById('mpCount').textContent = images.length ? `1/${images.length}` : '';

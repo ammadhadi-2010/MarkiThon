@@ -96,10 +96,17 @@ button, input { font: inherit; }
 .mp-block { padding: 28px 28px 8px; max-width: 1240px; margin: 0 auto; }
 .mp-block.mp-tight { padding-bottom: 0; margin-bottom: 0; }
 .mp-block.mp-tight-top { padding-top: 4px; }
-#trending.mp-block { padding-bottom: 0; margin-bottom: 0; }
+#categories.mp-block { padding-bottom: 4px; margin-bottom: 0; }
+#trending.mp-block {
+    padding-top: 8px;
+    padding-bottom: 0;
+    margin-top: 0;
+    margin-bottom: 0;
+}
 #mpPromos.mp-block { padding-top: 4px; padding-bottom: 0; margin: 0; }
 #shops.mp-block { padding-top: 4px; margin-top: 0; }
 .mp-head { display: flex; justify-content: space-between; gap: 12px; align-items: end; margin-bottom: 12px; }
+#trending .mp-head { margin-bottom: 8px; }
 .mp-head h2 { margin: 0; }
 .mp-head p, .mp-head a { color: #8b9bb8; font-size: 13px; }
 #trending .mp-head p,

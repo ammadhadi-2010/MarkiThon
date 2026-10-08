@@ -7,7 +7,9 @@
         "start": "node server.js",
         "dev": "nodemon server.js",
         "build": "node -e \"console.log('Static public assets are ready for Vercel.')\"",
-        "deploy:check": "node -e \"require('./config/cloudEnv'); console.log('Deploy env OK')\""
+        "deploy:check": "node -e \"require('./config/cloudEnv'); console.log('Deploy env OK')\"",
+        "purge:dup-products": "node scripts/purge-duplicate-products.js",
+        "purge:dup-products:dry": "node scripts/purge-duplicate-products.js --dry-run"
     },
     "engines": {
         "node": ">=18"

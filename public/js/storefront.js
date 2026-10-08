@@ -16,20 +16,15 @@ function waDigits(phone) {
 }
 
 function sfDedupeProducts(list) {
-    const seen = new Set();
-    const out = [];
-    (Array.isArray(list) ? list : []).forEach((row) => {
-        const id = row && (row.id || row.product_id || row.productId);
-        const sku = String((row && row.sku) || '').trim().toLowerCase();
-        const title = String((row && (row.title || row.name)) || '').trim().toLowerCase();
-        const key = id != null && String(id).trim()
-            ? 'id:' + String(id).trim()
-            : (sku ? 'sku:' + sku : (title ? 'title:' + title : ''));
-        if (!key || seen.has(key)) return;
-        seen.add(key);
-        out.push(row);
-    });
-    return out;
+    return Array.from(new Map(
+        (Array.isArray(list) ? list : []).map((item) => {
+            const title = String((item && (item.title || item.name)) || '').trim().toLowerCase();
+            const sku = String((item && item.sku) || '').trim().toLowerCase();
+            const id = item && (item.id || item.product_id || item.productId);
+            const key = title || (sku ? 'sku:' + sku : String(id || Math.random()));
+            return [key, item];
+        })
+    ).values());
 }
 
 function sfToast(message) {

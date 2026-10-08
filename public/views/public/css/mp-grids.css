@@ -27,11 +27,19 @@
     overflow: hidden;
     text-align: center;
 }
-.mp-cat img, .mp-shop img, .mp-prod img {
+.mp-cat img, .mp-shop img {
     width: 100%;
     height: 110px;
     object-fit: cover;
     background: #10192c;
+    display: block;
+}
+.mp-prod img {
+    width: 100%;
+    height: 110px;
+    object-fit: contain;
+    object-position: center;
+    background: #f8f9fa;
     display: block;
 }
 .mp-cat span, .mp-shop div, .mp-prod div { padding: 10px 12px 12px; display: block; }

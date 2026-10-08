@@ -15,9 +15,10 @@
 .mp-tcard img {
     width: 100%;
     height: 148px;
-    object-fit: cover;
+    object-fit: contain;
+    object-position: center;
     display: block;
-    background: #10192c;
+    background: #f8f9fa;
 }
 .mp-tcard div { padding: 8px 10px 10px; }
 .mp-tcard h3 {
@@ -128,7 +129,7 @@
     }
     .mp-tgrid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
     .mp-tcard { border-radius: 12px; }
-    .mp-tcard img { height: auto; aspect-ratio: 1 / 1; }
+    .mp-tcard img { height: auto; aspect-ratio: 1 / 1; object-fit: contain; background: #f8f9fa; }
     .mp-tcard div { padding: 6px 8px 8px; }
     .mp-tcard h3 { font-size: 12px; }
     .mp-shop-sub, .mp-stars { font-size: 11px; }

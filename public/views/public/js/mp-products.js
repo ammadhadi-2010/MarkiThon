@@ -40,7 +40,12 @@ function mpProductCard(item) {
 }
 
 function mpTrendItems() {
-    const source = typeof mpLiveProducts !== 'undefined' ? mpLiveProducts : [];
+    const raw = typeof mpLiveProducts !== 'undefined' ? mpLiveProducts : [];
+    const source = typeof mpDedupeProducts === 'function'
+        ? mpDedupeProducts(raw)
+        : Array.from(new Map(
+            raw.map((item) => [String(item.title || '').trim().toLowerCase(), item])
+        ).values());
     const featured = source.filter((row) => row.storeFeatured || row.tag === 'best');
     return (featured.length ? featured : source).slice(0, 12);
 }

@@ -6,27 +6,26 @@ function normKey(value) {
 }
 
 function productDedupeKey(row) {
-    const id = row && (row.id || row.product_id || row.productId);
-    if (id != null && String(id).trim()) return 'id:' + String(id).trim();
+    const shop = normKey((row && (row.shopName || row.ShopId || row.shopId)) || '');
+    const title = normKey((row && (row.storeTitle || row.title || row.name)) || '');
+    if (title) return (shop ? shop + '::' : '') + title;
     const sku = normKey(row && row.sku);
     if (sku) return 'sku:' + sku;
-    const barcode = normKey(row && row.barcode);
-    if (barcode) return 'barcode:' + barcode;
-    const title = normKey((row && (row.storeTitle || row.title || row.name)) || '');
-    if (title) return 'title:' + title;
+    const id = row && (row.id || row.product_id || row.productId);
+    if (id != null && String(id).trim()) return 'id:' + String(id).trim();
     return '';
 }
 
 function dedupeProducts(list) {
-    const seen = new Set();
-    const out = [];
+    const map = new Map();
     (Array.isArray(list) ? list : []).forEach((row) => {
-        const key = productDedupeKey(row);
-        if (!key || seen.has(key)) return;
-        seen.add(key);
-        out.push(row);
+        const title = String((row && (row.storeTitle || row.title || row.name)) || '').trim().toLowerCase();
+        const shop = String((row && (row.shopName || row.ShopId || row.shopId)) || '').trim().toLowerCase();
+        const key = title ? ((shop ? shop + '::' : '') + title) : productDedupeKey(row);
+        if (!key || map.has(key)) return;
+        map.set(key, row);
     });
-    return out;
+    return Array.from(map.values());
 }
 
 async function findShopProductConflict(shopId, fields, excludeId) {

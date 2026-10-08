@@ -48,19 +48,16 @@ function mpPreferFeatured(rows) {
 }
 
 function mpDedupeProducts(rows) {
-    const seen = new Set();
-    const out = [];
-    (Array.isArray(rows) ? rows : []).forEach((row) => {
-        const id = row && row.id;
-        const title = String((row && row.title) || '').trim().toLowerCase();
-        const key = id != null && String(id).trim()
-            ? 'id:' + String(id).trim()
-            : (title ? 'title:' + title : '');
-        if (!key || seen.has(key)) return;
-        seen.add(key);
-        out.push(row);
-    });
-    return out;
+    return Array.from(new Map(
+        (Array.isArray(rows) ? rows : []).map((item) => {
+            const title = String((item && item.title) || '').trim().toLowerCase();
+            const shop = String((item && item.shopName) || '').trim().toLowerCase();
+            const key = title
+                ? (shop ? shop + '::' + title : title)
+                : String((item && item.id) || Math.random());
+            return [key, item];
+        })
+    ).values());
 }
 
 async function mpFetchShopProducts() {

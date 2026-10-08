@@ -8,14 +8,7 @@ function onboardingStep7Markup() {
                 </p>
             </div>
             <div class="ob-verify-grid">
-                <div class="ob-qr-card ob-qr-lock" id="obQrCard">
-                    <p class="ob-label">Branded Store QR Code</p>
-                    <div class="ob-qr-wrap">
-                        <canvas id="obBrandQr" class="ob-store-qr" width="280" height="280" aria-label="Branded store QR code"></canvas>
-                        <div class="ob-qr-lock-note" id="obQrLockNote">Locked until admin approval</div>
-                    </div>
-                    <button type="button" class="primary" id="obDownloadQr" disabled>Download QR Code</button>
-                </div>
+                <div class="ob-qr-cards" id="obQrCards"></div>
                 <div class="ob-verify-actions">
                     <p class="ob-label">Digital Assets</p>
                     <button type="button" class="ghost" id="obShareStore" disabled>Share Store</button>
@@ -25,15 +18,31 @@ function onboardingStep7Markup() {
                         <p class="ob-label">Setup Summary</p>
                         <div class="ob-sum-row"><span>Shop Name</span><strong id="obVerifyName">Ammad Hadi Stor</strong></div>
                         <div class="ob-sum-row"><span>Live URL</span><strong id="obVerifyUrl">https://markithon.com/ammadhadistor</strong></div>
+                        <div class="ob-sum-row"><span>Business Type</span><strong id="obVerifyBiz">Both</strong></div>
                     </div>
                 </div>
             </div>
             <section class="ob-pass-card" id="obPassCard">
                 <p class="ob-label">Password Management</p>
                 <div id="obPassForm" autocomplete="off">
-                    <label>Current Password<input id="obCurrentPass" name="obCurrentPass" type="password" autocomplete="off"></label>
-                    <label>New Password<input id="obNewPass" name="obNewPass" type="password" autocomplete="off"></label>
-                    <label>Confirm Password<input id="obConfirmPass" name="obConfirmPass" type="password" autocomplete="off"></label>
+                    <label>Current Password
+                        <span class="pw-field">
+                            <input id="obCurrentPass" name="obCurrentPass" type="password" autocomplete="current-password">
+                            <button type="button" class="pw-toggle" aria-label="Show password"></button>
+                        </span>
+                    </label>
+                    <label>New Password
+                        <span class="pw-field">
+                            <input id="obNewPass" name="obNewPass" type="password" autocomplete="new-password">
+                            <button type="button" class="pw-toggle" aria-label="Show password"></button>
+                        </span>
+                    </label>
+                    <label>Confirm Password
+                        <span class="pw-field">
+                            <input id="obConfirmPass" name="obConfirmPass" type="password" autocomplete="new-password">
+                            <button type="button" class="pw-toggle" aria-label="Show password"></button>
+                        </span>
+                    </label>
                     <p class="ob-pass-note" id="obPassNote"></p>
                     <button class="primary" type="button" id="obPassSave">Update Password</button>
                 </div>

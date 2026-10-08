@@ -19,16 +19,23 @@ function drawRoundedRect(ctx, x, y, size, radius) {
     ctx.closePath();
 }
 
-async function paintBrandedQr(size) {
-    const canvas = document.getElementById('obBrandQr');
+function obQrCanvas(mode) {
+    const key = String(mode || 'retail').toLowerCase() === 'wholesale' ? 'wholesale' : 'retail';
+    return document.querySelector('[data-qr-canvas="' + key + '"]')
+        || document.getElementById('obBrandQr');
+}
+
+async function paintBrandedQr(size, mode) {
+    const canvas = obQrCanvas(mode);
     if (!canvas || typeof storeQrSrc !== 'function') return;
     const dim = size || 280;
+    const kind = String(mode || '').toLowerCase() === 'wholesale' ? 'wholesale' : '';
     canvas.width = dim;
     canvas.height = dim;
     const ctx = canvas.getContext('2d');
     ctx.fillStyle = '#ffffff';
     ctx.fillRect(0, 0, dim, dim);
-    const qr = await loadQrImage(storeQrSrc(dim));
+    const qr = await loadQrImage(storeQrSrc(dim, kind));
     ctx.drawImage(qr, 0, 0, dim, dim);
     const logoUrl = document.getElementById('obLogoUrl') && document.getElementById('obLogoUrl').value;
     if (!logoUrl) return;
@@ -47,16 +54,18 @@ async function paintBrandedQr(size) {
     ctx.restore();
 }
 
-async function downloadBrandedQr() {
+async function downloadBrandedQr(mode) {
     if (typeof storeAssetsUnlocked === 'function' && !storeAssetsUnlocked()) {
         throw new Error('Waiting for admin approval.');
     }
-    await paintBrandedQr(720);
-    const canvas = document.getElementById('obBrandQr');
+    const kind = String(mode || '').toLowerCase() === 'wholesale' ? 'wholesale' : 'retail';
+    await paintBrandedQr(720, kind);
+    const canvas = obQrCanvas(kind);
     if (!canvas) throw new Error('QR canvas is not ready.');
     const blob = await new Promise((resolve) => canvas.toBlob(resolve, 'image/png'));
     if (!blob) throw new Error('Could not export QR code.');
-    downloadBlobFile(blob, 'Ammad-Hadi-Stor-QR.png');
-    await paintBrandedQr(280);
-    showToast('QR code downloaded.');
+    const tag = kind === 'wholesale' ? 'Wholesale' : 'Retail';
+    downloadBlobFile(blob, 'Ammad-Hadi-Stor-' + tag + '-QR.png');
+    await paintBrandedQr(280, kind);
+    showToast(tag + ' QR code downloaded.');
 }

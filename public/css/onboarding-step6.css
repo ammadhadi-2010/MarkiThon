@@ -178,11 +178,13 @@
     color: #e2e8f0;
     font-size: 0.9rem;
 }
-.ob-pass-card input {
+.ob-pass-card .pw-field { display: block; width: 100%; }
+.ob-pass-card input,
+.ob-pass-card .pw-field input {
     width: 100%;
     box-sizing: border-box;
     border-radius: 10px;
-    padding: 10px 12px;
+    padding: 10px 44px 10px 12px;
     border: 1px solid rgba(59, 130, 246, 0.35);
     background: #10182c;
     color: #f8fafc;

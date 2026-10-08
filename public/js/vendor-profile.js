@@ -167,6 +167,7 @@ function bindVendorProfile() {
     });
     document.getElementById('vpPassForm').addEventListener('submit', async (event) => {
         event.preventDefault();
+        const form = document.getElementById('vpPassForm');
         try {
             const data = await vpFetch('/security', {
                 method: 'PUT',
@@ -176,10 +177,14 @@ function bindVendorProfile() {
                     confirmPassword: document.getElementById('vpConfirmPass').value
                 })
             });
-            document.getElementById('vpPassForm').reset();
+            if (typeof resetPasswordFields === 'function') resetPasswordFields(form);
+            else form.reset();
+            if (typeof bindPasswordToggles === 'function') bindPasswordToggles(form);
             vpNote('vpPassNote', data.message || 'Password updated.');
+            if (typeof showToast === 'function') showToast(data.message || 'Password updated.');
         } catch (error) {
             vpNote('vpPassNote', error.message, true);
+            if (typeof showToast === 'function') showToast(error.message);
         }
     });
     document.getElementById('vpBioRegister').addEventListener('click', () => {

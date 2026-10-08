@@ -42,9 +42,24 @@ function vendorProfileMarkup() {
             </form>
             <form class="vp-card" id="vpPassForm" autocomplete="off">
                 <h3>Password Management</h3>
-                <label>Current Password<input id="vpCurrentPass" name="vpCurrentPass" type="password" autocomplete="off" required></label>
-                <label>New Password<input id="vpNewPass" name="vpNewPass" type="password" autocomplete="off" required></label>
-                <label>Confirm Password<input id="vpConfirmPass" name="vpConfirmPass" type="password" autocomplete="off" required></label>
+                <label>Current Password
+                    <span class="pw-field">
+                        <input id="vpCurrentPass" name="vpCurrentPass" type="password" autocomplete="current-password" required>
+                        <button type="button" class="pw-toggle" aria-label="Show password"></button>
+                    </span>
+                </label>
+                <label>New Password
+                    <span class="pw-field">
+                        <input id="vpNewPass" name="vpNewPass" type="password" autocomplete="new-password" required>
+                        <button type="button" class="pw-toggle" aria-label="Show password"></button>
+                    </span>
+                </label>
+                <label>Confirm Password
+                    <span class="pw-field">
+                        <input id="vpConfirmPass" name="vpConfirmPass" type="password" autocomplete="new-password" required>
+                        <button type="button" class="pw-toggle" aria-label="Show password"></button>
+                    </span>
+                </label>
                 <p class="vp-note" id="vpPassNote"></p>
                 <button class="vp-btn" type="submit">Update Password</button>
             </form>

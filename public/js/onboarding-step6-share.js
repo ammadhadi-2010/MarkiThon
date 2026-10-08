@@ -1,13 +1,16 @@
-function liveStoreUrl() {
+function liveStoreUrl(mode) {
     const field = document.getElementById('obShopName');
     const slug = typeof shopSlugFromName === 'function'
         ? shopSlugFromName(field && field.value)
         : 'ammadhadistor';
-    return 'https://markithon.com/' + slug;
+    const base = 'https://markithon.com/' + slug;
+    const kind = String(mode || '').toLowerCase();
+    if (kind === 'wholesale') return base + '?mode=wholesale';
+    return base;
 }
 
-function storeQrSrc(size) {
-    const data = encodeURIComponent(liveStoreUrl());
+function storeQrSrc(size, mode) {
+    const data = encodeURIComponent(liveStoreUrl(mode));
     return '/api/settings/store-qr?size=' + (size || 220) + '&data=' + data;
 }
 
@@ -28,19 +31,21 @@ function downloadBlobFile(blob, filename) {
     setTimeout(() => URL.revokeObjectURL(href), 1500);
 }
 
-async function downloadStoreQr() {
+async function downloadStoreQr(mode) {
     if (typeof storeAssetsUnlocked === 'function' && !storeAssetsUnlocked()) {
         throw new Error('Waiting for admin approval.');
     }
     if (typeof downloadBrandedQr === 'function') {
-        await downloadBrandedQr();
+        await downloadBrandedQr(mode);
         return;
     }
-    const res = await fetch(storeQrSrc(512));
+    const kind = String(mode || '').toLowerCase() === 'wholesale' ? 'wholesale' : '';
+    const res = await fetch(storeQrSrc(512, kind));
     if (!res.ok) throw new Error('Could not download QR code.');
     const blob = await res.blob();
-    downloadBlobFile(blob, 'Ammad-Hadi-Stor-QR.png');
-    showToast('QR code downloaded.');
+    const tag = kind === 'wholesale' ? 'Wholesale' : 'Retail';
+    downloadBlobFile(blob, 'Ammad-Hadi-Stor-' + tag + '-QR.png');
+    showToast(tag + ' QR code downloaded.');
 }
 
 function storeShareText() {
@@ -107,15 +112,18 @@ function downloadShopVcard() {
 }
 
 function bindObStoreShare() {
-    const qr = document.getElementById('obDownloadQr');
-    const share = document.getElementById('obShareStore');
-    const vcf = document.getElementById('obDownloadVcf');
-    if (qr && !qr.dataset.bound) {
-        qr.dataset.bound = '1';
-        qr.addEventListener('click', () => {
-            downloadStoreQr().catch((err) => showToast(err.message));
+    const root = document.getElementById('obForm7') || document;
+    if (!root.dataset.qrShareBound) {
+        root.dataset.qrShareBound = '1';
+        root.addEventListener('click', (event) => {
+            const btn = event.target.closest('[data-qr-download]');
+            if (!btn) return;
+            downloadStoreQr(btn.getAttribute('data-qr-download'))
+                .catch((err) => showToast(err.message));
         });
     }
+    const share = document.getElementById('obShareStore');
+    const vcf = document.getElementById('obDownloadVcf');
     if (share && !share.dataset.bound) {
         share.dataset.bound = '1';
         share.addEventListener('click', () => {

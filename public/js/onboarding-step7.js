@@ -8,8 +8,6 @@ function applyStoreApproval(approved) {
     obIsApproved = Boolean(approved);
     const badge = document.getElementById('obVerifyBadge');
     const copy = document.getElementById('obVerifyCopy');
-    const card = document.getElementById('obQrCard');
-    const note = document.getElementById('obQrLockNote');
     const unlocked = storeAssetsUnlocked();
     if (badge) {
         badge.textContent = unlocked ? 'Store Live & Verified' : 'Pending Admin Approval';
@@ -21,9 +19,15 @@ function applyStoreApproval(approved) {
             ? 'Ammad Hadi Stor is verified. Download the branded QR code, share the store, or save the digital business card.'
             : 'Your store profile is in review. Sharing, QR downloads, and the digital business card stay locked until an admin approves Ammad Hadi Stor.';
     }
-    if (card) card.classList.toggle('ob-qr-lock', !unlocked);
-    if (note) note.hidden = unlocked;
-    ['obDownloadQr', 'obShareStore', 'obDownloadVcf'].forEach((id) => {
+    document.querySelectorAll('#obQrCards .ob-qr-card').forEach((card) => {
+        card.classList.toggle('ob-qr-lock', !unlocked);
+        const note = card.querySelector('.ob-qr-lock-note');
+        if (note) note.hidden = unlocked;
+    });
+    document.querySelectorAll('[data-qr-download]').forEach((btn) => {
+        btn.disabled = !unlocked;
+    });
+    ['obShareStore', 'obDownloadVcf'].forEach((id) => {
         const btn = document.getElementById(id);
         if (btn) btn.disabled = !unlocked;
     });
@@ -33,10 +37,14 @@ function paintVerifyStep() {
     const name = document.getElementById('obShopName');
     const nameEl = document.getElementById('obVerifyName');
     const urlEl = document.getElementById('obVerifyUrl');
+    const bizEl = document.getElementById('obVerifyBiz');
     if (nameEl) nameEl.textContent = (name && name.value) || 'Ammad Hadi Stor';
     if (urlEl && typeof liveStoreUrl === 'function') urlEl.textContent = liveStoreUrl();
-    if (typeof paintBrandedQr === 'function') {
-        paintBrandedQr(280).catch(() => {});
+    if (bizEl) bizEl.textContent = typeof obBusinessMode === 'function' ? obBusinessMode() : 'Both';
+    if (typeof paintObQrCards === 'function') paintObQrCards();
+    applyStoreApproval(obIsApproved);
+    if (typeof bindPasswordToggles === 'function') {
+        bindPasswordToggles(document.getElementById('obPassForm'));
     }
 }
 

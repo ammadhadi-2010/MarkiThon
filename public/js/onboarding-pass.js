@@ -48,13 +48,17 @@ function bindObPassword() {
         }
         try {
             const data = await obChangePassword({ currentPassword, newPassword, confirmPassword });
-            document.getElementById('obCurrentPass').value = '';
-            document.getElementById('obNewPass').value = '';
-            document.getElementById('obConfirmPass').value = '';
+            if (typeof resetPasswordFields === 'function') resetPasswordFields(box);
+            else {
+                document.getElementById('obCurrentPass').value = '';
+                document.getElementById('obNewPass').value = '';
+                document.getElementById('obConfirmPass').value = '';
+            }
             obPassNote(data.message || 'Password updated.');
             if (typeof showToast === 'function') showToast(data.message || 'Password updated.');
         } catch (error) {
             obPassNote(error.message, true);
+            if (typeof showToast === 'function') showToast(error.message);
         }
     });
     if (typeof disableAutofill === 'function') disableAutofill(box);

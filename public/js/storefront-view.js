@@ -122,7 +122,6 @@ function storefrontMarkup(shop, categories) {
         ${storefrontHeroMarkup(shop, logo, socials)}
         ${typeof storefrontShowcaseMarkup === 'function' ? storefrontShowcaseMarkup(shop) : ''}
         <div class="sf-filters" id="sfFilters">${chips}</div>
-        <section id="sfGridTop" class="sf-grid" hidden></section>
         <div id="sfBannerSlot" class="sf-banner-slot" hidden></div>
         <section id="sfGrid" class="sf-grid"></section>
         ${bio ? `<footer class="sf-foot">${escapeHtml(bio)}</footer>` : ''}

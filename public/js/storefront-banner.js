@@ -6,12 +6,13 @@ function storefrontBannerMarkup(shop) {
     const desc = b.description || 'On Selected Bedding & Towels';
     const cta = b.ctaText || 'Shop Sale';
     const link = b.ctaLink || 'sale';
-    const img = b.imageUrl
-        ? `style="background-image:linear-gradient(90deg,rgba(11,17,32,.86),rgba(22,31,54,.4)),url('${String(b.imageUrl).replace(/'/g, '%27')}')"`
+    const media = b.imageUrl
+        ? `<img class="sf-banner-media" src="${escapeHtml(b.imageUrl)}" alt="" loading="lazy">`
         : '';
     return `
         <section class="sf-banner">
-            <div class="sf-banner-hero"${img}>
+            <div class="sf-banner-hero">
+                ${media}
                 <div class="sf-banner-copy">
                     <span class="sf-banner-kicker">${escapeHtml(sub)}</span>
                     <h2>${escapeHtml(head)}</h2>

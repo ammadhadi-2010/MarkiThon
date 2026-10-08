@@ -34,35 +34,17 @@ function sfToast(message) {
     setTimeout(() => el.classList.remove('on'), 2200);
 }
 
-function sfGridCols() {
-    const grid = document.getElementById('sfGrid');
-    if (!grid) return 1;
-    const tracks = getComputedStyle(grid).gridTemplateColumns.split(' ').filter(Boolean);
-    return Math.max(1, tracks.length);
-}
-
-function paintSfBanner(cardsHtml) {
-    const top = document.getElementById('sfGridTop');
+function paintSfBanner() {
     const slot = document.getElementById('sfBannerSlot');
-    const grid = document.getElementById('sfGrid');
+    if (!slot) return;
     const html = typeof storefrontBannerMarkup === 'function' ? storefrontBannerMarkup(sfShop) : '';
-    if (!top || !slot || !grid) return;
     if (!html) {
-        top.innerHTML = '';
-        top.hidden = true;
         slot.innerHTML = '';
         slot.hidden = true;
         return;
     }
-    const cols = sfGridCols();
-    const cards = cardsHtml || [];
-    const split = Math.min(Math.max(cols, 1), cards.length);
-    top.innerHTML = cards.slice(0, split).join('');
-    top.hidden = !split;
     slot.innerHTML = html;
     slot.hidden = false;
-    grid.innerHTML = cards.slice(split).join('')
-        || (split ? '' : '<p class="sf-empty">No products in this category yet.</p>');
 }
 
 function renderSfGrid() {
@@ -71,10 +53,9 @@ function renderSfGrid() {
     );
     const rows = sfDedupeProducts(filtered);
     const grid = document.getElementById('sfGrid');
-    const cards = rows.map(storefrontCardMarkup);
-    grid.innerHTML = cards.join('')
+    paintSfBanner();
+    grid.innerHTML = rows.map(storefrontCardMarkup).join('')
         || '<p class="sf-empty">No products in this category yet.</p>';
-    paintSfBanner(cards);
 }
 
 function openWhatsAppOrder(product) {

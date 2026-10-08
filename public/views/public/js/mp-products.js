@@ -51,12 +51,12 @@ function mpProductCard(item) {
            </div>`;
     return `
         <article class="mp-tcard" data-mpopen="${mpEscape(id)}">
-            <a href="/product/${mpEscape(id)}">
+            <a class="mp-tcard-media" href="/product/${mpEscape(id)}">
                 <img src="${mpEscape(img)}" alt="" loading="lazy"
                     onerror="this.onerror=null;this.src='${MP_PRODUCT_FALLBACK}'">
             </a>
             <button type="button" class="mp-heart" data-wish="${mpEscape(id)}" aria-label="Wishlist">♡</button>
-            <div>
+            <div class="mp-tcard-body">
                 <h3><a href="/product/${mpEscape(id)}">${mpEscape(item.title)}</a></h3>
                 <p class="mp-shop-sub">${mpEscape(item.shopName || 'MarkiThon')}</p>
                 <p class="mp-stars">★ ${mpEscape(item.rating || '4.6')} ${count}</p>

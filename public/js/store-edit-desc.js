@@ -15,7 +15,7 @@ function storeEditDescMarkup() {
         <div class="field">
             <label for="osEditShort">Short Description <span class="os-req">*</span></label>
             <textarea id="osEditShort" name="osEditShort" rows="2" maxlength="200" autocomplete="off"
-                placeholder="High quality fabric, soft and comfortable."></textarea>
+                placeholder="e.g. Fast charging cable with durable braided design."></textarea>
             <small class="os-count" id="osEditShortCount">0/200</small>
         </div>
         <div class="field">

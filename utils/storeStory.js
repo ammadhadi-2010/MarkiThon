@@ -1,5 +1,11 @@
-const FEATURE_ICONS = new Set(['cotton', 'wind', 'sun', 'wash', 'shield', 'star']);
-const CARE_ICONS = new Set(['machine', 'bottle', 'bleach', 'dry']);
+const FEATURE_ICONS = new Set([
+    'bolt', 'check', 'shield', 'star', 'box', 'tag',
+    'cotton', 'wind', 'sun', 'wash'
+]);
+const CARE_ICONS = new Set([
+    'note', 'info', 'alert', 'heart',
+    'machine', 'bottle', 'bleach', 'dry'
+]);
 
 function parseList(raw) {
     try {
@@ -12,8 +18,8 @@ function parseList(raw) {
 
 function packFeatures(raw) {
     return JSON.stringify(parseList(raw).map((item) => ({
-        label: String((item && item.label) || '').trim().slice(0, 80),
-        icon: FEATURE_ICONS.has(item && item.icon) ? item.icon : 'cotton'
+        label: String((item && (item.label || item.title)) || '').trim().slice(0, 80),
+        icon: FEATURE_ICONS.has(item && item.icon) ? item.icon : 'bolt'
     })).filter((item) => item.label).slice(0, 4));
 }
 
@@ -26,8 +32,8 @@ function packLines(raw) {
 
 function packCare(raw) {
     return JSON.stringify(parseList(raw).map((item) => ({
-        label: String((item && item.label) || '').trim().slice(0, 80),
-        icon: CARE_ICONS.has(item && item.icon) ? item.icon : 'machine'
+        label: String((item && (item.label || item.title)) || '').trim().slice(0, 80),
+        icon: CARE_ICONS.has(item && item.icon) ? item.icon : 'note'
     })).filter((item) => item.label).slice(0, 4));
 }
 
@@ -38,18 +44,26 @@ function applyStoryFields(body, data) {
     if (body.storeDescBody !== undefined) {
         data.storeDescBody = String(body.storeDescBody || '').trim().slice(0, 2000);
     }
-    if (body.storeFeatures !== undefined) data.storeFeatures = packFeatures(body.storeFeatures);
-    if (body.storeIncludes !== undefined) data.storeIncludes = packLines(body.storeIncludes);
-    if (body.storeCare !== undefined) data.storeCare = packCare(body.storeCare);
+    const features = body.storeFeatures !== undefined ? body.storeFeatures : body.highlights;
+    const includes = body.storeIncludes !== undefined ? body.storeIncludes : body.packageIncludes;
+    const care = body.storeCare !== undefined ? body.storeCare : body.careInstructions;
+    if (features !== undefined) data.storeFeatures = packFeatures(features);
+    if (includes !== undefined) data.storeIncludes = packLines(includes);
+    if (care !== undefined) data.storeCare = packCare(care);
 }
 
 function publicStory(row) {
+    const features = parseList(row && row.storeFeatures);
+    const includes = parseList(row && row.storeIncludes);
+    const care = parseList(row && row.storeCare);
     return {
         descHeadline: (row && row.storeDescHeadline) || '',
         descBody: (row && row.storeDescBody) || '',
-        features: parseList(row && row.storeFeatures),
-        includes: parseList(row && row.storeIncludes),
-        care: parseList(row && row.storeCare)
+        features,
+        includes,
+        care,
+        packageIncludes: includes,
+        careInstructions: care
     };
 }
 

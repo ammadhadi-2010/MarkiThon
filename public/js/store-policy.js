@@ -4,7 +4,7 @@ function storePolicyMarkup() {
         <div class="card-title">Store Policy Defaults</div>
         <p class="os-policy-note">Used on product pages when a product leaves a policy field blank.</p>
         <form id="osPolicyForm" autocomplete="off">
-            <p class="os-policy-note">Product highlights / quality checked points</p>
+            <p class="os-policy-note">Highlights / Key Bullet Points</p>
             <div class="os-policy-grid">${osPolicyPointRows('osPolicyPoint')}</div>
             ${osPolicyFields({
                 time: 'osPolicyTime',

@@ -51,8 +51,10 @@ function mpDetailRow(data) {
         descHeadline: data.descHeadline || '',
         descBody: data.descBody || data.description || '',
         features: Array.isArray(data.features) ? data.features : [],
-        includes: Array.isArray(data.includes) ? data.includes : [],
-        care: Array.isArray(data.care) ? data.care : []
+        includes: Array.isArray(data.includes) ? data.includes
+            : (Array.isArray(data.packageIncludes) ? data.packageIncludes : []),
+        care: Array.isArray(data.care) ? data.care
+            : (Array.isArray(data.careInstructions) ? data.careInstructions : [])
     };
 }
 

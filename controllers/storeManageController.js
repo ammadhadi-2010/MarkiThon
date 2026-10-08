@@ -58,6 +58,9 @@ function mapManageProduct(row, stock, images) {
         storeFeatures: p.storeFeatures || '[]',
         storeIncludes: p.storeIncludes || '[]',
         storeCare: p.storeCare || '[]',
+        highlights: p.storeFeatures || '[]',
+        packageIncludes: p.storeIncludes || '[]',
+        careInstructions: p.storeCare || '[]',
         retailPrice: toNum(p.retailPrice),
         sellUnit: p.sellUnit || p.stockUnit || 'Gaz'
     };

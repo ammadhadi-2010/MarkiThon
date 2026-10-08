@@ -1,8 +1,8 @@
 function osPolicyPointRows(prefix) {
     return [0, 1, 2, 3].map((index) => `
         <div class="os-point">
-            <input id="${prefix}Title${index}" name="${prefix}Title${index}" maxlength="80" placeholder="Quality point" autocomplete="off">
-            <input id="${prefix}Detail${index}" name="${prefix}Detail${index}" maxlength="160" placeholder="Short detail" autocomplete="off">
+            <input id="${prefix}Title${index}" name="${prefix}Title${index}" maxlength="80" placeholder="e.g. Fast Charging" autocomplete="off">
+            <input id="${prefix}Detail${index}" name="${prefix}Detail${index}" maxlength="160" placeholder="e.g. Supports up to 65W PD" autocomplete="off">
         </div>`).join('');
 }
 
@@ -30,7 +30,7 @@ function storeEditPolicyMarkup() {
     return `
     <section class="os-edit-sec">
         ${osEditSecHead('8', 'Product Page Policies', 'These appear in the three cards beside this product. Leave a field blank to use your store default.')}
-        <p class="os-policy-note">Product highlights / quality checked points</p>
+        <p class="os-policy-note">Highlights / Key Bullet Points</p>
         <div class="os-policy-grid">${osPolicyPointRows('osEditPoint')}</div>
         ${osPolicyFields({
             time: 'osEditShipTime',

@@ -11,7 +11,7 @@ function setInvMobileHint(mobile) {
     if (!hint) return;
     hint.textContent = mobile
         ? 'Identity only: name, brand, category, compatibility, warranty, and piece units.'
-        : 'Identity only: name, brand, category, fabric type, and units. Colors are added when you receive stock.';
+        : 'Identity only: name, brand, category, type, and units. Colors are added when you receive stock.';
 }
 
 function applyInvMobileMode() {

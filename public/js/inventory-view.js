@@ -4,7 +4,7 @@ function inventoryMarkup() {
     <div class="split">
         <div class="card">
             <div class="card-title"><span class="plus">+</span> Master Product Catalog</div>
-            <p class="wl-hint">Identity only: name, brand, category, fabric type, and units. Colors are added when you receive stock.</p>
+            <p class="wl-hint">Identity only: name, brand, category, type, and units. Colors are added when you receive stock.</p>
             <form id="invForm" autocomplete="off">
                 <div class="tabs">
                     <button type="button" class="tab active" data-tab="basic">Basic Info</button>
@@ -12,18 +12,18 @@ function inventoryMarkup() {
                 </div>
                 <div class="panel active" data-panel="basic">
                     <div class="field"><label>Product Name *</label>
-                        <input id="invTitle" name="invTitle" required placeholder="Premium Lawn" autocomplete="off"></div>
+                        <input id="invTitle" name="invTitle" required placeholder="Product name" autocomplete="off"></div>
                     <div class="field"><label>Brand</label>
-                        <input id="invBrand" name="invBrand" placeholder="Gul Ahmed" list="invBrandList" autocomplete="off">
+                        <input id="invBrand" name="invBrand" placeholder="Brand name" list="invBrandList" autocomplete="off">
                         <datalist id="invBrandList"></datalist></div>
                     <div class="grid-2">
                         <div class="field"><label>Category *</label>
                             <select id="invCategory" name="invCategory" autocomplete="off"></select></div>
                         <div class="field" id="invSubWrap"><label>Sub Category</label>
-                            <input id="invSubCategory" name="invSubCategory" placeholder="Unstitched" autocomplete="off"></div>
+                            <input id="invSubCategory" name="invSubCategory" placeholder="Sub category" autocomplete="off"></div>
                     </div>
                     <div class="field" id="invFabricWrap"><label>Fabric Type</label>
-                        <input id="invFabricType" name="invFabricType" placeholder="Cotton/Silk" autocomplete="off"></div>
+                        <input id="invFabricType" name="invFabricType" placeholder="Material / type" autocomplete="off"></div>
                     ${typeof invMobileFieldsMarkup === 'function' ? invMobileFieldsMarkup() : ''}
                     ${typeof invBedsheetFieldsMarkup === 'function' ? invBedsheetFieldsMarkup() : ''}
                     ${typeof invBlanketFieldsMarkup === 'function' ? invBlanketFieldsMarkup() : ''}
@@ -62,7 +62,7 @@ function inventoryMarkup() {
                 </div>
                 <div class="panel" data-panel="images">
                     <div class="image-box">
-                        <img id="invPreview" alt="Fabric preview" hidden>
+                        <img id="invPreview" alt="Product preview" hidden>
                         <div id="invImageHint">+ Add Image</div>
                     </div>
                     <div class="field"><label>Image URL</label>

@@ -57,9 +57,22 @@ body {
 }
 .sf-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 12px;
+    align-items: start;
     padding: 0 16px 16px;
+}
+@media (min-width: 640px) {
+    .sf-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+@media (min-width: 768px) {
+    .sf-grid {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 16px;
+    }
+}
+@media (min-width: 1024px) {
+    .sf-grid { grid-template-columns: repeat(5, minmax(0, 1fr)); }
 }
 #sfGridTop { padding-bottom: 12px; }
 #sfGrid { padding-top: 12px; padding-bottom: 28px; }
@@ -69,6 +82,8 @@ body {
     border-radius: 16px;
     overflow: hidden;
     position: relative;
+    width: 100%;
+    min-width: 0;
 }
 .sf-thumb {
     position: relative;
@@ -198,11 +213,10 @@ body {
 }
 @media (min-width: 720px) {
     .sf-head, .sf-filters, .sf-grid, .sf-banner-slot {
-        max-width: 980px;
+        max-width: 1100px;
         margin-left: auto;
         margin-right: auto;
     }
-    .sf-grid { grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); }
     .sf-banner-hero {
         height: 240px;
         max-height: 240px;
@@ -211,7 +225,7 @@ body {
     .sf-banner-hero h2 { font-size: 26px; }
 }
 .sf-foot {
-    max-width: 980px;
+    max-width: 1100px;
     margin: 0 auto;
     padding: 8px 16px 28px;
     color: #8b9bb8;

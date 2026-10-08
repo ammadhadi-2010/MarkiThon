@@ -13,7 +13,6 @@
 }
 [data-sf-theme="modern-apparel"] .sf-logo { border-radius: 8px; }
 [data-sf-theme="modern-apparel"] .sf-grid {
-    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
     gap: 16px;
 }
 [data-sf-theme="modern-apparel"] .sf-card {
@@ -40,9 +39,6 @@
 [data-sf-theme="luxury-boutique"] .sf-logo {
     border-radius: 50%;
     border: 2px solid #d4af37;
-}
-[data-sf-theme="luxury-boutique"] .sf-grid {
-    grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
 }
 [data-sf-theme="luxury-boutique"] .sf-card {
     border-radius: 0;
@@ -84,14 +80,9 @@
     height: 140px;
 }
 [data-sf-theme="urban-streetwear"] .sf-grid {
-    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
     gap: 10px;
 }
 [data-sf-theme="urban-streetwear"] .sf-chip.on { background: #f43f5e; }
-
-[data-sf-theme="standard-retail"] .sf-grid {
-    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-}
 
 .sf-showcase {
     display: grid;
@@ -113,10 +104,4 @@
 }
 @media (max-width: 700px) {
     .sf-showcase { grid-template-columns: 1fr; }
-    [data-sf-theme="modern-apparel"] .sf-grid,
-    [data-sf-theme="luxury-boutique"] .sf-grid,
-    [data-sf-theme="urban-streetwear"] .sf-grid,
-    [data-sf-theme="standard-retail"] .sf-grid {
-        grid-template-columns: 1fr 1fr;
-    }
 }

@@ -1,10 +1,21 @@
 .mp-empty { color: #8b9bb8; margin: 0; }
 .mp-tgrid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(180px, 210px));
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 12px;
-    justify-content: start;
     align-items: start;
+}
+@media (min-width: 640px) {
+    .mp-tgrid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+@media (min-width: 768px) {
+    .mp-tgrid {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 16px;
+    }
+}
+@media (min-width: 1024px) {
+    .mp-tgrid { grid-template-columns: repeat(5, minmax(0, 1fr)); }
 }
 .mp-tcard {
     display: flex;
@@ -19,7 +30,7 @@
     position: relative;
     min-width: 0;
     width: 100%;
-    max-width: 210px;
+    max-width: none;
 }
 .mp-tcard-media {
     display: block;
@@ -188,11 +199,8 @@
         background: rgba(37, 99, 235, 0.35);
         box-shadow: 0 0 12px rgba(37, 99, 235, 0.28);
     }
-    .mp-tgrid {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-        gap: 8px;
-    }
-    .mp-tcard { border-radius: 12px; max-width: none; }
+    .mp-tgrid { gap: 8px; }
+    .mp-tcard { border-radius: 12px; }
     .mp-tcard img { height: auto; aspect-ratio: 1 / 1; object-fit: contain; background: #f8f9fa; }
     .mp-tcard-body { padding: 6px 8px 8px; gap: 3px; }
     .mp-tcard h3 { font-size: 12px; }

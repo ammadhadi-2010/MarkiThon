@@ -73,8 +73,13 @@ exports.publicShop = async (req, res) => {
         });
         const listed = products.map((row) => {
                 const p = row.toJSON();
-                const retail = Number(p.storeOnlinePrice) > 0 ? p.storeOnlinePrice : p.retailPrice;
-                const was = Number(p.storeDiscountPrice) || 0;
+                let retail = Number(p.storeOnlinePrice) > 0 ? p.storeOnlinePrice : p.retailPrice;
+                let was = Number(p.storeDiscountPrice) || 0;
+                if (was > 0 && retail > 0 && was < retail) {
+                    const swap = was;
+                    was = retail;
+                    retail = swap;
+                }
                 let gallery = [];
                 try {
                     gallery = typeof p.storeImages === 'string'

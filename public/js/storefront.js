@@ -66,9 +66,10 @@ function paintSfBanner(cardsHtml) {
 }
 
 function renderSfGrid() {
-    const rows = sfProducts.filter((p) =>
+    const filtered = sfProducts.filter((p) =>
         typeof matchSfProduct === 'function' ? matchSfProduct(p) : (sfCategory === 'All' || p.category === sfCategory)
     );
+    const rows = sfDedupeProducts(filtered);
     const grid = document.getElementById('sfGrid');
     const cards = rows.map(storefrontCardMarkup);
     grid.innerHTML = cards.join('')
@@ -78,7 +79,10 @@ function renderSfGrid() {
 
 function openWhatsAppOrder(product) {
     const phone = waDigits(sfShop && (sfShop.whatsappNumber || sfShop.phoneNumber));
-    const price = Number(product.retailPrice || 0).toLocaleString();
+    const parts = typeof sfCardPriceParts === 'function'
+        ? sfCardPriceParts(product)
+        : { sell: Number(product.retailPrice || 0) };
+    const price = Number(parts.sell || 0).toLocaleString();
     const text = 'Hi, I want to buy ' + product.title + ' priced at Rs. ' + price + ' from your MarkiThon store.';
     if (!phone) return sfToast('WhatsApp number is not set for this shop.');
     window.open('https://wa.me/' + phone + '?text=' + encodeURIComponent(text), '_blank', 'noopener');

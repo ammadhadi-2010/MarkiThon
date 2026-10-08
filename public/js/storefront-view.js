@@ -129,17 +129,47 @@ function storefrontMarkup(shop, categories) {
         </div>`;
 }
 
+function sfCardPriceParts(product) {
+    let sell = Number(product.retailPrice || product.onlineSellingPrice || product.salePrice || 0);
+    let original = Number(product.wasPrice || product.originalPrice || product.storeDiscountPrice || 0);
+    const pct = Number(product.discountPercent || 0);
+    if (original > 0 && sell > 0 && original < sell) {
+        const swap = original;
+        original = sell;
+        sell = swap;
+    }
+    if (!(original > sell) && pct > 0 && sell > 0) {
+        original = Math.round(sell / (1 - Math.min(pct, 99) / 100));
+    }
+    const hasDiscount = original > sell && sell > 0;
+    const off = hasDiscount ? Math.round((1 - sell / original) * 100) : 0;
+    return { sell, original, hasDiscount, off, unit: product.stockUnit || 'Pcs' };
+}
+
 function storefrontCardMarkup(product) {
-    const price = Number(product.retailPrice || 0).toLocaleString();
-    const unit = product.stockUnit || 'Meter';
+    const parts = sfCardPriceParts(product);
+    const unit = escapeHtml(parts.unit);
     const id = escapeHtml(product.id);
+    const badge = parts.hasDiscount
+        ? `<span class="sf-off">${parts.off}% OFF</span>`
+        : '';
+    const priceHtml = parts.hasDiscount
+        ? `<p class="sf-price">
+                <span class="sf-price-was">Rs. ${parts.original.toLocaleString()}</span>
+                <span class="sf-price-now">Rs. ${parts.sell.toLocaleString()}</span>
+                <span class="sf-price-unit">/ ${unit}</span>
+           </p>`
+        : `<p class="sf-price">Rs. ${parts.sell.toLocaleString()} / ${unit}</p>`;
     return `
         <article class="sf-card" data-sfopen="${id}">
             <a class="sf-open" href="/product/${id}">
-                <img src="${escapeHtml(product.imageUrl || '')}" alt="" onerror="this.style.opacity=0.2">
+                <div class="sf-thumb">
+                    <img src="${escapeHtml(product.imageUrl || '')}" alt="" onerror="this.style.opacity=0.2">
+                    ${badge}
+                </div>
                 <div class="sf-meta">
                     <h2>${escapeHtml(product.title)}</h2>
-                    <p>Rs. ${price} / ${escapeHtml(unit)}</p>
+                    ${priceHtml}
                 </div>
             </a>
             <button type="button" class="sf-wa" data-sfwa="${id}">Order via WhatsApp</button>

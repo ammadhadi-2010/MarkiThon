@@ -68,18 +68,54 @@ body {
     border: 1px solid rgba(59, 130, 246, 0.2);
     border-radius: 16px;
     overflow: hidden;
+    position: relative;
+}
+.sf-thumb {
+    position: relative;
+    width: 100%;
+    height: 132px;
+    background: #f8f9fa;
 }
 .sf-card img {
     width: 100%;
-    height: 120px;
-    object-fit: cover;
-    background: #0b1120;
+    height: 100%;
+    object-fit: contain;
+    object-position: center;
+    background: #f8f9fa;
+    display: block;
+}
+.sf-off {
+    position: absolute;
+    top: 8px;
+    left: 8px;
+    z-index: 2;
+    padding: 2px 8px;
+    border-radius: 999px;
+    background: #dc2626;
+    color: #fff;
+    font-size: 11px;
+    font-weight: 800;
 }
 .sf-open { display: block; color: inherit; }
 .sf-card .sf-wa { margin: 0 10px 10px; width: calc(100% - 20px); }
 .sf-meta { padding: 10px; }
 .sf-card h2 { margin: 0 0 4px; font-size: 14px; }
-.sf-card p { margin: 0 0 10px; color: #93c5fd; font-size: 13px; }
+.sf-card p,
+.sf-price { margin: 0 0 10px; color: #93c5fd; font-size: 13px; }
+.sf-price-was {
+    display: inline-block;
+    margin-right: 6px;
+    text-decoration: line-through;
+    opacity: 0.6;
+    color: #94a3b8;
+    font-size: 12px;
+    font-weight: 500;
+}
+.sf-price-now {
+    color: #4ade80;
+    font-weight: 800;
+}
+.sf-price-unit { color: #93c5fd; font-weight: 600; }
 .sf-wa {
     width: 100%;
     border: 0;

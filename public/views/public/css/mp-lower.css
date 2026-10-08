@@ -33,8 +33,18 @@
 .mp-shop-sub { color: #8b9bb8; font-size: 12px; margin: 4px 0; }
 .mp-stars { color: #fbbf24; font-size: 12px; margin: 0; }
 .mp-stars span { color: #8b9bb8; }
-.mp-tcard .mp-price { color: #facc15 !important; font-weight: 800; margin: 6px 0 10px; }
-.mp-tcard .mp-price s { color: #8b9bb8; font-weight: 500; margin-left: 4px; }
+.mp-tcard .mp-price { color: #e2e8f0; font-weight: 700; margin: 6px 0 10px; }
+.mp-tcard .mp-price-was {
+    display: inline-block;
+    margin-right: 6px;
+    text-decoration: line-through;
+    opacity: 0.6;
+    color: #94a3b8;
+    font-size: 12px;
+    font-weight: 500;
+}
+.mp-tcard .mp-price-now { color: #4ade80; font-weight: 800; }
+.mp-tcard .mp-price-unit { color: #93c5fd; font-weight: 600; }
 .mp-off {
     position: absolute;
     top: 10px;

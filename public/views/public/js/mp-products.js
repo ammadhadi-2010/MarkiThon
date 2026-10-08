@@ -7,33 +7,49 @@ function mpEscape(value) {
 const MP_PRODUCT_FALLBACK =
     'https://images.unsplash.com/photo-1523381210434-271e8be1f52b?auto=format&fit=crop&w=400&q=80';
 
+function mpPriceParts(item) {
+    let sell = Number(item.salePrice || item.onlineSellingPrice || 0);
+    let original = Number(item.retailPrice || item.originalPrice || item.wasPrice || 0);
+    if (!(sell > 0) && original > 0) sell = original;
+    if (original > 0 && sell > 0 && original < sell) {
+        const swap = original;
+        original = sell;
+        sell = swap;
+    }
+    const hasDiscount = original > sell && sell > 0;
+    const off = hasDiscount ? Math.round((1 - sell / original) * 100) : 0;
+    return { sell, original, hasDiscount, off, unit: item.unit || item.stockUnit || 'Pcs' };
+}
+
 function mpOffPercent(item) {
-    const sale = Number(item.salePrice || item.retailPrice || 0);
-    const retail = Number(item.retailPrice || sale);
-    if (!retail || sale >= retail) return 0;
-    return Math.round((1 - sale / retail) * 100);
+    return mpPriceParts(item).off;
 }
 
 function mpProductCard(item) {
-    const sale = Number(item.salePrice || item.retailPrice || 0);
-    const retail = Number(item.retailPrice || sale);
+    const parts = mpPriceParts(item);
     const img = (item.images && item.images[0]) || item.imageUrl || MP_PRODUCT_FALLBACK;
     const id = item.id || 'lawn-suit';
-    const off = mpOffPercent(item);
     const count = item.reviews ? `<span>(${item.reviews})</span>` : '';
+    const priceHtml = parts.hasDiscount
+        ? `<p class="mp-price">
+                <span class="mp-price-was">Rs. ${parts.original.toLocaleString()}</span>
+                <span class="mp-price-now">Rs. ${parts.sell.toLocaleString()}</span>
+                <span class="mp-price-unit">/ ${mpEscape(parts.unit)}</span>
+           </p>`
+        : `<p class="mp-price">Rs. ${parts.sell.toLocaleString()} / ${mpEscape(parts.unit)}</p>`;
     return `
         <article class="mp-tcard" data-mpopen="${mpEscape(id)}">
             <a href="/product/${mpEscape(id)}">
                 <img src="${mpEscape(img)}" alt="" loading="lazy"
                     onerror="this.onerror=null;this.src='${MP_PRODUCT_FALLBACK}'">
-                ${off ? `<span class="mp-off">-${off}%</span>` : ''}
+                ${parts.hasDiscount ? `<span class="mp-off">${parts.off}% OFF</span>` : ''}
             </a>
             <button type="button" class="mp-heart" data-wish="${mpEscape(id)}" aria-label="Wishlist">♡</button>
             <div>
                 <h3><a href="/product/${mpEscape(id)}">${mpEscape(item.title)}</a></h3>
                 <p class="mp-shop-sub">${mpEscape(item.shopName || 'MarkiThon')}</p>
                 <p class="mp-stars">★ ${mpEscape(item.rating || '4.6')} ${count}</p>
-                <p class="mp-price">Rs. ${sale.toLocaleString()}${retail > sale ? ` <s>Rs. ${retail.toLocaleString()}</s>` : ''}</p>
+                ${priceHtml}
                 <button type="button" class="mp-add" data-add="${mpEscape(id)}">Add to Cart</button>
             </div>
         </article>`;

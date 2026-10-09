@@ -1,6 +1,7 @@
 const StoreOrder = require('../models/StoreOrder');
 const { readBuyerToken } = require('../utils/buyerToken');
 const { normalizeItems, mergeDetails, packOrder } = require('../utils/storeOrderDetails');
+const { resolveCustomerEmail, queueOrderEmail } = require('../utils/orderEmail');
 
 const STATUSES = StoreOrder.STATUSES;
 const PAYMENTS = StoreOrder.PAYMENTS;
@@ -51,8 +52,9 @@ exports.createOrder = async (req, res) => {
         } catch (error) {
             buyerId = null;
         }
+        const orderNumber = await nextNumber();
         const row = await StoreOrder.create({
-            orderNumber: await nextNumber(),
+            orderNumber,
             customerName: name,
             customerPhone: String(body.customerPhone || '').trim(),
             items,
@@ -66,6 +68,20 @@ exports.createOrder = async (req, res) => {
             ShopId: 1
         });
         const placed = body.source === 'checkout';
+        const email = await resolveCustomerEmail({
+            email: body.customerEmail || body.email,
+            customerPhone: row.customerPhone,
+            buyerId,
+            details
+        });
+        queueOrderEmail(email, {
+            number: orderNumber,
+            customerName: name,
+            total: row.total,
+            payment: row.payment,
+            items,
+            shopName: 'Ammad Hadi Stor'
+        });
         res.status(201).json({ message: placed ? 'Order placed.' : 'Manual order created.', order: pack(row) });
     } catch (error) {
         res.status(500).json({ message: 'Could not create order.', error: error.message });

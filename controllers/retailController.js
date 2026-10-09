@@ -126,6 +126,29 @@ exports.createBill = async (req, res) => {
             description: `Retail ${billNumber}`,
             settled: true
         });
+        try {
+            const { resolveCustomerEmail, queueOrderEmail } = require('../utils/orderEmail');
+            const email = await resolveCustomerEmail({
+                email: req.body.customerEmail || req.body.email,
+                customerPhone: customerPhone,
+                phone: customerPhone
+            });
+            queueOrderEmail(email, {
+                number: billNumber,
+                billNumber,
+                customerName: bill.customerName,
+                total: grandTotal,
+                paymentMethod: method,
+                items: prepared.map((line) => ({
+                    title: line.product.title,
+                    qty: line.sold,
+                    total: line.total
+                })),
+                shopName: 'Ammad Hadi Stor'
+            });
+        } catch (mailError) {
+            console.error('[email] retail bill:', mailError.message || mailError);
+        }
         res.status(201).json({ message: 'Retail bill saved.', bill });
     } catch (error) {
         await t.rollback();

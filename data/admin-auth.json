@@ -1,6 +1,13 @@
 {
   "users": [
     {
+      "id": "admin-official",
+      "role": "admin",
+      "name": "Super Admin",
+      "email": "markithon.official@gmail.com",
+      "password": "$2a$10$fnWJYQL/5p4G5ebt04x7.ue01E1eMJnFTNe6LY0sixSjcnnmYZ3k."
+    },
+    {
       "id": "admin-1",
       "role": "admin",
       "name": "Super Admin",

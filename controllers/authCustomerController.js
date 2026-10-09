@@ -79,9 +79,15 @@ async function customerForgot(req, res) {
         });
         buyer.preferences = preferences;
         await buyer.save();
+        try {
+            const { sendPasswordResetEmail } = require('../services/emailService');
+            await sendPasswordResetEmail(email, resetToken);
+        } catch (mailError) {
+            console.error('[email] password reset:', mailError.message || mailError);
+        }
         return res.status(200).json({
-            message: 'Reset code created. Open the reset page and enter the code.',
-            resetToken
+            message: 'If an account exists, a reset email has been sent.',
+            resetToken: process.env.NODE_ENV === 'development' ? resetToken : undefined
         });
     } catch (error) {
         return res.status(500).json({ message: 'Could not start password reset.' });

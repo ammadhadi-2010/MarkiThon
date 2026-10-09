@@ -9,6 +9,7 @@ const {
     randomChallenge,
     ensureDefaultVendor
 } = require('../utils/vendorProfile');
+const { sendWelcomeEmail, queueEmail } = require('../services/emailService');
 
 const PENDING = 'Pending Admin Approval';
 
@@ -44,6 +45,7 @@ async function vendorRegister(req, res) {
             password: await hashPassword(password),
             status: PENDING
         });
+        queueEmail(() => sendWelcomeEmail(email, shopName));
         return res.status(201).json({
             message: 'Registration submitted. Your account is Pending Admin Approval.',
             user: publicVendor(vendor)

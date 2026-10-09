@@ -25,7 +25,7 @@ authBindForm('authForm', async (form) => {
             localStorage.setItem('vendor', JSON.stringify(data.user));
             localStorage.setItem('mtVendorUser', JSON.stringify(data.user));
         }
-        location.assign('/dashboard');
+        location.assign('/app');
     } catch (error) {
         if (error.status === 403) {
             const ok = document.getElementById('authOk');
@@ -70,7 +70,7 @@ document.getElementById('authBioBtn').addEventListener('click', async () => {
             localStorage.setItem('vendor', JSON.stringify(data.user));
             localStorage.setItem('mtVendorUser', JSON.stringify(data.user));
         }
-        location.assign('/dashboard');
+        location.assign('/app');
     } catch (err) {
         error.textContent = err.message || 'Thumb scan login failed.';
         error.classList.add('show');

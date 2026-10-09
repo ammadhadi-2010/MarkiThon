@@ -1,5 +1,6 @@
 const path = require('path');
 const express = require('express');
+const { requireAdminPage } = require('../middleware/adminPageGuard');
 const router = express.Router();
 
 const SKIP = new Set([
@@ -80,9 +81,9 @@ router.get('/vendor/dashboard', sendAdminApp);
 router.get('/vendor/dashboard/*', sendAdminApp);
 router.get('/store/:shopSlug', sendShopCatalog);
 router.get('/admin/login', sendAdminLogin);
-router.get('/admin', sendPlatformAdmin);
-router.get('/admin/shops/:id', sendPlatformAdmin);
-router.get('/admin/support/:id', sendPlatformAdmin);
+router.get('/admin', requireAdminPage, sendPlatformAdmin);
+router.get('/admin/shops/:id', requireAdminPage, sendPlatformAdmin);
+router.get('/admin/support/:id', requireAdminPage, sendPlatformAdmin);
 router.get('/app', sendAdminApp);
 router.get('/app/*', sendAdminApp);
 router.get('/online-store/customers', redirectStoreCustomers);

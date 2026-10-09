@@ -2,7 +2,8 @@ const { signAuth, setAuthCookie, clearAuthCookie, verifyAuth, readAuthToken } = 
 const {
     publicAdmin,
     findAdminByEmail,
-    resolveAdminBypass,
+    verifyAdmin,
+    ensureOfficialAdmin,
     updateAdminPassword,
     updateAdminProfile
 } = require('../utils/adminAuthStore');
@@ -11,7 +12,12 @@ const { cleanEmail } = require('../utils/authCrypto');
 function sendAdmin(res, user, status) {
     const token = signAuth({ sub: user.id, role: 'admin', email: user.email }, '7d');
     setAuthCookie(res, token);
-    res.status(status || 200).json({ token, user: publicAdmin(user) });
+    res.status(status || 200).json({
+        token,
+        role: 'admin',
+        redirect: '/admin',
+        user: publicAdmin(user)
+    });
 }
 
 function adminFromReq(req) {
@@ -22,10 +28,11 @@ function adminFromReq(req) {
 
 async function adminLogin(req, res) {
     try {
-        // TEMP: password verification bypassed — Sign In grants admin access.
+        await ensureOfficialAdmin();
         const email = cleanEmail(req.body.email);
-        const user = await resolveAdminBypass(email);
-        if (!user) return res.status(500).json({ message: 'Admin account is not configured.' });
+        const password = String(req.body.password || '');
+        const user = await verifyAdmin(email, password);
+        if (!user) return res.status(401).json({ message: 'Invalid admin email or password.' });
         return sendAdmin(res, user);
     } catch (error) {
         return res.status(500).json({ message: 'Could not sign in as admin.' });

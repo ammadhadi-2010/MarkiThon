@@ -36,7 +36,7 @@ async function saRequireAdmin() {
     } catch (error) {
         /* Fall through to login. */
     }
-    location.replace('/admin/login');
+    location.replace('/login?reason=unauthorized&next=' + encodeURIComponent('/admin'));
     return false;
 }
 
@@ -48,7 +48,7 @@ async function saLogoutAdmin() {
     }
     localStorage.removeItem(SA_AUTH_KEY);
     localStorage.removeItem('mtAuthToken');
-    location.replace('/admin/login');
+    location.replace('/login');
 }
 
 window.saLogoutAdmin = saLogoutAdmin;

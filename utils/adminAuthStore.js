@@ -4,6 +4,8 @@ const { hashPassword, matchPassword, cleanEmail, validEmail } = require('./authC
 
 const file = path.join(__dirname, '../data/admin-auth.json');
 
+const OFFICIAL_ADMIN_EMAIL = 'markithon.official@gmail.com';
+
 async function seedAdmins() {
     const password = await hashPassword('MarkiThon@Admin1');
     return {
@@ -11,10 +13,33 @@ async function seedAdmins() {
             id: 'admin-1',
             role: 'admin',
             name: 'Super Admin',
+            email: OFFICIAL_ADMIN_EMAIL,
+            password
+        }, {
+            id: 'admin-legacy',
+            role: 'admin',
+            name: 'Super Admin',
             email: 'admin@markithon.com',
             password
         }]
     };
+}
+
+async function ensureOfficialAdmin() {
+    const store = await readAdmins();
+    const user = store.users.find((row) => row.email === OFFICIAL_ADMIN_EMAIL);
+    if (user) return store;
+    const bootstrap = String(process.env.ADMIN_BOOTSTRAP_PASSWORD || process.env.ADMIN_PASSWORD || '').trim()
+        || 'MarkiThon@Admin1';
+    store.users.unshift({
+        id: 'admin-official',
+        role: 'admin',
+        name: 'Super Admin',
+        email: OFFICIAL_ADMIN_EMAIL,
+        password: await hashPassword(bootstrap)
+    });
+    await writeAdmins(store);
+    return store;
 }
 
 async function readAdmins() {
@@ -92,7 +117,9 @@ module.exports = {
     findAdminByEmail,
     verifyAdmin,
     readAdmins,
+    ensureOfficialAdmin,
     resolveAdminBypass,
     updateAdminPassword,
-    updateAdminProfile
+    updateAdminProfile,
+    OFFICIAL_ADMIN_EMAIL
 };

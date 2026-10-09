@@ -10,9 +10,11 @@ const {
     customerMe
 } = require('../controllers/authCustomerController');
 const { googleConfig, googleSignIn } = require('../controllers/googleAuthController');
+const { unifiedLogin } = require('../controllers/authUnifiedController');
 
 const router = express.Router();
 
+router.post('/login', unifiedLogin);
 router.post('/admin/login', adminLogin);
 router.get('/admin/me', requireRole('admin'), adminMe);
 router.put('/admin/profile', requireRole('admin'), adminUpdateProfile);

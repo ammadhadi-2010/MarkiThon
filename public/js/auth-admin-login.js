@@ -4,5 +4,5 @@ authBindForm('authForm', async (form) => {
         password: form.authPassword.value
     });
     authSaveToken('admin', data.token);
-    location.assign('/admin');
+    location.assign(data.redirect || '/admin');
 });

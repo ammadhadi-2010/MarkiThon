@@ -1,3 +1,20 @@
+const SA_CAT_EMOJI = ['📁', '👕', '👗', '👟', '👜', '📱', '💻', '🏠', '🛋️', '🧴', '🧸', '💎', '🔧', '💊'];
+
+function saCatToast(message, isError) {
+    let el = document.getElementById('saCatToast');
+    if (!el) {
+        el = document.createElement('div');
+        el.id = 'saCatToast';
+        el.className = 'sa-cat-toast';
+        document.body.appendChild(el);
+    }
+    el.textContent = message || '';
+    el.classList.toggle('is-error', Boolean(isError));
+    el.classList.add('on');
+    clearTimeout(saCatToast._t);
+    saCatToast._t = setTimeout(() => el.classList.remove('on'), 2400);
+}
+
 async function saCatApi(url, method, body) {
     const response = await fetch(url, {
         method,
@@ -7,20 +24,33 @@ async function saCatApi(url, method, body) {
     const data = await response.json();
     if (!response.ok) {
         const note = document.getElementById('saFormNote');
-        if (note) note.textContent = data.message || 'Request failed.';
-        else {
-            saCatFlash = data.message || 'Request failed.';
-            saPaintCategories();
-        }
+        const msg = data.message || 'Request failed.';
+        if (note) note.textContent = msg;
+        else saCatToast(msg, true);
         return null;
     }
     const modal = document.getElementById('saShopModal');
     if (modal) modal.remove();
-    saCatFlash = data.message || 'Saved.';
-    if (data.shopTypes) saCatTree = data.shopTypes;
-    else await saMountCategories();
-    saPaintCategories();
+    saCatToast(data.message || 'Saved.');
+    if (body && body.shopType) saCatOpen[body.shopType] = true;
+    await saMountCategories();
     return data;
+}
+
+function saCatShopTypeOptions(selected) {
+    return (saCatTree || []).map((row) => {
+        const name = row.shopType;
+        const on = name === selected ? ' selected' : '';
+        return `<option value="${saText(name)}"${on}>${saText(name)}</option>`;
+    }).join('');
+}
+
+function saCatEmojiPicker() {
+    return `<div class="sa-cat-emoji" id="saFormEmojiPick">
+        ${SA_CAT_EMOJI.map((icon) =>
+            `<button type="button" class="sa-cat-emoji-btn" data-emoji="${icon}" aria-label="Pick ${icon}">${icon}</button>`
+        ).join('')}
+    </div>`;
 }
 
 function saCatModalFields(shopType, mode, parents) {
@@ -28,8 +58,8 @@ function saCatModalFields(shopType, mode, parents) {
         `<option value="${saText(name)}">${saText(name)}</option>`).join('');
     if (mode === 'sub') {
         return `<label>Shop Type</label>
-            <input value="${saText(shopType)}" disabled>
-            <label>Main Category</label>
+            <input id="saFormShopType" value="${saText(shopType)}" disabled>
+            <label>Parent Main Category</label>
             <select id="saFormParent" required>
                 <option value="">Select category</option>${options}
             </select>
@@ -41,21 +71,43 @@ function saCatModalFields(shopType, mode, parents) {
             <input id="saFormCatName" autocomplete="off" required>`;
     }
     return `<label>Shop Type</label>
-        <input value="${saText(shopType)}" disabled>
-        <label>Main Category Name</label>
-        <input id="saFormCatName" autocomplete="off" required placeholder="e.g. Men's Clothing">`;
+        <select id="saFormShopType" required>${saCatShopTypeOptions(shopType)}</select>
+        <label>Category Name</label>
+        <input id="saFormCatName" autocomplete="off" required placeholder="e.g. Men's Clothing">
+        <label>Category Icon / Emoji <span class="sa-muted">(optional)</span></label>
+        <div class="sa-cat-icon-row">
+            <input id="saFormCatIcon" autocomplete="off" maxlength="8" value="📁" placeholder="📁">
+            ${saCatEmojiPicker()}
+        </div>`;
+}
+
+function saWireCatModal() {
+    document.getElementById('saFormCancel').onclick = () => document.getElementById('saShopModal').remove();
+    const pick = document.getElementById('saFormEmojiPick');
+    if (!pick) return;
+    pick.addEventListener('click', (event) => {
+        const btn = event.target.closest('[data-emoji]');
+        if (!btn) return;
+        const input = document.getElementById('saFormCatIcon');
+        if (input) input.value = btn.dataset.emoji;
+        pick.querySelectorAll('.sa-cat-emoji-btn').forEach((el) => {
+            el.classList.toggle('on', el === btn);
+        });
+    });
 }
 
 function saOpenAddCategory(shopType) {
-    saShopModal('Add Category — ' + saText(shopType), saCatModalFields(shopType, 'add'),
+    saShopModal('Add Category', saCatModalFields(shopType, 'add'),
         '<button type="button" id="saFormCancel">Cancel</button><button class="sa-add" type="submit">Save Category</button>');
-    document.getElementById('saFormCancel').onclick = () => document.getElementById('saShopModal').remove();
+    saWireCatModal();
     document.querySelector('#saShopModal form').onsubmit = (event) => {
         event.preventDefault();
+        const form = event.currentTarget;
         saCatApi('/api/admin/categories', 'POST', {
-            shopType,
-            name: document.getElementById('saFormCatName').value
-        });
+            shopType: document.getElementById('saFormShopType').value,
+            name: document.getElementById('saFormCatName').value,
+            icon: document.getElementById('saFormCatIcon').value
+        }).then((ok) => { if (ok) form.reset(); });
     };
 }
 
@@ -63,22 +115,22 @@ function saOpenAddSubcategory(shopType, parentName) {
     const group = saCatGroup(shopType);
     const parents = (group && group.categories || []).map((row) => row.name);
     if (!parents.length) {
-        saCatFlash = 'Add a main category first.';
-        saPaintCategories();
+        saCatToast('Add a main category first.', true);
         return;
     }
-    saShopModal('Add Subcategory — ' + saText(shopType), saCatModalFields(shopType, 'sub', parents),
+    saShopModal('Add Subcategory', saCatModalFields(shopType, 'sub', parents),
         '<button type="button" id="saFormCancel">Cancel</button><button class="sa-add" type="submit">Save Subcategory</button>');
+    saWireCatModal();
     const parent = document.getElementById('saFormParent');
     if (parentName && parents.includes(parentName)) parent.value = parentName;
-    document.getElementById('saFormCancel').onclick = () => document.getElementById('saShopModal').remove();
     document.querySelector('#saShopModal form').onsubmit = (event) => {
         event.preventDefault();
-        saCatApi('/api/admin/categories/sub', 'POST', {
-            shopType,
+        const form = event.currentTarget;
+        saCatApi('/api/admin/subcategories', 'POST', {
+            shopType: document.getElementById('saFormShopType').value,
             parent: parent.value,
             name: document.getElementById('saFormCatName').value
-        });
+        }).then((ok) => { if (ok) form.reset(); });
     };
 }
 
@@ -86,14 +138,13 @@ function saOpenCatEdit(hit) {
     const label = hit.sub ? hit.sub.name : hit.cat.name;
     const id = hit.sub ? hit.sub.id : hit.cat.id;
     if (!hit.sub && hit.cat.locked) {
-        saCatFlash = 'Standard categories cannot be renamed.';
-        saPaintCategories();
+        saCatToast('Standard categories cannot be renamed.', true);
         return;
     }
     saShopModal('Edit ' + saText(label), saCatModalFields('', 'edit'),
         '<button type="button" id="saFormCancel">Cancel</button><button class="sa-add" type="submit">Save</button>');
     document.getElementById('saFormCatName').value = label;
-    document.getElementById('saFormCancel').onclick = () => document.getElementById('saShopModal').remove();
+    saWireCatModal();
     document.querySelector('#saShopModal form').onsubmit = (event) => {
         event.preventDefault();
         saCatApi('/api/admin/categories/' + encodeURIComponent(id), 'PUT', {

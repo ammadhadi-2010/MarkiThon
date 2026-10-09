@@ -32,7 +32,7 @@ function saCatSection(cat, shopType) {
     return `<div class="sa-cat-section">
         <div class="sa-cat-section-head">
             <div class="sa-cat-section-title">
-                <span class="sa-cat-folder" aria-hidden="true">📁</span>
+                <span class="sa-cat-folder" aria-hidden="true">${saText(cat.icon || '📁')}</span>
                 <strong>${saText(cat.name)}</strong>
                 ${cat.locked ? '<span class="sa-cat-lock">Standard</span>' : ''}
             </div>

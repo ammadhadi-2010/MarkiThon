@@ -31,6 +31,7 @@ router.post('/customers/:id', adminOnly, updateCustomer);
 router.get('/categories', adminOnly, categories);
 router.post('/categories', adminOnly, createCategory);
 router.post('/categories/sub', adminOnly, createSubcategory);
+router.post('/subcategories', adminOnly, createSubcategory);
 router.put('/categories/:id', adminOnly, updateCategory);
 router.post('/categories/:id', adminOnly, updateCategory);
 router.delete('/categories/:id', adminOnly, deleteCategory);

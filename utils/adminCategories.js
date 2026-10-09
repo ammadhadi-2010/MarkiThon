@@ -52,10 +52,15 @@ function emptyTree() {
     Object.keys(SHOP_CATALOG).forEach((shopType) => {
         tree[shopType] = {};
         SHOP_CATALOG[shopType].categories.forEach((name) => {
-            tree[shopType][name] = { locked: true, subs: [] };
+            tree[shopType][name] = { locked: true, subs: [], icon: '📁' };
         });
     });
     return tree;
+}
+
+function cleanIcon(value) {
+    const icon = String(value || '').trim().slice(0, 8);
+    return icon || '📁';
 }
 
 function loadTree() {
@@ -72,7 +77,11 @@ function loadTree() {
             const entry = row[name] || {};
             const subs = Array.isArray(entry.subs) ? entry.subs.map(clean).filter(Boolean) : [];
             const locked = tree[shopType][name] ? true : Boolean(entry.locked);
-            tree[shopType][name] = { locked, subs: [...new Set(subs)] };
+            tree[shopType][name] = {
+                locked,
+                subs: [...new Set(subs)],
+                icon: cleanIcon(entry.icon || (tree[shopType][name] && tree[shopType][name].icon))
+            };
         });
     });
     return tree;
@@ -95,6 +104,7 @@ function listCategories() {
                 return {
                     id: makeId([shopType, name]),
                     name,
+                    icon: cleanIcon(entry.icon),
                     locked: Boolean(entry.locked),
                     subcategories: (entry.subs || []).map((sub) => ({
                         id: makeId([shopType, name, sub]),
@@ -128,11 +138,12 @@ function findTarget(tree, id) {
 function addCategory(body) {
     const shopType = clean(body.shopType);
     const name = clean(body.name);
+    const icon = cleanIcon(body.icon);
     if (!SHOP_CATALOG[shopType]) return { error: 'Choose a valid shop type.' };
     if (name.length < 2) return { error: 'Enter a category name.' };
     const tree = loadTree();
     if (tree[shopType][name]) return { error: 'That category already exists.' };
-    tree[shopType][name] = { locked: false, subs: [] };
+    tree[shopType][name] = { locked: false, subs: [], icon };
     saveTree(tree);
     return { ok: true, message: 'Category added.' };
 }

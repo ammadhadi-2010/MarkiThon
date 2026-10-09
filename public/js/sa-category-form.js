@@ -19,7 +19,7 @@ async function saCatApi(url, method, body) {
         headers: { 'Content-Type': 'application/json' },
         body: body ? JSON.stringify(body) : undefined
     });
-    const data = await response.json();
+    const data = await response.json().catch(() => ({}));
     if (!response.ok) {
         const note = document.getElementById('saFormNote');
         const msg = data.message || 'Request failed.';
@@ -32,7 +32,9 @@ async function saCatApi(url, method, body) {
     saCatToast(data.message || 'Saved.');
     if (body && body.shopType) saCatOpen[body.shopType] = true;
     else if (data.shopType) saCatOpen[data.shopType] = true;
-    await saMountCategories();
+    if (data.shopTypes) saCatTree = data.shopTypes;
+    else await saMountCategories();
+    saPaintCategories();
     return data;
 }
 
@@ -123,12 +125,41 @@ function saOpenCatEdit(hit) {
 
 async function saCatDelete(id, kindHint) {
     const hit = saCatFind(id);
-    if (!hit) return;
+    if (!hit) {
+        saCatToast('Category not found.', true);
+        return;
+    }
     const kind = (hit.sub || kindHint === 'subcategory') ? 'Subcategory' : 'Category';
     const label = hit.sub ? hit.sub.name : hit.cat.name;
     if (!window.confirm('Are you sure you want to delete this ' + kind + '?\n\n"' + label + '"')) return;
-    await saCatApi('/api/admin/categories/' + encodeURIComponent(id), 'DELETE', {
-        shopType: hit.group.shopType
+    const shopType = hit.group.shopType;
+    const ok = await saCatApi(
+        '/api/admin/categories/' + encodeURIComponent(id) + '/delete',
+        'POST',
+        { shopType }
+    );
+    if (!ok) return;
+    saCatDropLocal(id);
+}
+
+async function saCatQuickSubmit(form) {
+    const shopType = form.getAttribute('data-shop-type');
+    const parent = form.getAttribute('data-parent');
+    const input = form.querySelector('input[name="subName"]');
+    const name = String(input && input.value || '').trim();
+    if (!name) return;
+    const btn = form.querySelector('button[type="submit"]');
+    if (btn) btn.disabled = true;
+    const ok = await saCatApi('/api/admin/subcategories', 'POST', { shopType, parent, name });
+    if (btn) btn.disabled = false;
+    if (!ok) return;
+    document.querySelectorAll('.sa-cat-quick').forEach((el) => {
+        if (el.getAttribute('data-shop-type') !== shopType) return;
+        if (el.getAttribute('data-parent') !== parent) return;
+        const next = el.querySelector('input');
+        if (!next) return;
+        next.value = '';
+        next.focus();
     });
 }
 
@@ -142,12 +173,34 @@ document.addEventListener('click', (event) => {
         const key = toggle.dataset.catToggle;
         saCatOpen[key] = !saCatOpen[key];
         saPaintCategories();
+        return;
     }
-    if (add) saOpenAddCategory(add.dataset.catAdd);
-    if (sub) saOpenAddSubcategory(sub.dataset.catSub, sub.dataset.catParent || '');
+    if (add) {
+        event.preventDefault();
+        saOpenAddCategory(add.dataset.catAdd);
+        return;
+    }
+    if (sub) {
+        event.preventDefault();
+        saOpenAddSubcategory(sub.dataset.catSub, sub.dataset.catParent || '');
+        return;
+    }
     if (edit) {
+        event.preventDefault();
         const hit = saCatFind(edit.dataset.catEdit);
         if (hit) saOpenCatEdit(hit);
+        return;
     }
-    if (del) saCatDelete(del.dataset.catDel, del.dataset.catKind || '');
+    if (del) {
+        event.preventDefault();
+        event.stopPropagation();
+        saCatDelete(del.dataset.catDel, del.dataset.catKind || '');
+    }
+});
+
+document.addEventListener('submit', (event) => {
+    const form = event.target.closest('[data-cat-quick]');
+    if (!form) return;
+    event.preventDefault();
+    saCatQuickSubmit(form);
 });

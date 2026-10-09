@@ -35,6 +35,7 @@ router.post('/subcategories', adminOnly, createSubcategory);
 router.put('/categories/:id', adminOnly, updateCategory);
 router.post('/categories/:id', adminOnly, updateCategory);
 router.delete('/categories/:id', adminOnly, deleteCategory);
+router.post('/categories/:id/delete', adminOnly, deleteCategory);
 router.post('/cms/pages', adminOnly, savePage);
 router.put('/cms/pages', adminOnly, savePage);
 router.put('/cms/footer', adminOnly, saveFooter);

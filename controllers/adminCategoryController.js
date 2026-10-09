@@ -54,7 +54,11 @@ exports.deleteCategory = async (req, res) => {
         const row = removeCategory(req.params.id);
         if (row && row.missing) return res.status(404).json({ message: 'Category not found.' });
         if (row && row.error) return res.status(400).json({ message: row.error });
-        res.status(200).json({ message: row.message || 'Deleted.', shopTypes: listCategories() });
+        res.status(200).json({
+            message: row.message || 'Deleted.',
+            shopType: row.shopType,
+            shopTypes: listCategories()
+        });
     } catch (error) {
         res.status(500).json({ message: 'Could not delete the category.' });
     }

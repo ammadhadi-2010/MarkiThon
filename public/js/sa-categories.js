@@ -16,21 +16,26 @@ function saCatActions(shopType) {
 }
 
 function saCatChip(sub) {
-    return `<span class="sa-cat-chip">
+    return `<span class="sa-cat-chip" data-sub-id="${saText(sub.id)}">
         <em>${saText(sub.name)}</em>
         <button type="button" class="sa-cat-x" data-cat-del="${saText(sub.id)}"
             data-cat-kind="subcategory" title="Delete subcategory" aria-label="Delete ${saText(sub.name)}">×</button>
     </span>`;
 }
 
+function saCatQuickAdd(shopType, parentName) {
+    return `<form class="sa-cat-quick" data-cat-quick="1" data-shop-type="${saText(shopType)}"
+        data-parent="${saText(parentName)}">
+        <input name="subName" autocomplete="off" maxlength="80" placeholder="+ Add Subcategory" required>
+        <button type="submit" title="Add subcategory">Add</button>
+    </form>`;
+}
+
 function saCatSection(cat, shopType) {
     const type = saText(shopType);
-    const subs = cat.subcategories || [];
-    const chips = subs.length
-        ? subs.map(saCatChip).join('')
-        : `<button type="button" class="sa-cat-inline-add" data-cat-sub="${type}" data-cat-parent="${saText(cat.name)}">+ Add Subcategory</button>`;
+    const chips = (cat.subcategories || []).map(saCatChip).join('');
     const pen = saCatIcon('<path d="M4 20h4L18 10l-4-4L4 16v4z"/>');
-    return `<div class="sa-cat-section">
+    return `<div class="sa-cat-section" data-cat-id="${saText(cat.id)}">
         <div class="sa-cat-section-head">
             <div class="sa-cat-section-title">
                 <span class="sa-cat-folder" aria-hidden="true">${saText(cat.icon || '📁')}</span>
@@ -42,7 +47,10 @@ function saCatSection(cat, shopType) {
             <button type="button" class="sa-cat-x is-row" data-cat-del="${saText(cat.id)}"
                 data-cat-kind="category" title="Delete category" aria-label="Delete ${saText(cat.name)}">×</button>
         </div>
-        <div class="sa-cat-chips">${chips}</div>
+        <div class="sa-cat-chips">
+            ${chips}
+            ${saCatQuickAdd(type, cat.name)}
+        </div>
     </div>`;
 }
 
@@ -100,13 +108,25 @@ function saCatGroup(shopType) {
 }
 
 function saCatFind(id) {
+    const key = String(id || '');
     for (const group of saCatTree) {
         for (const cat of group.categories || []) {
-            if (cat.id === id) return { group, cat, sub: null };
+            if (cat.id === key) return { group, cat, sub: null };
             for (const sub of cat.subcategories || []) {
-                if (sub.id === id) return { group, cat, sub };
+                if (sub.id === key) return { group, cat, sub };
             }
         }
     }
     return null;
+}
+
+function saCatDropLocal(id) {
+    const hit = saCatFind(id);
+    if (!hit) return;
+    if (hit.sub) {
+        hit.cat.subcategories = (hit.cat.subcategories || []).filter((row) => row.id !== id);
+    } else {
+        hit.group.categories = (hit.group.categories || []).filter((row) => row.id !== id);
+        hit.group.count = hit.group.categories.length;
+    }
 }

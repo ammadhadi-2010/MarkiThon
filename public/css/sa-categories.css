@@ -166,45 +166,37 @@
     background: rgba(220, 38, 38, 0.16);
     border: 1px solid rgba(248, 113, 113, 0.35);
 }
-.sa-cat-inline-add {
+.sa-cat-quick {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 3px 4px 3px 10px;
+    border-radius: 999px;
     border: 1px dashed rgba(99, 102, 241, 0.45);
     background: rgba(99, 102, 241, 0.08);
-    color: #a5b4fc;
-    border-radius: 999px;
-    padding: 5px 12px;
-    font-size: 12px;
-    font-weight: 700;
-    cursor: pointer;
 }
-.sa-cat-inline-add:hover {
-    background: rgba(99, 102, 241, 0.18);
+.sa-cat-quick input {
+    width: 128px;
+    border: 0;
+    background: transparent;
     color: #c7d2fe;
+    font-size: 12px;
+    font-weight: 600;
+    outline: none;
 }
-.sa-cat-icon-row { display: grid; gap: 8px; }
-.sa-cat-icon-row input {
-    max-width: 88px;
-    text-align: center;
-    font-size: 20px;
-}
-.sa-cat-emoji {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 6px;
-}
-.sa-cat-emoji-btn {
-    width: 34px;
-    height: 34px;
-    border-radius: 8px;
-    border: 1px solid rgba(148, 163, 184, 0.25);
-    background: rgba(15, 23, 42, 0.65);
+.sa-cat-quick input::placeholder { color: #a5b4fc; }
+.sa-cat-quick button {
+    border: 0;
+    border-radius: 999px;
+    background: #2563eb;
+    color: #fff;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 5px 10px;
     cursor: pointer;
-    font-size: 16px;
 }
-.sa-cat-emoji-btn.on,
-.sa-cat-emoji-btn:hover {
-    border-color: rgba(59, 130, 246, 0.55);
-    background: rgba(37, 99, 235, 0.22);
-}
+.sa-cat-quick button:hover { background: #1d4ed8; }
+.sa-cat-quick button:disabled { opacity: 0.6; cursor: wait; }
 .sa-cat-toast {
     position: fixed;
     left: 50%;

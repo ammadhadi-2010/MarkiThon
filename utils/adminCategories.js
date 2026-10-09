@@ -63,25 +63,36 @@ function cleanIcon(value) {
     return icon || '📁';
 }
 
+function packEntry(entry, fallbackLocked) {
+    const row = entry || {};
+    const subs = Array.isArray(row.subs) ? row.subs.map(clean).filter(Boolean) : [];
+    return {
+        locked: row.locked !== undefined ? Boolean(row.locked) : Boolean(fallbackLocked),
+        subs: [...new Set(subs)],
+        icon: cleanIcon(row.icon)
+    };
+}
+
 function loadTree() {
     const saved = readJson(treeFile, null);
-    const tree = emptyTree();
     if (!saved || typeof saved !== 'object') {
+        const tree = emptyTree();
         writeJson(treeFile, tree);
         return tree;
     }
+    const tree = {};
     Object.keys(SHOP_CATALOG).forEach((shopType) => {
         const row = saved[shopType];
-        if (!row || typeof row !== 'object') return;
+        tree[shopType] = {};
+        if (!row || typeof row !== 'object') {
+            SHOP_CATALOG[shopType].categories.forEach((name) => {
+                tree[shopType][name] = { locked: true, subs: [], icon: '📁' };
+            });
+            return;
+        }
         Object.keys(row).forEach((name) => {
-            const entry = row[name] || {};
-            const subs = Array.isArray(entry.subs) ? entry.subs.map(clean).filter(Boolean) : [];
-            const locked = tree[shopType][name] ? true : Boolean(entry.locked);
-            tree[shopType][name] = {
-                locked,
-                subs: [...new Set(subs)],
-                icon: cleanIcon(entry.icon || (tree[shopType][name] && tree[shopType][name].icon))
-            };
+            const isStandard = SHOP_CATALOG[shopType].categories.includes(name);
+            tree[shopType][name] = packEntry(row[name], isStandard);
         });
     });
     return tree;
@@ -199,7 +210,8 @@ function removeCategory(id) {
         target.entry.subs = (target.entry.subs || []).filter((item) => item !== target.sub);
     }
     saveTree(tree);
-    return { ok: true, message: 'Deleted.' };
+    const kind = target.kind === 'sub' ? 'Subcategory' : 'Category';
+    return { ok: true, message: kind + ' deleted.', shopType: target.shopType };
 }
 
 module.exports = {

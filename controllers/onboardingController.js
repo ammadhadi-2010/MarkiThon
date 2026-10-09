@@ -192,12 +192,17 @@ exports.saveStep6 = async (req, res) => {
             longitude: req.body.longitude == null || req.body.longitude === '' ? null : Number(req.body.longitude),
             marketPosition: spots.includes(req.body.marketPosition) ? req.body.marketPosition : null,
             landmarkNote: req.body.landmarkNote || null,
-            isSetupCompleted: req.body.finishSetup === true,
             ShopId: 1
         };
+        if (req.body.finishSetup === true) digital.isSetupCompleted = true;
         await row.update(digital);
         const profile = await getOrCreate();
-        await profile.update(digital);
+        const profilePatch = { ...digital };
+        delete profilePatch.isSetupCompleted;
+        await profile.update(profilePatch);
+        if (req.body.finishSetup === true) {
+            await profile.update({ isSetupCompleted: true });
+        }
         res.status(200).json({
             message: req.body.finishSetup === true
                 ? 'Shop setup completed.'

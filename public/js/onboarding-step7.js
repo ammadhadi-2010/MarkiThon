@@ -33,12 +33,19 @@ function applyStoreApproval(approved) {
     });
 }
 
+function obShopDisplayName() {
+    const field = document.getElementById('obShopName');
+    return String((field && field.value) || 'Ammad Hadi Stor').trim() || 'Ammad Hadi Stor';
+}
+
 function paintVerifyStep() {
-    const name = document.getElementById('obShopName');
+    const shopName = obShopDisplayName();
     const nameEl = document.getElementById('obVerifyName');
+    const titleEl = document.getElementById('obQrShopTitle');
     const urlEl = document.getElementById('obVerifyUrl');
     const bizEl = document.getElementById('obVerifyBiz');
-    if (nameEl) nameEl.textContent = (name && name.value) || 'Ammad Hadi Stor';
+    if (nameEl) nameEl.textContent = shopName;
+    if (titleEl) titleEl.textContent = shopName;
     if (urlEl && typeof liveStoreUrl === 'function') urlEl.textContent = liveStoreUrl();
     if (bizEl) bizEl.textContent = typeof obBusinessMode === 'function' ? obBusinessMode() : 'Both';
     if (typeof paintObQrCards === 'function') paintObQrCards();
@@ -46,6 +53,7 @@ function paintVerifyStep() {
     if (typeof bindPasswordToggles === 'function') {
         bindPasswordToggles(document.getElementById('obPassForm'));
     }
+    if (typeof restoreObPassDraft === 'function') restoreObPassDraft();
 }
 
 async function saveOnboardingStep7(event) {
@@ -55,6 +63,8 @@ async function saveOnboardingStep7(event) {
         ...payload,
         finishSetup: true
     });
+    obSetupCompleted = true;
+    obMaxWizard = OB_WIZARD.length - 1;
     showToast(data.message);
     showView('dashboard');
 }

@@ -30,6 +30,14 @@
     gap: 16px;
     margin-bottom: 16px;
 }
+.ob-qr-shop-title {
+    margin: 0 0 12px;
+    text-align: center;
+    font-size: 22px;
+    font-weight: 800;
+    color: #f8fafc;
+    letter-spacing: 0.01em;
+}
 .ob-qr-cards {
     display: grid;
     grid-template-columns: 1fr;
@@ -43,8 +51,15 @@
     border-radius: 14px;
     padding: 12px;
     display: grid;
-    gap: 10px;
+    gap: 8px;
     justify-items: center;
+}
+.ob-qr-shop {
+    margin: 0;
+    text-align: center;
+    font-size: 15px;
+    font-weight: 800;
+    color: #f8fafc;
 }
 .ob-qr-card .ob-label { margin: 0; text-align: center; }
 .ob-qr-card .primary { width: 100%; }

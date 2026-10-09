@@ -2,6 +2,9 @@ let obShopType = 'Fabric Shop';
 let obBusinessType = 'Both';
 let obProductTypes = [];
 let obStep = 1;
+let obSetupCompleted = false;
+let obMaxWizard = 0;
+const obPassDraft = { current: '', next: '', confirm: '' };
 
 function setObChoice(rootId, attr, value) {
     document.querySelectorAll('#' + rootId + ' .ob-chip').forEach((btn) => {
@@ -9,16 +12,59 @@ function setObChoice(rootId, attr, value) {
     });
 }
 
-function showObStep(step) {
+function obCanJumpSteps() {
+    return Boolean(obSetupCompleted);
+}
+
+function obCanOpenStep(step) {
+    if (obSetupCompleted) return true;
+    return obWizardIndex(step) <= obMaxWizard;
+}
+
+function stashObPassDraft() {
+    const cur = document.getElementById('obCurrentPass');
+    const neu = document.getElementById('obNewPass');
+    const conf = document.getElementById('obConfirmPass');
+    if (cur) obPassDraft.current = cur.value;
+    if (neu) obPassDraft.next = neu.value;
+    if (conf) obPassDraft.confirm = conf.value;
+}
+
+function restoreObPassDraft() {
+    const cur = document.getElementById('obCurrentPass');
+    const neu = document.getElementById('obNewPass');
+    const conf = document.getElementById('obConfirmPass');
+    if (cur) cur.value = obPassDraft.current;
+    if (neu) neu.value = obPassDraft.next;
+    if (conf) conf.value = obPassDraft.confirm;
+}
+
+function clearObPassDraft() {
+    obPassDraft.current = '';
+    obPassDraft.next = '';
+    obPassDraft.confirm = '';
+}
+
+function showObStep(step, fromJump) {
     if (Number(step) === 3) step = 4;
+    if (fromJump && !obCanOpenStep(step)) {
+        showToast('Complete earlier steps first, or finish setup once to unlock free navigation.');
+        return;
+    }
+    stashObPassDraft();
     obStep = step;
+    const idx = obWizardIndex(step);
+    if (idx > obMaxWizard) obMaxWizard = idx;
     document.getElementById('obHead').innerHTML = onboardingHeaderMarkup(step);
     document.querySelectorAll('.ob-panel').forEach((panel) => {
         panel.hidden = Number(panel.dataset.obstep) !== step;
     });
+    const passCard = document.getElementById('obPassCard');
+    if (passCard) passCard.hidden = Number(step) !== 7;
     if (step === 6 && typeof paintSetupSummary === 'function') paintSetupSummary();
     if (step === 6 && typeof updateObEmbedMap === 'function') updateObEmbedMap();
     if (step === 7 && typeof paintVerifyStep === 'function') paintVerifyStep();
+    if (Number(step) === 7) restoreObPassDraft();
 }
 
 function obVal(id) {
@@ -112,6 +158,8 @@ function fillOnboarding(row) {
     if (typeof loadStaffStep === 'function') loadStaffStep().catch(() => {});
     if (typeof fillPackage === 'function') fillPackage(row);
     if (typeof fillDigital === 'function') fillDigital(row);
+    obSetupCompleted = Boolean(row.isSetupCompleted || row.isApproved);
+    if (obSetupCompleted) obMaxWizard = OB_WIZARD.length - 1;
     if (typeof applyShopProfile === 'function') {
         applyShopProfile({ shopName: row.shopName, ownerName: row.ownerName });
     }
@@ -144,6 +192,16 @@ async function saveOnboardingStep2(event) {
 
 function bindOnboarding() {
     const root = document.getElementById('view-settings');
+    const card = document.getElementById('obCard');
+    if (card && !card.dataset.jumpBound) {
+        card.dataset.jumpBound = '1';
+        card.addEventListener('click', (event) => {
+            const jump = event.target.closest('[data-objump]');
+            if (!jump || jump.disabled) return;
+            event.preventDefault();
+            showObStep(Number(jump.getAttribute('data-objump')), true);
+        });
+    }
     document.getElementById('obShopType').addEventListener('click', (e) => {
         const btn = e.target.closest('[data-shoptype]');
         if (!btn) return;

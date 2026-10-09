@@ -8,7 +8,10 @@ function onboardingStep7Markup() {
                 </p>
             </div>
             <div class="ob-verify-grid">
-                <div class="ob-qr-cards" id="obQrCards"></div>
+                <div>
+                    <h3 class="ob-qr-shop-title" id="obQrShopTitle">Ammad Hadi Stor</h3>
+                    <div class="ob-qr-cards" id="obQrCards"></div>
+                </div>
                 <div class="ob-verify-actions">
                     <p class="ob-label">Digital Assets</p>
                     <button type="button" class="ghost" id="obShareStore" disabled>Share Store</button>
@@ -22,31 +25,6 @@ function onboardingStep7Markup() {
                     </div>
                 </div>
             </div>
-            <section class="ob-pass-card" id="obPassCard">
-                <p class="ob-label">Password Management</p>
-                <div id="obPassForm" autocomplete="off">
-                    <label>Current Password
-                        <span class="pw-field">
-                            <input id="obCurrentPass" name="obCurrentPass" type="password" autocomplete="current-password">
-                            <button type="button" class="pw-toggle" aria-label="Show password"></button>
-                        </span>
-                    </label>
-                    <label>New Password
-                        <span class="pw-field">
-                            <input id="obNewPass" name="obNewPass" type="password" autocomplete="new-password">
-                            <button type="button" class="pw-toggle" aria-label="Show password"></button>
-                        </span>
-                    </label>
-                    <label>Confirm Password
-                        <span class="pw-field">
-                            <input id="obConfirmPass" name="obConfirmPass" type="password" autocomplete="new-password">
-                            <button type="button" class="pw-toggle" aria-label="Show password"></button>
-                        </span>
-                    </label>
-                    <p class="ob-pass-note" id="obPassNote"></p>
-                    <button class="primary" type="button" id="obPassSave">Update Password</button>
-                </div>
-            </section>
             <div class="ob-actions spread">
                 <button type="button" class="ghost" id="obBack7">← Back</button>
                 <button type="submit" class="ob-complete" id="obComplete">✓ Complete Setup ✓</button>

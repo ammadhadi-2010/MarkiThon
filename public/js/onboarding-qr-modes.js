@@ -18,13 +18,25 @@ function obQrModeList() {
     ];
 }
 
+function obEscQr(value) {
+    return String(value || '').replace(/[&<>"']/g, (ch) => ({
+        '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+    }[ch]));
+}
+
 function paintObQrCards() {
     const slot = document.getElementById('obQrCards');
     if (!slot) return;
     const unlocked = typeof storeAssetsUnlocked === 'function' ? storeAssetsUnlocked() : false;
+    const shopName = typeof obShopDisplayName === 'function'
+        ? obShopDisplayName()
+        : 'Ammad Hadi Stor';
+    const title = document.getElementById('obQrShopTitle');
+    if (title) title.textContent = shopName;
     slot.className = 'ob-qr-cards' + (obQrModeList().length > 1 ? ' dual' : '');
     slot.innerHTML = obQrModeList().map((row) => `
         <div class="ob-qr-card${unlocked ? '' : ' ob-qr-lock'}" data-qrmode="${row.mode}">
+            <p class="ob-qr-shop">${obEscQr(shopName)}</p>
             <p class="ob-label">${row.label}</p>
             <div class="ob-qr-wrap">
                 <canvas class="ob-store-qr" data-qr-canvas="${row.mode}" width="280" height="280"

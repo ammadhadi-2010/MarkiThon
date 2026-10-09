@@ -48,6 +48,7 @@ function bindObPassword() {
         }
         try {
             const data = await obChangePassword({ currentPassword, newPassword, confirmPassword });
+            if (typeof clearObPassDraft === 'function') clearObPassDraft();
             if (typeof resetPasswordFields === 'function') resetPasswordFields(box);
             else {
                 document.getElementById('obCurrentPass').value = '';

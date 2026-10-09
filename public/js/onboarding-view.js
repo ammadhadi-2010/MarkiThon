@@ -17,10 +17,16 @@ function onboardingHeaderMarkup(step) {
     const [title, sub] = titles[step] || titles[1];
     const current = obWizardIndex(step);
     const display = current + 1;
-    const dots = OB_WIZARD.map((_n, i) => {
-        if (i < current) return '<span class="done">✓</span>';
-        if (i === current) return `<span class="on">${display}</span>`;
-        return `<span>${i + 1}</span>`;
+    const free = typeof obCanJumpSteps === 'function' && obCanJumpSteps();
+    const dots = OB_WIZARD.map((n, i) => {
+        const can = free || (typeof obCanOpenStep === 'function' && obCanOpenStep(n));
+        let cls = '';
+        if (i < current) cls = 'done';
+        else if (i === current) cls = 'on';
+        if (can) cls = (cls ? cls + ' ' : '') + 'jump';
+        const label = i < current ? '✓' : String(i + 1);
+        return `<button type="button" class="ob-step-dot${cls ? ' ' + cls : ''}" data-objump="${n}"
+            aria-label="Go to step ${i + 1}" ${can ? '' : 'disabled'}>${label}</button>`;
     }).join('');
     return `
         <div class="ob-head">
@@ -85,6 +91,35 @@ function onboardingStep1Markup() {
         </form>`;
 }
 
+function onboardingPassMarkup() {
+    return `
+        <section class="ob-pass-card" id="obPassCard" hidden>
+            <p class="ob-label">Password Management</p>
+            <div id="obPassForm" autocomplete="off">
+                <label>Current Password
+                    <span class="pw-field">
+                        <input id="obCurrentPass" name="obCurrentPass" type="password" autocomplete="off">
+                        <button type="button" class="pw-toggle" aria-label="Show password"></button>
+                    </span>
+                </label>
+                <label>New Password
+                    <span class="pw-field">
+                        <input id="obNewPass" name="obNewPass" type="password" autocomplete="off">
+                        <button type="button" class="pw-toggle" aria-label="Show password"></button>
+                    </span>
+                </label>
+                <label>Confirm Password
+                    <span class="pw-field">
+                        <input id="obConfirmPass" name="obConfirmPass" type="password" autocomplete="off">
+                        <button type="button" class="pw-toggle" aria-label="Show password"></button>
+                    </span>
+                </label>
+                <p class="ob-pass-note" id="obPassNote"></p>
+                <button class="primary" type="button" id="obPassSave">Update Password</button>
+            </div>
+        </section>`;
+}
+
 function onboardingMarkup() {
     return `<div class="ob-card" id="obCard">
         <div id="obHead">${onboardingHeaderMarkup(1)}</div>
@@ -94,5 +129,6 @@ function onboardingMarkup() {
         ${typeof onboardingStep5Markup === 'function' ? onboardingStep5Markup() : ''}
         ${typeof onboardingStep6Markup === 'function' ? onboardingStep6Markup() : ''}
         ${typeof onboardingStep7Markup === 'function' ? onboardingStep7Markup() : ''}
+        ${onboardingPassMarkup()}
     </div>`;
 }

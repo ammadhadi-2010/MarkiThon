@@ -1,29 +1,43 @@
+const { Op } = require('sequelize');
 const Product = require('../models/Product');
 const ShopProfile = require('../models/ShopProfile');
 const { purgeProductById } = require('../utils/purgeProduct');
 const {
     normStatus,
     applyMarketplaceStatus,
-    mapAdminProduct,
-    countStatuses
+    groupAdminProducts,
+    countStatuses,
+    expandVariantIds
 } = require('../utils/adminProductMap');
 
 async function loadMapped() {
     const [products, profiles] = await Promise.all([
         Product.findAll({
             attributes: [
-                'id', 'title', 'sku', 'category', 'retailPrice', 'storeOnlinePrice', 'stockMeters',
+                'id', 'title', 'sku', 'category', 'color', 'retailPrice', 'storeOnlinePrice', 'stockMeters',
                 'sellUnit', 'stockUnit', 'imageUrl', 'storePublished', 'marketplaceStatus',
                 'storeFeatured', 'storeNewArrival', 'storeSale', 'ShopId', 'createdAt'
             ],
-            order: [['createdAt', 'DESC']]
+            order: [['createdAt', 'DESC']],
+            raw: true
         }),
         ShopProfile.findAll({ attributes: ['ShopId', 'shopName'], raw: true })
     ]);
     const names = {};
     profiles.forEach((row) => { names[row.ShopId] = row.shopName; });
-    return products.map((row, index) =>
-        mapAdminProduct(row.get ? row.get({ plain: true }) : row, names[row.ShopId], index));
+    return groupAdminProducts(products, names);
+}
+
+async function familyIdsForProduct(product) {
+    if (!product) return [];
+    const title = String(product.title || '').trim();
+    if (!title) return [String(product.id)];
+    const pack = await Product.findAll({
+        attributes: ['id'],
+        where: { ShopId: product.ShopId || 1, title },
+        raw: true
+    });
+    return pack.length ? pack.map((row) => String(row.id)) : [String(product.id)];
 }
 
 exports.listProducts = async (req, res) => {
@@ -43,9 +57,12 @@ exports.setStatus = async (req, res) => {
         }
         const product = await Product.findByPk(req.params.id);
         if (!product) return res.status(404).json({ message: 'Product not found.' });
-        await product.update(applyMarketplaceStatus(status));
+        const ids = await familyIdsForProduct(product);
+        await Product.update(applyMarketplaceStatus(status), { where: { id: { [Op.in]: ids } } });
         const products = await loadMapped();
-        const row = products.find((item) => String(item.id) === String(product.id));
+        const row = products.find((item) =>
+            String(item.id) === String(product.id)
+            || (item.variantIds || []).includes(String(product.id)));
         res.status(200).json({
             message: `Product marked ${status}.`,
             product: row,
@@ -75,18 +92,24 @@ exports.removeProduct = async (req, res) => {
 
 exports.bulkProducts = async (req, res) => {
     try {
-        const ids = [...new Set((Array.isArray(req.body && req.body.ids) ? req.body.ids : []).map(String))];
+        const selected = [...new Set((Array.isArray(req.body && req.body.ids) ? req.body.ids : []).map(String))];
         const action = String(req.body && req.body.action || '').toLowerCase();
         const status = normStatus(action);
-        if (!ids.length) return res.status(400).json({ message: 'Select at least one product.' });
+        if (!selected.length) return res.status(400).json({ message: 'Select at least one product.' });
         if (action !== 'delete' && !status) {
             return res.status(400).json({ message: 'Choose Publish, Hide, Pending, or Delete.' });
         }
+        const listed = await loadMapped();
+        const ids = expandVariantIds(listed, selected);
         if (action === 'delete') {
-            for (const id of ids) await purgeProductById(id);
+            const done = new Set();
+            for (const id of ids) {
+                if (done.has(id)) continue;
+                const purged = await purgeProductById(id);
+                (purged && purged.ids ? purged.ids : [id]).forEach((item) => done.add(String(item)));
+            }
         } else {
-            const patch = applyMarketplaceStatus(status);
-            await Product.update(patch, { where: { id: ids } });
+            await Product.update(applyMarketplaceStatus(status), { where: { id: { [Op.in]: ids } } });
         }
         const products = await loadMapped();
         res.status(200).json({

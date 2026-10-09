@@ -6,7 +6,7 @@ function catalogPageActions(active) {
     return `
         <div class="cat-actions" role="toolbar" aria-label="Catalog actions">
             ${btn('product', '+ Add Product')}
-            ${btn('category', '+ Add Category')}
+            ${btn('category', '+ Add Subcategory')}
             ${btn('brand', '+ Add Brand')}
             ${btn('color', '+ Add Color')}
         </div>`;

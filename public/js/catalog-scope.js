@@ -3,6 +3,8 @@ let catalogScope = {
     shopId: 1,
     shopType: '',
     categories: [],
+    mainCategories: [],
+    subcategories: [],
     brands: [],
     groups: []
 };
@@ -13,7 +15,19 @@ function catalogItems(kind) {
 }
 
 function catalogNames(kind) {
-    return catalogItems(kind).map((row) => row.name);
+    if (kind !== 'category') return catalogItems(kind).map((row) => row.name);
+    const mains = Array.isArray(catalogScope.mainCategories)
+        ? catalogScope.mainCategories.map((row) => row.name)
+        : [];
+    const subs = Array.isArray(catalogScope.subcategories)
+        ? catalogScope.subcategories.map((row) => row.name)
+        : catalogItems('category').filter((row) => row.kind === 'subcategory').map((row) => row.name);
+    const names = [];
+    mains.concat(subs).forEach((name) => {
+        if (name && !names.includes(name)) names.push(name);
+    });
+    if (names.length) return names;
+    return catalogItems('category').map((row) => row.name);
 }
 
 function catalogTerm(kind, name) {

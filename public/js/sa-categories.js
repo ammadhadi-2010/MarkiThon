@@ -16,9 +16,12 @@ function saCatActions(shopType) {
 }
 
 function saCatChip(sub) {
-    return `<span class="sa-cat-chip" data-sub-id="${saText(sub.id)}">
+    const shop = sub.source === 'shop';
+    const delId = saText(sub.id);
+    return `<span class="sa-cat-chip${shop ? ' is-shop' : ''}" data-sub-id="${delId}">
         <em>${saText(sub.name)}</em>
-        <button type="button" class="sa-cat-x" data-cat-del="${saText(sub.id)}"
+        ${shop ? `<small title="${saText(sub.shopName || 'Shop')}">Shop</small>` : ''}
+        <button type="button" class="sa-cat-x" data-cat-del="${delId}"
             data-cat-kind="subcategory" title="Delete subcategory" aria-label="Delete ${saText(sub.name)}">×</button>
     </span>`;
 }
@@ -34,7 +37,8 @@ function saCatQuickAdd(shopType, cat) {
 }
 
 function saCatSection(cat, shopType) {
-    const chips = (cat.subcategories || []).map(saCatChip).join('');
+    const adminChips = (cat.subcategories || []).map(saCatChip).join('');
+    const shopChips = (cat.shopSubs || []).map(saCatChip).join('');
     const pen = saCatIcon('<path d="M4 20h4L18 10l-4-4L4 16v4z"/>');
     return `<div class="sa-cat-section" data-cat-id="${saText(cat.id)}">
         <div class="sa-cat-section-head">
@@ -49,7 +53,7 @@ function saCatSection(cat, shopType) {
                 data-cat-kind="category" title="Delete category" aria-label="Delete ${saText(cat.name)}">×</button>
         </div>
         <div class="sa-cat-chips">
-            ${chips}
+            ${adminChips}${shopChips}
             ${saCatQuickAdd(shopType, cat)}
         </div>
     </div>`;

@@ -1,6 +1,6 @@
 const fs = require('fs');
 const path = require('path');
-const { SHOP_CATALOG } = require('./shopTypeCatalog');
+const { SHOP_CATALOG, resolveShopType } = require('./shopTypeCatalog');
 
 const treeFile = path.join(__dirname, '../data/admin-category-tree.json');
 
@@ -236,11 +236,14 @@ function removeCategory(id) {
     return { ok: true, message: kind + ' deleted.', shopType: target.shopType };
 }
 
+function mainNamesForType(shopType) {
+    const key = resolveShopType(shopType);
+    const group = listCategories().find((row) => row.shopType === key);
+    if (group && group.categories.length) return group.categories.map((row) => row.name);
+    return (SHOP_CATALOG[key] || SHOP_CATALOG['General / Multi-Category']).categories.slice();
+}
+
 module.exports = {
-    SHOP_TYPE_ICONS,
-    listCategories,
-    addCategory,
-    addSubcategory,
-    updateCategory,
-    removeCategory
+    SHOP_TYPE_ICONS, listCategories, mainNamesForType,
+    addCategory, addSubcategory, updateCategory, removeCategory
 };

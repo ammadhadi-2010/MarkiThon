@@ -141,6 +141,15 @@
     font-weight: 600;
 }
 .sa-cat-chip em { font-style: normal; }
+.sa-cat-chip.is-shop {
+    border-color: rgba(245, 158, 11, 0.45);
+    background: rgba(245, 158, 11, 0.12);
+}
+.sa-cat-chip.is-shop small {
+    font-size: 10px;
+    font-weight: 800;
+    color: #fbbf24;
+}
 .sa-cat-x {
     width: 22px;
     height: 22px;

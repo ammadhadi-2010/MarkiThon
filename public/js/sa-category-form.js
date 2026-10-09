@@ -120,6 +120,11 @@ function saOpenCatEdit(hit) {
 }
 
 async function saCatDelete(id, kindHint) {
+    if (String(id || '').startsWith('shopsub-')) {
+        if (!window.confirm('Delete this shopkeeper subcategory?')) return;
+        await saCatApi('/api/admin/categories/' + encodeURIComponent(id) + '/delete', 'POST', {});
+        return;
+    }
     const hit = saCatFind(id);
     if (!hit) {
         saCatToast('Category not found.', true);

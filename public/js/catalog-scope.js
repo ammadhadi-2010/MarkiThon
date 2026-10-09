@@ -16,18 +16,20 @@ function catalogItems(kind) {
 
 function catalogNames(kind) {
     if (kind !== 'category') return catalogItems(kind).map((row) => row.name);
-    const mains = Array.isArray(catalogScope.mainCategories)
-        ? catalogScope.mainCategories.map((row) => row.name)
-        : [];
-    const subs = Array.isArray(catalogScope.subcategories)
-        ? catalogScope.subcategories.map((row) => row.name)
-        : catalogItems('category').filter((row) => row.kind === 'subcategory').map((row) => row.name);
+    const type = String(catalogScope.shopType || '').trim();
+    const sameType = (row) => !type || !row.shopType
+        || String(row.shopType).trim().toLowerCase() === type.toLowerCase();
+    const mains = (Array.isArray(catalogScope.mainCategories) ? catalogScope.mainCategories : [])
+        .filter(sameType)
+        .map((row) => row.name);
+    const subs = (Array.isArray(catalogScope.subcategories) ? catalogScope.subcategories : [])
+        .filter(sameType)
+        .map((row) => row.name);
     const names = [];
     mains.concat(subs).forEach((name) => {
         if (name && !names.includes(name)) names.push(name);
     });
-    if (names.length) return names;
-    return catalogItems('category').map((row) => row.name);
+    return names;
 }
 
 function catalogTerm(kind, name) {

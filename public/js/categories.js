@@ -1,13 +1,24 @@
+function catSameShopType(row) {
+    const type = String(catalogScope.shopType || '').trim().toLowerCase();
+    if (!type) return true;
+    const rowType = String((row && row.shopType) || type).trim().toLowerCase();
+    return rowType === type;
+}
+
 function catMainOptions() {
     const mains = Array.isArray(catalogScope.mainCategories)
         ? catalogScope.mainCategories
         : catalogItems('category').filter((row) => row.kind === 'main' || row.source === 'standard');
-    return mains;
+    return mains.filter(catSameShopType);
 }
 
 function catSubRows() {
-    if (Array.isArray(catalogScope.subcategories)) return catalogScope.subcategories;
-    return catalogItems('category').filter((row) => row.kind === 'subcategory' || row.parentName);
+    const rows = Array.isArray(catalogScope.subcategories)
+        ? catalogScope.subcategories
+        : catalogItems('category').filter((row) => row.kind === 'subcategory' || row.parentName);
+    const mains = catMainOptions().map((row) => String(row.name || '').toLowerCase());
+    return rows.filter(catSameShopType).filter((row) =>
+        !mains.length || mains.includes(String(row.parentName || '').toLowerCase()));
 }
 
 function fillCatParentSelect(selected) {

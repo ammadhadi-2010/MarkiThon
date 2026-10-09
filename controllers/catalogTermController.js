@@ -1,7 +1,7 @@
 const ShopProfile = require('../models/ShopProfile');
 const CatalogTerm = require('../models/CatalogTerm');
-const { isSystemName, platformStandardGroups } = require('../utils/shopTypeCatalog');
-const { mainNamesForType } = require('../utils/adminCategories');
+const { isSystemName, platformStandardGroups, resolveShopType } = require('../utils/shopTypeCatalog');
+const { mainNamesForType, listCategories } = require('../utils/adminCategories');
 
 function clean(value) {
     return String(value || '').trim().slice(0, 80);
@@ -13,32 +13,39 @@ function sameName(left, right) {
 
 async function loadShop() {
     const profile = await ShopProfile.findOne({ where: { ShopId: 1 } });
+    const shopType = resolveShopType((profile && profile.shopType) || 'Clothing & Fashion');
     return {
         shopId: profile ? Number(profile.ShopId) : 1,
-        shopType: (profile && profile.shopType) || 'Clothing & Fashion',
+        shopType,
+        productTypes: Array.isArray(profile && profile.productTypes) ? profile.productTypes : [],
         ownerName: (profile && profile.ownerName) || '',
         shopName: (profile && profile.shopName) || 'Ammad Hadi Stor'
     };
 }
 
-function mapSub(row, shop) {
+function mapSub(row, shop, source) {
     return {
         id: row.id,
         name: row.name,
-        parentName: row.parentName || '',
-        source: 'custom',
+        parentName: row.parentName || row.parent || '',
+        source: source || 'custom',
         kind: 'subcategory',
-        locked: false,
+        locked: source === 'standard',
         status: row.status || 'active',
-        shopId: Number(row.shopId),
+        shopId: Number(row.shopId || shop.shopId),
         ownerName: row.ownerName || shop.ownerName,
-        shopType: row.shopType || shop.shopType,
+        shopType: shop.shopType,
         shopName: shop.shopName
     };
 }
 
-function packShop(shop, customs) {
-    const mains = mainNamesForType(shop.shopType).map((name) => ({
+function mainsForShop(shop) {
+    const all = mainNamesForType(shop.shopType);
+    const picked = (shop.productTypes || [])
+        .map((name) => clean(name))
+        .filter((name) => all.some((item) => sameName(item, name)));
+    const names = picked.length ? picked : all;
+    return names.map((name) => ({
         name,
         source: 'standard',
         kind: 'main',
@@ -48,24 +55,57 @@ function packShop(shop, customs) {
         shopType: shop.shopType,
         shopName: shop.shopName
     }));
+}
+
+function adminSubsForMains(shop, mains) {
+    const group = listCategories().find((row) => row.shopType === shop.shopType);
+    if (!group) return [];
+    const allowed = mains.map((row) => row.name);
+    const out = [];
+    group.categories.forEach((cat) => {
+        if (!allowed.some((name) => sameName(name, cat.name))) return;
+        (cat.subcategories || []).forEach((sub) => {
+            out.push(mapSub({
+                id: sub.id,
+                name: sub.name,
+                parentName: cat.name
+            }, shop, 'standard'));
+        });
+    });
+    return out;
+}
+
+function packShop(shop, customs) {
+    const typeKey = resolveShopType(shop.shopType);
+    shop.shopType = typeKey;
+    const mains = mainsForShop(shop);
+    const mainNames = mains.map((row) => row.name);
     const own = customs.filter((row) => Number(row.shopId) === Number(shop.shopId));
-    const subs = own
+    const shopSubs = own
         .filter((row) => row.kind === 'subcategory' || (row.kind === 'category' && row.parentName))
-        .map((row) => mapSub(row, shop));
+        .filter((row) => {
+            const rowType = resolveShopType(row.shopType || typeKey);
+            if (rowType !== typeKey) return false;
+            return mainNames.some((name) => sameName(name, row.parentName));
+        })
+        .map((row) => mapSub(row, shop, 'custom'));
+    const adminSubs = adminSubsForMains(shop, mains);
+    const subs = adminSubs.concat(shopSubs.filter((sub) =>
+        !adminSubs.some((row) => sameName(row.name, sub.name) && sameName(row.parentName, sub.parentName))));
     const brands = own.filter((row) => row.kind === 'brand').map((row) => ({
         name: row.name,
         source: 'custom',
         locked: false,
         shopId: Number(row.shopId),
         ownerName: row.ownerName || shop.ownerName,
-        shopType: row.shopType || shop.shopType,
+        shopType: typeKey,
         shopName: shop.shopName
     }));
     return {
         shopId: shop.shopId,
         shopName: shop.shopName,
         ownerName: shop.ownerName,
-        shopType: shop.shopType,
+        shopType: typeKey,
         mainCategories: mains,
         categories: mains.concat(subs),
         subcategories: subs,

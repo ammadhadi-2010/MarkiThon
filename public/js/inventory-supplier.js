@@ -1,14 +1,4 @@
-const DEFAULT_INV_CATS = ['Lawn', 'Cotton', 'Silk', 'Khaddar', 'Linen', 'Bedsheet', 'Blanket / Kambal'];
 let invShopCategories = [];
-
-function extraInvCategories() {
-    try {
-        const raw = JSON.parse(localStorage.getItem('invCategories') || '[]');
-        return Array.isArray(raw) ? raw.filter(Boolean) : [];
-    } catch (error) {
-        return [];
-    }
-}
 
 function allInvCategories() {
     if (typeof catalogNames === 'function') {
@@ -32,9 +22,11 @@ function fillInvCategoryOptions(selected) {
     const select = document.getElementById('invCategory');
     if (!select) return;
     const names = allInvCategories();
-    if (selected && !names.includes(selected)) names.push(selected);
-    select.innerHTML = names.map((name) => `<option>${escapeHtml(name)}</option>`).join('');
-    if (selected && names.includes(selected)) select.value = selected;
+    const allowed = selected && names.includes(selected) ? selected : '';
+    select.innerHTML = (names.length
+        ? names
+        : ['']).map((name) => `<option>${escapeHtml(name || 'No categories for this shop type')}</option>`).join('');
+    if (allowed) select.value = allowed;
     else if (names[0]) select.value = names[0];
 }
 

@@ -99,6 +99,7 @@ app.use('/api/onboarding', onboardingRoutes);
 app.use('/api/profile', profileRoutes);
 app.use('/api/catalog', catalogRoutes);
 app.use('/api/categories', require('./routes/categoryRoutes'));
+app.use('/api/subcategories', require('./routes/subcategoryRoutes'));
 app.use('/api/buyers', buyerRoutes);
 app.use('/api/auth', roleAuthRoutes);
 app.use('/api/vendor', vendorRoutes);

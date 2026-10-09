@@ -16,9 +16,11 @@ function osThemeSlotMarkup(slot) {
     return `
         <label class="os-th-slot">
             ${slot.label}
-            <span class="os-th-file">
+            <span class="os-th-file" id="osThWrap_${slot.key}">
                 <img id="osThPrev_${slot.key}" alt="" hidden>
                 <span id="osThHint_${slot.key}">Click to upload</span>
+                <button type="button" class="os-th-clear" id="osThClear_${slot.key}"
+                    data-thclear="${slot.key}" aria-label="Remove ${slot.label}" hidden>×</button>
                 <input id="osThFile_${slot.key}" name="osThFile_${slot.key}" type="file"
                     accept="image/*" data-thfile="${slot.key}" autocomplete="off">
             </span>

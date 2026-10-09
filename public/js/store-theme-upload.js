@@ -28,8 +28,12 @@ function paintOsThemeAsset(key, url) {
     const hidden = document.getElementById('osTh_' + key);
     const img = document.getElementById('osThPrev_' + key);
     const hint = document.getElementById('osThHint_' + key);
+    const clear = document.getElementById('osThClear_' + key);
+    const file = document.getElementById('osThFile_' + key);
+    const has = Boolean(url);
     if (hidden) hidden.value = url || '';
-    if (img && url) {
+    if (file && !has) file.value = '';
+    if (img && has) {
         img.src = url;
         img.hidden = false;
         if (hint) hint.hidden = true;
@@ -38,6 +42,12 @@ function paintOsThemeAsset(key, url) {
         img.hidden = true;
         if (hint) hint.hidden = false;
     }
+    if (clear) clear.hidden = !has;
+}
+
+function clearOsThemeAsset(key) {
+    paintOsThemeAsset(key, '');
+    if (typeof paintOsThemePreview === 'function') paintOsThemePreview();
 }
 
 async function applyOsThemeFile(key, file) {

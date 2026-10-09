@@ -1,26 +1,38 @@
+function osThemePreviewClearBtn(key, label) {
+    return `<button type="button" class="os-th-clear os-th-clear-live" data-thclear="${key}"
+        aria-label="Remove ${label}">×</button>`;
+}
+
 function osThemePreviewMarkup(themeId, assets, shopName) {
     const name = shopName || 'Ammad Hadi Stor';
     const logo = assets.logo
-        ? `<img class="sf-logo" src="${assets.logo}" alt="">`
+        ? `<div class="os-th-live-asset">
+                <img class="sf-logo" src="${assets.logo}" alt="">
+                ${osThemePreviewClearBtn('logo', 'Brand Logo')}
+           </div>`
         : '<div class="sf-logo sf-mark">M</div>';
     const hero = assets.hero
         ? ` style="background-image:linear-gradient(100deg,rgba(11,17,32,.82),rgba(22,31,54,.28)),url('${String(assets.hero).replace(/'/g, '%27')}')"`
         : '';
-    const shot = (url, label) => url
-        ? `<div class="sf-shot" style="background-image:url('${String(url).replace(/'/g, '%27')}')"></div>`
+    const heroClear = assets.hero
+        ? osThemePreviewClearBtn('hero', 'Store Hero Banner')
+        : '';
+    const shot = (url, label, key) => url
+        ? `<div class="sf-shot os-th-live-asset" style="background-image:url('${String(url).replace(/'/g, '%27')}')">${osThemePreviewClearBtn(key, label)}</div>`
         : `<div class="sf-shot sf-shot-empty">${label}</div>`;
     return `
-        <header class="sf-head"${hero}>
+        <header class="sf-head os-th-live-asset"${hero}>
             ${logo}
             <div>
                 <p class="sf-kicker">${osThemeById(themeId).name}</p>
                 <h1>${name}</h1>
                 <p>Main Market, Punjab</p>
             </div>
+            ${heroClear}
         </header>
         <section class="sf-showcase">
-            ${shot(assets.showcaseA, 'Collection')}
-            ${shot(assets.showcaseB, 'Showcase')}
+            ${shot(assets.showcaseA, 'Collection', 'showcaseA')}
+            ${shot(assets.showcaseB, 'Showcase', 'showcaseB')}
         </section>
         <section class="sf-grid os-th-demo">
             <article class="sf-card"><div class="os-th-ph"></div><div class="sf-meta"><h2>Sample Lawn</h2><p>Rs. 1,100</p></div></article>
@@ -43,6 +55,6 @@ function paintOsThemeSlots(themeId) {
     const keep = osThemeAssetsRead();
     slotBox.innerHTML = osThemeSlotsMarkup(themeId);
     Object.keys(keep).forEach((key) => paintOsThemeAsset(key, keep[key]));
-    if (typeof bindOsThemeUploads === 'function') bindOsThemeUploads();
+    if (typeof bindOsThemeUploads === 'function') bindOsThemeUploads(true);
     paintOsThemePreview();
 }

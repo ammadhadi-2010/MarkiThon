@@ -55,6 +55,14 @@ function bindStoreTheme() {
     const retail = card.querySelector('input[name="osStoreTheme"][value="standard-retail"]');
     if (retail) retail.checked = true;
     bindOsThemeUploads();
+    card.addEventListener('click', (event) => {
+        const clear = event.target.closest('[data-thclear]');
+        if (!clear) return;
+        event.preventDefault();
+        event.stopPropagation();
+        const key = clear.getAttribute('data-thclear');
+        if (key && typeof clearOsThemeAsset === 'function') clearOsThemeAsset(key);
+    });
     card.addEventListener('change', (event) => {
         if (event.target && event.target.name === 'osStoreTheme') {
             paintOsThemeSlots(event.target.value);

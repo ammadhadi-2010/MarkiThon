@@ -59,7 +59,7 @@ function saOpenAddCategory(shopType) {
     };
 }
 
-function saOpenAddSubcategory(shopType) {
+function saOpenAddSubcategory(shopType, parentName) {
     const group = saCatGroup(shopType);
     const parents = (group && group.categories || []).map((row) => row.name);
     if (!parents.length) {
@@ -69,12 +69,14 @@ function saOpenAddSubcategory(shopType) {
     }
     saShopModal('Add Subcategory — ' + saText(shopType), saCatModalFields(shopType, 'sub', parents),
         '<button type="button" id="saFormCancel">Cancel</button><button class="sa-add" type="submit">Save Subcategory</button>');
+    const parent = document.getElementById('saFormParent');
+    if (parentName && parents.includes(parentName)) parent.value = parentName;
     document.getElementById('saFormCancel').onclick = () => document.getElementById('saShopModal').remove();
     document.querySelector('#saShopModal form').onsubmit = (event) => {
         event.preventDefault();
         saCatApi('/api/admin/categories/sub', 'POST', {
             shopType,
-            parent: document.getElementById('saFormParent').value,
+            parent: parent.value,
             name: document.getElementById('saFormCatName').value
         });
     };
@@ -100,16 +102,12 @@ function saOpenCatEdit(hit) {
     };
 }
 
-async function saCatDelete(id) {
+async function saCatDelete(id, kindHint) {
     const hit = saCatFind(id);
     if (!hit) return;
-    if (!hit.sub && hit.cat.locked) {
-        saCatFlash = 'Standard categories cannot be deleted.';
-        saPaintCategories();
-        return;
-    }
+    const kind = (hit.sub || kindHint === 'subcategory') ? 'Subcategory' : 'Category';
     const label = hit.sub ? hit.sub.name : hit.cat.name;
-    if (!window.confirm('Delete "' + label + '"?')) return;
+    if (!window.confirm('Are you sure you want to delete this ' + kind + '?\n\n"' + label + '"')) return;
     await saCatApi('/api/admin/categories/' + encodeURIComponent(id), 'DELETE');
 }
 
@@ -125,10 +123,10 @@ document.addEventListener('click', (event) => {
         saPaintCategories();
     }
     if (add) saOpenAddCategory(add.dataset.catAdd);
-    if (sub) saOpenAddSubcategory(sub.dataset.catSub);
+    if (sub) saOpenAddSubcategory(sub.dataset.catSub, sub.dataset.catParent || '');
     if (edit) {
         const hit = saCatFind(edit.dataset.catEdit);
         if (hit) saOpenCatEdit(hit);
     }
-    if (del) saCatDelete(del.dataset.catDel);
+    if (del) saCatDelete(del.dataset.catDel, del.dataset.catKind || '');
 });

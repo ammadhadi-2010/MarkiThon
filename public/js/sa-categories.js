@@ -16,28 +16,28 @@ function saCatActions(shopType) {
 }
 
 function saCatChip(sub) {
-    const edit = saCatIcon('<path d="M4 20h4L18 10l-4-4L4 16v4z"/>');
-    const del = saCatIcon('<path d="M6 7h12M9 7V5h6v2m-8 3v9a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V10"/>');
     return `<span class="sa-cat-chip">
         <em>${saText(sub.name)}</em>
-        <button type="button" data-cat-edit="${saText(sub.id)}" title="Edit" aria-label="Edit">${edit}</button>
-        <button type="button" data-cat-del="${saText(sub.id)}" title="Delete" aria-label="Delete">${del}</button>
+        <button type="button" class="sa-cat-x" data-cat-del="${saText(sub.id)}"
+            data-cat-kind="subcategory" title="Delete subcategory" aria-label="Delete ${saText(sub.name)}">×</button>
     </span>`;
 }
 
-function saCatSection(cat) {
-    const edit = saCatIcon('<path d="M4 20h4L18 10l-4-4L4 16v4z"/>');
-    const del = saCatIcon('<path d="M6 7h12M9 7V5h6v2m-8 3v9a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V10"/>');
-    const chips = (cat.subcategories || []).map((sub) => saCatChip(sub)).join('')
-        || '<span class="sa-muted sa-cat-empty">No subcategories yet.</span>';
-    const tools = cat.locked
-        ? '<span class="sa-cat-lock">Standard</span>'
-        : `<button type="button" data-cat-edit="${saText(cat.id)}" title="Edit">${edit}</button>
-           <button type="button" data-cat-del="${saText(cat.id)}" title="Delete">${del}</button>`;
+function saCatSection(cat, shopType) {
+    const type = saText(shopType);
+    const subs = cat.subcategories || [];
+    const chips = subs.length
+        ? subs.map(saCatChip).join('')
+        : `<button type="button" class="sa-cat-inline-add" data-cat-sub="${type}" data-cat-parent="${saText(cat.name)}">+ Add Subcategory</button>`;
     return `<div class="sa-cat-section">
         <div class="sa-cat-section-head">
-            <strong>${saText(cat.name)}</strong>
-            <div class="sa-cat-mini">${tools}</div>
+            <div class="sa-cat-section-title">
+                <span class="sa-cat-folder" aria-hidden="true">📁</span>
+                <strong>${saText(cat.name)}</strong>
+                ${cat.locked ? '<span class="sa-cat-lock">Standard</span>' : ''}
+            </div>
+            <button type="button" class="sa-cat-x is-row" data-cat-del="${saText(cat.id)}"
+                data-cat-kind="category" title="Delete category" aria-label="Delete ${saText(cat.name)}">×</button>
         </div>
         <div class="sa-cat-chips">${chips}</div>
     </div>`;
@@ -46,7 +46,7 @@ function saCatSection(cat) {
 function saCatCard(group) {
     const open = Boolean(saCatOpen[group.shopType]);
     const body = open
-        ? `<div class="sa-cat-body">${(group.categories || []).map(saCatSection).join('')
+        ? `<div class="sa-cat-body">${(group.categories || []).map((cat) => saCatSection(cat, group.shopType)).join('')
             || '<p class="sa-muted">No categories yet. Add the first main category.</p>'}</div>`
         : '';
     return `<article class="sa-cat-card${open ? ' is-open' : ''}" data-cat-type="${saText(group.shopType)}">

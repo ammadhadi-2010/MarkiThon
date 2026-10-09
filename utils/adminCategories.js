@@ -184,7 +184,6 @@ function removeCategory(id) {
     const target = findTarget(tree, id);
     if (!target) return { missing: true };
     if (target.kind === 'category') {
-        if (target.entry.locked) return { error: 'Standard categories cannot be deleted.' };
         delete tree[target.shopType][target.name];
     } else {
         target.entry.subs = (target.entry.subs || []).filter((item) => item !== target.sub);

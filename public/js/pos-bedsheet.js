@@ -79,6 +79,44 @@ function posHitStock(product) {
     return `${qty}m`;
 }
 
+function posIsBlankColor(product) {
+    const color = String(product && product.color || '').trim().toLowerCase();
+    return !color || color === 'no color' || color === 'default' || color === '-';
+}
+
+function posSameFamily(left, right) {
+    if (String(left.title || '').trim().toLowerCase() !== String(right.title || '').trim().toLowerCase()) {
+        return false;
+    }
+    const brand = String(left.brand || '').trim().toLowerCase();
+    const other = String(right.brand || '').trim().toLowerCase();
+    return !brand || !other || brand === other;
+}
+
+/** In-stock rows for POS/wholesale search; drops 0-stock and blank parents when variants exist. */
+function posSellableRows(rows) {
+    const list = (typeof shopInventory === 'function' ? shopInventory(rows) : (rows || []))
+        .filter((row) => Number(row && row.stockMeters) > 0);
+    const seenId = new Set();
+    const seenSku = new Set();
+    const out = [];
+    list.forEach((row) => {
+        const id = String(row.id || '');
+        if (!id || seenId.has(id)) return;
+        if (posIsBlankColor(row)) {
+            const hasVariant = list.some((item) =>
+                String(item.id) !== id && posSameFamily(row, item) && !posIsBlankColor(item));
+            if (hasVariant) return;
+        }
+        const sku = String(row.sku || '').trim().toLowerCase();
+        if (sku && seenSku.has(sku)) return;
+        seenId.add(id);
+        if (sku) seenSku.add(sku);
+        out.push(row);
+    });
+    return out;
+}
+
 function posHitButtonHtml(product, attr) {
     const spec = (typeof posItemSpecLabel === 'function' ? posItemSpecLabel(product) : '')
         || bedsheetSpecLabel(product);

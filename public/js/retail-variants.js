@@ -66,7 +66,10 @@ function searchRtProducts(q) {
         hits.hidden = true;
         return;
     }
-    const rows = shopInventory(productsCache).filter((p) =>
+    const pool = typeof posSellableRows === 'function'
+        ? posSellableRows(productsCache)
+        : shopInventory(productsCache).filter((p) => Number(p.stockMeters) > 0);
+    const rows = pool.filter((p) =>
         (typeof posSearchBlob === 'function' ? posSearchBlob(p) : [p.title, p.sku, p.barcode, p.brand, p.color])
             .some((v) => rtNorm(v).includes(term))
     ).slice(0, 20);

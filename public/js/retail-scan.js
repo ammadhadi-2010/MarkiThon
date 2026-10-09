@@ -16,7 +16,9 @@ function matchRtScan(query) {
     const raw = parsed.raw.toLowerCase();
     const sku = parsed.sku.toLowerCase();
     const color = parsed.color.toLowerCase();
-    const list = shopInventory(productsCache);
+    const list = typeof posSellableRows === 'function'
+        ? posSellableRows(productsCache)
+        : shopInventory(productsCache).filter((p) => Number(p.stockMeters) > 0);
     const exact = list.find((p) => {
         const codes = rtScanCodes(p);
         return codes.includes(raw) || codes.includes(sku);

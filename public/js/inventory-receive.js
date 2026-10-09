@@ -99,7 +99,12 @@ function searchRecvProducts(q) {
         return;
     }
     const seen = new Set();
-    const rows = shopInventory(productsCache).filter((p) => {
+    const ranked = shopInventory(productsCache).slice().sort((a, b) => {
+        const aBlank = !String(a.color || '').trim() ? 0 : 1;
+        const bBlank = !String(b.color || '').trim() ? 0 : 1;
+        return aBlank - bBlank;
+    });
+    const rows = ranked.filter((p) => {
         const hit = [p.title, p.sku, p.barcode, p.brand]
             .some((v) => String(v || '').toLowerCase().includes(term));
         if (!hit) return false;

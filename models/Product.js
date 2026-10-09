@@ -38,6 +38,7 @@ const Product = sequelize.define('Product', {
     blanketWeight: { type: DataTypes.FLOAT, allowNull: true },
     blanketMaterial: { type: DataTypes.STRING, allowNull: true },
     storePublished: { type: DataTypes.BOOLEAN, defaultValue: true },
+    marketplaceStatus: { type: DataTypes.STRING, allowNull: true, defaultValue: null },
     storeFeatured: { type: DataTypes.BOOLEAN, defaultValue: false },
     storeNewArrival: { type: DataTypes.BOOLEAN, defaultValue: false },
     storeSale: { type: DataTypes.BOOLEAN, defaultValue: false },

@@ -3,9 +3,11 @@ function saProdFields(row) {
     const choice = (list, current) => list.map((name) => `<option value="${name}"${name === current ? ' selected' : ''}>${name || 'None'}</option>`).join('');
     const lock = item.locked ? ' disabled' : '';
     const note = item.locked ? '<p class="sa-muted">Title, price, and stock stay in the shopkeeper catalog. Status and tag save here.</p>' : '';
+    const cats = saProdCatList();
+    const catOpts = cats.length ? cats : ['Other'];
     return `${note}<label>Product title</label><input id="saFormTitle" autocomplete="off" value="${saText(item.title)}"${lock}>
         <label>Shop</label><input id="saFormShop" autocomplete="off" value="${saText(item.shop)}"${lock}>
-        <label>Category</label><select id="saFormCategory"${lock}>${choice(saProdCatList(), item.category)}</select>
+        <label>Category</label><select id="saFormCategory"${lock}>${choice(catOpts, item.category)}</select>
         <label>Price</label><input id="saFormPrice" type="number" min="1" autocomplete="off" value="${item.price}"${lock}>
         <label>Original price</label><input id="saFormWas" type="number" min="0" autocomplete="off" value="${item.was || ''}"${lock}>
         <label>Unit</label><input id="saFormUnit" autocomplete="off" value="${saText(item.unit || 'Pcs')}"${lock}>
@@ -28,26 +30,95 @@ function saProdBody() {
     };
 }
 
+function saApplyProdPayload(data) {
+    if (data.products) saProdRows = data.products;
+    saProdFlash = data.message || 'Products updated.';
+    saPaintProducts();
+}
+
+async function saProdApi(url, options) {
+    const response = await fetch(url, options);
+    const data = await response.json().catch(() => ({}));
+    if (!response.ok) {
+        saProdFlash = data.message || 'Could not update products.';
+        saPaintProducts();
+        return null;
+    }
+    return data;
+}
+
+async function saProdSetStatus(id, status) {
+    const data = await saProdApi('/api/admin/products/' + encodeURIComponent(id) + '/status', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status })
+    });
+    if (data) saApplyProdPayload(data);
+}
+
+async function saProdDeleteIds(ids) {
+    if (!ids.length) return;
+    if (ids.length === 1) {
+        const data = await saProdApi('/api/admin/products/' + encodeURIComponent(ids[0]), { method: 'DELETE' });
+        if (data) {
+            ids.forEach((id) => saProdPick.delete(String(id)));
+            saApplyProdPayload(data);
+        }
+        return;
+    }
+    const data = await saProdApi('/api/admin/products/bulk', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ids, action: 'delete' })
+    });
+    if (data) {
+        ids.forEach((id) => saProdPick.delete(String(id)));
+        saApplyProdPayload(data);
+    }
+}
+
+async function saProdBulk(action) {
+    const ids = [...saProdPick];
+    if (!ids.length) {
+        saProdFlash = 'Select products first.';
+        saPaintProducts();
+        return;
+    }
+    if (action === 'delete') {
+        saConfirmProdDelete(ids);
+        return;
+    }
+    const data = await saProdApi('/api/admin/products/bulk', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ids, action })
+    });
+    if (data) saApplyProdPayload(data);
+}
+
+function saConfirmProdDelete(ids) {
+    const label = ids.length === 1
+        ? `Delete "${saText((saProdById(ids[0]) || {}).title || 'this product')}" permanently?`
+        : `Delete ${ids.length} selected products permanently?`;
+    saShopModal('Confirm Delete', `<p>${label}</p><p class="sa-muted">This removes the product from the database and marketplace.</p>`,
+        '<button type="button" id="saFormCancel">Cancel</button><button class="sa-add sa-danger" type="button" id="saProdConfirmDel">Delete</button>');
+    document.getElementById('saFormCancel').addEventListener('click', () => document.getElementById('saShopModal').remove());
+    document.getElementById('saProdConfirmDel').addEventListener('click', async () => {
+        document.getElementById('saShopModal').remove();
+        await saProdDeleteIds(ids.map(String));
+    });
+}
+
 async function saProdSend(url, body) {
-    const response = await fetch(url, {
+    const data = await saProdApi(url, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(body)
     });
-    const data = await response.json();
-    const note = document.getElementById('saFormNote');
-    if (!response.ok) {
-        if (note) note.textContent = data.message || 'Could not save the product.';
-        else saProdFlash = data.message || 'Could not save the product.';
-        if (!note) saPaintProducts();
-        return;
-    }
+    if (!data) return;
     const modal = document.getElementById('saShopModal');
     if (modal) modal.remove();
-    saProdFlash = data.message || 'Products updated.';
-    if (data.products) saProdRows = data.products;
-    if (body.action === 'delete') (body.ids || []).forEach((id) => saProdPick.delete(id));
-    if (data.products) saPaintProducts();
+    if (data.products) saApplyProdPayload(data);
     else await saMountProducts();
 }
 
@@ -58,7 +129,12 @@ function saOpenProdForm(row) {
     document.getElementById('saFormCancel').addEventListener('click', () => document.getElementById('saShopModal').remove());
     document.querySelector('#saShopModal form').addEventListener('submit', (event) => {
         event.preventDefault();
-        saProdSend(editing ? '/api/platform/products/' + row.id : '/api/platform/products', saProdBody());
+        const body = saProdBody();
+        if (editing) {
+            saProdSend('/api/platform/products/' + row.id, body);
+            return;
+        }
+        saProdSend('/api/platform/products', body);
     });
 }
 
@@ -77,21 +153,6 @@ function saOpenProdView(row) {
     document.getElementById('saFormCancel').addEventListener('click', () => document.getElementById('saShopModal').remove());
 }
 
-function saOpenProdMenu(id, button) {
-    const old = document.getElementById('saProdMenu');
-    if (old) old.remove();
-    const menu = document.createElement('div');
-    menu.id = 'saProdMenu';
-    menu.className = 'sa-menu-pop';
-    menu.innerHTML = ['Published', 'Hidden', 'Pending'].map((status) =>
-        `<button type="button" data-prod-status="${status}" data-prod-id="${id}">Mark ${status}</button>`).join('')
-        + `<button type="button" data-prod-status="delete" data-prod-id="${id}">Delete</button>`;
-    const box = button.getBoundingClientRect();
-    menu.style.top = (window.scrollY + box.bottom + 6) + 'px';
-    menu.style.left = (window.scrollX + box.right - 150) + 'px';
-    document.body.appendChild(menu);
-}
-
 document.addEventListener('change', (event) => {
     const pick = event.target.closest('[data-prod-pick]');
     if (!pick) return;
@@ -104,13 +165,12 @@ document.addEventListener('change', (event) => {
 document.addEventListener('click', (event) => {
     const add = event.target.closest('#saAddProduct');
     const like = event.target.closest('[data-prod-like]');
-    const view = event.target.closest('[data-prod-view]');
     const edit = event.target.closest('[data-prod-edit]');
+    const publish = event.target.closest('[data-prod-publish]');
     const hide = event.target.closest('[data-prod-hide]');
-    const more = event.target.closest('[data-prod-more]');
+    const del = event.target.closest('[data-prod-del]');
     const pill = event.target.closest('[data-prod-pill]');
     const bulk = event.target.closest('[data-prod-bulk]');
-    const status = event.target.closest('[data-prod-status]');
     if (add) saOpenProdForm(null);
     if (like) {
         const id = like.dataset.prodLike;
@@ -118,19 +178,13 @@ document.addEventListener('click', (event) => {
         else saProdLikes.add(id);
         like.classList.toggle('is-on');
     }
-    if (view) {
-        const row = saProdById(view.dataset.prodView);
-        if (row) saOpenProdView(row);
-    }
     if (edit) {
         const row = saProdById(edit.dataset.prodEdit);
         if (row) saOpenProdForm(row);
     }
-    if (hide) {
-        const row = saProdById(hide.dataset.prodHide);
-        if (row) saProdSend('/api/platform/products/' + row.id, { ...row, status: row.status === 'Published' ? 'Hidden' : 'Published' });
-    }
-    if (more) saOpenProdMenu(more.dataset.prodMore, more);
+    if (publish) saProdSetStatus(publish.dataset.prodPublish, 'published');
+    if (hide) saProdSetStatus(hide.dataset.prodHide, 'hidden');
+    if (del) saConfirmProdDelete([del.dataset.prodDel]);
     if (pill) { saProdCategory = pill.dataset.prodPill; saPaintProducts(); }
     if (event.target.closest('#saProdAll')) {
         saProdQuery = '';
@@ -139,19 +193,5 @@ document.addEventListener('click', (event) => {
         saProdSort = 'Newest';
         saPaintProducts();
     }
-    if (bulk && !saProdPick.size) {
-        saProdFlash = 'Select products first.';
-        saPaintProducts();
-    } else if (bulk) saProdSend('/api/platform/products/bulk', { ids: [...saProdPick], action: bulk.dataset.prodBulk });
-    if (status) {
-        const id = status.dataset.prodId;
-        document.getElementById('saProdMenu').remove();
-        const action = status.dataset.prodStatus;
-        if (action === 'delete') saProdSend('/api/platform/products/bulk', { ids: [id], action: 'delete' });
-        else saProdSend('/api/platform/products/' + id, { ...saProdById(id), status: action });
-    }
-    if (!more && !event.target.closest('#saProdMenu')) {
-        const menu = document.getElementById('saProdMenu');
-        if (menu) menu.remove();
-    }
+    if (bulk) saProdBulk(bulk.dataset.prodBulk);
 });

@@ -4,6 +4,8 @@ const Product = require('../models/Product');
 const { liveProducts } = require('./platformProductLive');
 
 const flagFile = path.join(__dirname, '../data/platform-product-flags.json');
+const { applyMarketplaceStatus, normStatus, displayStatus } = require('./adminProductMap');
+
 const statuses = ['Published', 'Hidden', 'Pending'];
 const tags = ['', 'Featured', 'New', 'Sale'];
 
@@ -62,7 +64,7 @@ async function createProduct(body) {
         retailPrice: clean.price,
         stockMeters: clean.stock,
         sellUnit: clean.unit,
-        storePublished: clean.status === 'Published',
+        ...applyMarketplaceStatus(clean.status),
         storeFeatured: clean.tag === 'Featured',
         storeNewArrival: clean.tag === 'New',
         storeSale: clean.tag === 'Sale',
@@ -86,7 +88,9 @@ async function createProduct(body) {
 async function updateProduct(id, body) {
     const current = (await listProducts()).find((row) => String(row.id) === String(id));
     if (!current) return { missing: true };
-    const status = statuses.includes(body.status) ? body.status : current.status;
+    const status = statuses.includes(body.status)
+        ? body.status
+        : displayStatus(normStatus(body.status) || current.status);
     const tag = tags.includes(body.tag) ? body.tag : current.tag;
     const product = await Product.findByPk(id);
     if (!product) {
@@ -102,7 +106,7 @@ async function updateProduct(id, body) {
         retailPrice: price > 0 ? price : product.retailPrice,
         stockMeters: Number.isFinite(Number(body.stock)) ? Number(body.stock) : product.stockMeters,
         sellUnit: String(body.unit || product.sellUnit || 'Pcs').trim(),
-        storePublished: status !== 'Hidden',
+        ...applyMarketplaceStatus(status),
         storeFeatured: tag === 'Featured',
         storeNewArrival: tag === 'New',
         storeSale: tag === 'Sale'
@@ -117,7 +121,8 @@ async function bulkProducts(body) {
     const picked = (await listProducts()).filter((row) => ids.has(String(row.id)));
     if (!picked.length) return null;
     if (action === 'delete') {
-        await Product.destroy({ where: { id: [...ids] } });
+        const { purgeProductById } = require('./purgeProduct');
+        for (const id of ids) await purgeProductById(id);
         const flags = readFlags();
         ids.forEach((id) => { delete flags[id]; });
         saveFlags(flags);

@@ -9,6 +9,24 @@
 .sa-prod { display: flex; flex-direction: column; gap: 8px; padding: 10px; }
 .sa-prod h3 { margin: 0; font-size: 15px; line-height: 1.3; }
 .sa-prod-photo { position: relative; height: 148px; border-radius: 12px; overflow: hidden; }
+.sa-prod-img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.sa-prod-ph {
+    width: 100%; height: 100%; display: grid; place-items: center;
+    font-size: 42px; font-weight: 800; color: rgba(255, 255, 255, 0.85);
+    background: linear-gradient(160deg, #334155, #1e293b 45%, #0f172a);
+}
+.sa-prod-cat { margin: 0; font-size: 12px; }
+.sa-prod-mods { display: flex; flex-wrap: wrap; gap: 6px; }
+.sa-mod {
+    border: 0; border-radius: 8px; padding: 6px 10px; font-size: 12px; font-weight: 700;
+    color: #fff; cursor: pointer;
+}
+.sa-mod:disabled { opacity: 0.45; cursor: default; }
+.sa-mod.is-pub { background: #16a34a; }
+.sa-mod.is-hide { background: #7c3aed; }
+.sa-mod.is-del { background: #dc2626; }
+.sa-mod.is-edit { background: #2563eb; }
+.sa-danger { background: #dc2626 !important; }
 .sa-cover-sheet { background: linear-gradient(160deg, #f8fafc, #cbd5e1 46%, #64748b); }
 .sa-cover-lawn { background: linear-gradient(160deg, #fecaca, #ef4444 42%, #7f1d1d); }
 .sa-cover-curtain { background: linear-gradient(160deg, #99f6e4, #0f766e 48%, #134e4a); }
@@ -42,6 +60,7 @@
 .sa-prod-foot .sa-actions { margin-left: auto; }
 .sa-prod .sa-pill.is-published { background: rgba(22, 163, 74, 0.22); color: #4ade80; }
 .sa-prod .sa-pill.is-hidden { background: rgba(124, 58, 237, 0.22); color: #d8b4fe; }
+.sa-prod .sa-pill.is-pending { background: rgba(245, 158, 11, 0.22); color: #fbbf24; }
 .sa-tick { display: inline-flex; }
 .sa-tick input { width: 16px; height: 16px; accent-color: #2563eb; }
 .sa-bulk {

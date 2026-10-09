@@ -13,6 +13,12 @@ const { tickets, ticketOne, createTicket, updateTicket, bulkTickets } = require(
 const { cms, saveCms, bannerImage } = require('../controllers/adminCmsController');
 const { getFooter, saveFooter } = require('../controllers/cmsFooterController');
 const { getPages, savePage } = require('../controllers/cmsPagesController');
+const {
+    listProducts,
+    setStatus,
+    removeProduct,
+    bulkProducts
+} = require('../controllers/adminProductController');
 
 const router = express.Router();
 const adminOnly = requireRole('admin');
@@ -46,5 +52,11 @@ router.post('/support/tickets/bulk', adminOnly, bulkTickets);
 router.post('/support/tickets', adminOnly, createTicket);
 router.get('/support/tickets/:id', adminOnly, ticketOne);
 router.post('/support/tickets/:id', adminOnly, updateTicket);
+router.get('/products', adminOnly, listProducts);
+router.post('/products/bulk', adminOnly, bulkProducts);
+router.put('/products/:id/status', adminOnly, setStatus);
+router.post('/products/:id/status', adminOnly, setStatus);
+router.delete('/products/:id', adminOnly, removeProduct);
+router.post('/products/:id/delete', adminOnly, removeProduct);
 
 module.exports = router;

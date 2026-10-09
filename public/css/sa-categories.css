@@ -1,24 +1,134 @@
-.sa-cat-layout { display: grid; grid-template-columns: 230px minmax(0, 1fr); gap: 14px; align-items: start; }
-.sa-cat-side {
-    display: flex; flex-direction: column; gap: 4px; padding: 8px;
-    background: rgba(22, 31, 54, 0.92); border: 1px solid var(--sa-line); border-radius: 16px;
+.sa-cat-tree {
+    display: grid;
+    gap: 12px;
 }
-.sa-cat-link {
-    display: flex; justify-content: space-between; align-items: center; gap: 8px; width: 100%;
-    border: 0; background: transparent; color: #d5deef; border-radius: 10px; padding: 10px 12px; cursor: pointer;
+.sa-cat-card {
+    position: relative;
+    background: rgba(22, 31, 54, 0.95);
+    border: 1px solid rgba(59, 130, 246, 0.22);
+    border-radius: 16px;
+    overflow: hidden;
 }
-.sa-cat-link.is-on { background: #2563eb; color: white; box-shadow: 0 0 16px rgba(37, 99, 235, 0.45); }
-.sa-cat-link b {
-    min-width: 22px; text-align: center; border-radius: 999px; padding: 2px 7px; font-size: 12px;
-    background: rgba(148, 163, 184, 0.16); color: #f8fafc;
+.sa-cat-head {
+    width: 100%;
+    display: grid;
+    grid-template-columns: 44px minmax(0, 1fr) auto;
+    gap: 12px;
+    align-items: center;
+    padding: 14px 16px;
+    padding-right: 280px;
+    border: 0;
+    background: transparent;
+    color: #e8eefc;
+    cursor: pointer;
+    text-align: left;
 }
-.sa-cat-link.is-on b { background: rgba(255, 255, 255, 0.18); }
-.sa-cat-thumb { width: 42px; height: 42px; border-radius: 10px; flex: 0 0 42px; }
-.sa-cat-table { min-width: 860px; }
-.sa-cat-table .sa-pill.is-active { background: rgba(22, 163, 74, 0.22); color: #4ade80; }
-.sa-cat-table .sa-pill.is-inactive { background: rgba(220, 38, 38, 0.22); color: #fca5a5; }
-@media (max-width: 800px) {
-    .sa-cat-layout { grid-template-columns: 1fr; }
-    .sa-cat-side { flex-direction: row; overflow-x: auto; -webkit-overflow-scrolling: touch; }
-    .sa-cat-link { width: auto; flex: 0 0 auto; }
+.sa-cat-ico {
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    display: grid;
+    place-items: center;
+    background: rgba(37, 99, 235, 0.18);
+    font-size: 22px;
+}
+.sa-cat-meta { display: grid; gap: 2px; }
+.sa-cat-meta strong { font-size: 15px; }
+.sa-cat-meta small { color: #93a4c7; font-size: 12px; }
+.sa-cat-chev { color: #93a4c7; font-size: 14px; }
+.sa-cat-actions {
+    position: absolute;
+    top: 14px;
+    right: 14px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    justify-content: flex-end;
+}
+.sa-cat-btn {
+    padding: 6px 12px;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    border: 0;
+}
+.sa-cat-btn.is-add {
+    background: #2563eb;
+    color: #fff;
+}
+.sa-cat-btn.is-add:hover { background: #1d4ed8; }
+.sa-cat-btn.is-sub {
+    background: rgba(99, 102, 241, 0.2);
+    color: #a5b4fc;
+    border: 1px solid rgba(99, 102, 241, 0.3);
+}
+.sa-cat-btn.is-sub:hover { background: rgba(99, 102, 241, 0.3); }
+.sa-cat-body {
+    border-top: 1px solid rgba(59, 130, 246, 0.16);
+    padding: 12px 16px 16px;
+    display: grid;
+    gap: 14px;
+}
+.sa-cat-section-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    margin-bottom: 8px;
+}
+.sa-cat-section-head strong { font-size: 14px; color: #f8fafc; }
+.sa-cat-mini { display: flex; gap: 4px; }
+.sa-cat-mini button,
+.sa-cat-chip button {
+    width: 28px;
+    height: 28px;
+    border: 0;
+    border-radius: 8px;
+    background: rgba(148, 163, 184, 0.12);
+    color: #cbd5e1;
+    cursor: pointer;
+    display: grid;
+    place-items: center;
+}
+.sa-cat-mini button:hover,
+.sa-cat-chip button:hover {
+    background: rgba(59, 130, 246, 0.25);
+    color: #fff;
+}
+.sa-cat-lock {
+    font-size: 11px;
+    font-weight: 700;
+    color: #93c5fd;
+    background: rgba(59, 130, 246, 0.16);
+    border-radius: 999px;
+    padding: 3px 8px;
+}
+.sa-cat-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+.sa-cat-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px 6px 4px 10px;
+    border-radius: 999px;
+    background: rgba(15, 23, 42, 0.65);
+    border: 1px solid rgba(148, 163, 184, 0.22);
+    color: #e2e8f0;
+    font-size: 12px;
+    font-weight: 600;
+}
+.sa-cat-chip em { font-style: normal; padding-right: 2px; }
+.sa-cat-empty { font-size: 12px; }
+@media (max-width: 900px) {
+    .sa-cat-head { padding-right: 16px; grid-template-columns: 40px minmax(0, 1fr) auto; }
+    .sa-cat-actions {
+        position: static;
+        padding: 0 14px 12px;
+        justify-content: stretch;
+    }
+    .sa-cat-btn { flex: 1; text-align: center; }
 }

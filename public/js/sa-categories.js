@@ -1,78 +1,109 @@
-let saCatRows = [];
-let saCatPage = 1;
-let saCatPick = 'All';
+let saCatTree = [];
+let saCatOpen = {};
 let saCatFlash = '';
-const SA_CAT_SIZE = 9;
 
-function saCatShown() {
-    if (saCatPick === 'All') return saCatRows;
-    return saCatRows.filter((row) => row.id === saCatPick);
+function saCatIcon(svg) {
+    return saSvg(svg);
 }
 
-function saCatSide(rows) {
-    const items = [['All', 'All Categories', rows.length]].concat(rows.map((row) => [row.id, row.name, row.products]));
-    return `<aside class="sa-cat-side">${items.map(([id, label, total]) =>
-        `<button class="sa-cat-link${id === saCatPick ? ' is-on' : ''}" type="button" data-cat-pick="${id}"><span>${saText(label)}</span><b>${saCount(total)}</b></button>`
-    ).join('')}</aside>`;
+function saCatActions(shopType) {
+    const type = saText(shopType);
+    return `
+        <div class="sa-cat-actions" onclick="event.stopPropagation()">
+            <button type="button" class="sa-cat-btn is-add" data-cat-add="${type}">+ Add Category</button>
+            <button type="button" class="sa-cat-btn is-sub" data-cat-sub="${type}">+ Add Subcategory</button>
+        </div>`;
 }
 
-function saCatRow(row, index) {
-    const eye = saSvg('<path d="M2 12s4-6 10-6 10 6 10 6-4 6-10 6S2 12 2 12z"/><circle cx="12" cy="12" r="2.5"/>');
-    const pen = saSvg('<path d="M4 20h4L18 10l-4-4L4 16v4z"/>');
-    const more = saSvg('<circle cx="6" cy="12" r="1.2" fill="currentColor"/><circle cx="12" cy="12" r="1.2" fill="currentColor"/><circle cx="18" cy="12" r="1.2" fill="currentColor"/>');
-    return `<tr>
-        <td>${index + 1}</td>
-        <td><div class="sa-order-who"><span class="sa-cat-thumb sa-cover-${saText(row.tone)}"></span><strong>${saText(row.name)}</strong></div></td>
-        <td>${saText(row.slug)}</td>
-        <td>${saCount(row.products)}</td>
-        <td>${saStatus(row.status)}</td>
-        <td><div class="sa-actions">
-            <button type="button" data-cat-edit="${row.id}" title="Edit" aria-label="Edit">${pen}</button>
-            <button type="button" data-cat-view="${row.id}" title="View" aria-label="View">${eye}</button>
-            <button type="button" data-cat-more="${row.id}" title="More options" aria-label="More options">${more}</button>
-        </div></td>
-    </tr>`;
+function saCatChip(sub) {
+    const edit = saCatIcon('<path d="M4 20h4L18 10l-4-4L4 16v4z"/>');
+    const del = saCatIcon('<path d="M6 7h12M9 7V5h6v2m-8 3v9a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V10"/>');
+    return `<span class="sa-cat-chip">
+        <em>${saText(sub.name)}</em>
+        <button type="button" data-cat-edit="${saText(sub.id)}" title="Edit" aria-label="Edit">${edit}</button>
+        <button type="button" data-cat-del="${saText(sub.id)}" title="Delete" aria-label="Delete">${del}</button>
+    </span>`;
 }
 
-function saCatPager(total) {
-    const pages = Math.max(1, Math.ceil(total / SA_CAT_SIZE));
-    if (saCatPage > pages) saCatPage = pages;
-    const start = total ? (saCatPage - 1) * SA_CAT_SIZE + 1 : 0;
-    const end = Math.min(total, saCatPage * SA_CAT_SIZE);
-    const buttons = Array.from({ length: pages }, (_, index) => {
-        const page = index + 1;
-        return `<button class="sa-page-btn${page === saCatPage ? ' is-on' : ''}" type="button" data-cat-page="${page}">${page}</button>`;
-    }).join('');
-    return `<div class="sa-pager"><span class="sa-muted">Showing ${start} – ${end} of ${total} categories</span><div>${buttons}</div></div>`;
+function saCatSection(cat) {
+    const edit = saCatIcon('<path d="M4 20h4L18 10l-4-4L4 16v4z"/>');
+    const del = saCatIcon('<path d="M6 7h12M9 7V5h6v2m-8 3v9a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V10"/>');
+    const chips = (cat.subcategories || []).map((sub) => saCatChip(sub)).join('')
+        || '<span class="sa-muted sa-cat-empty">No subcategories yet.</span>';
+    const tools = cat.locked
+        ? '<span class="sa-cat-lock">Standard</span>'
+        : `<button type="button" data-cat-edit="${saText(cat.id)}" title="Edit">${edit}</button>
+           <button type="button" data-cat-del="${saText(cat.id)}" title="Delete">${del}</button>`;
+    return `<div class="sa-cat-section">
+        <div class="sa-cat-section-head">
+            <strong>${saText(cat.name)}</strong>
+            <div class="sa-cat-mini">${tools}</div>
+        </div>
+        <div class="sa-cat-chips">${chips}</div>
+    </div>`;
+}
+
+function saCatCard(group) {
+    const open = Boolean(saCatOpen[group.shopType]);
+    const body = open
+        ? `<div class="sa-cat-body">${(group.categories || []).map(saCatSection).join('')
+            || '<p class="sa-muted">No categories yet. Add the first main category.</p>'}</div>`
+        : '';
+    return `<article class="sa-cat-card${open ? ' is-open' : ''}" data-cat-type="${saText(group.shopType)}">
+        <button type="button" class="sa-cat-head" data-cat-toggle="${saText(group.shopType)}">
+            <span class="sa-cat-ico" aria-hidden="true">${group.icon || '🏪'}</span>
+            <span class="sa-cat-meta">
+                <strong>${saText(group.shopType)}</strong>
+                <small>${saCount(group.count)} categories</small>
+            </span>
+            <span class="sa-cat-chev" aria-hidden="true">${open ? '▾' : '▸'}</span>
+        </button>
+        ${saCatActions(group.shopType)}
+        ${body}
+    </article>`;
 }
 
 function saPaintCategories() {
-    const shown = saCatShown();
-    const slice = shown.slice((saCatPage - 1) * SA_CAT_SIZE, saCatPage * SA_CAT_SIZE);
-    const mark = saSvg('<path d="M12 3l8 4.5v9L12 21l-8-4.5v-9L12 3z"/>');
-    document.getElementById('saCategories').innerHTML = `
+    const mark = saCatIcon('<path d="M12 3l8 4.5v9L12 21l-8-4.5v-9L12 3z"/>');
+    const root = document.getElementById('saCategories');
+    if (!root) return;
+    root.innerHTML = `
         <div class="sa-shop-head">
-            <div class="sa-shop-title"><div class="sa-shop-mark">${mark}</div><div><h1>Categories</h1><p class="sa-muted">Manage product categories and organize your marketplace.</p></div></div>
+            <div class="sa-shop-title">
+                <div class="sa-shop-mark">${mark}</div>
+                <div>
+                    <h1>Categories</h1>
+                    <p class="sa-muted">Shop-type hierarchy with main categories and subcategories.</p>
+                </div>
+            </div>
         </div>
-        <div class="sa-cat-layout">
-            ${saCatSide(saCatRows)}
-            <section class="sa-card sa-shop-board"><div class="sa-scroll"><table class="sa-table sa-shop-table sa-cat-table">
-                <thead><tr><th>#</th><th>Category Name</th><th>Slug</th><th>Products</th><th>Status</th><th>Actions</th></tr></thead>
-                <tbody>${slice.map((row, index) => saCatRow(row, (saCatPage - 1) * SA_CAT_SIZE + index)).join('') || `<tr><td colspan="6">${saCatRows.length ? 'No categories match this list.' : 'No categories yet — add products to create them.'}</td></tr>`}</tbody>
-            </table></div>${saCatPager(shown.length)}</section>
-        </div>
-        <p class="sa-note-line" id="saCatNote">${saText(saCatFlash)}</p>
-        <p class="sa-muted">Slug and status stay in this admin list. Product labels are not changed.</p>`;
+        <div class="sa-cat-tree">${saCatTree.map(saCatCard).join('')}</div>
+        <p class="sa-note-line" id="saCatNote">${saText(saCatFlash)}</p>`;
     saCatFlash = '';
 }
 
 async function saMountCategories() {
     const response = await fetch('/api/admin/categories');
     const data = await response.json();
-    saCatRows = data.categories || [];
+    saCatTree = data.shopTypes || [];
+    if (!Object.keys(saCatOpen).length && saCatTree[0]) {
+        saCatOpen[saCatTree[0].shopType] = true;
+    }
     saPaintCategories();
 }
 
-function saCatById(id) {
-    return saCatRows.find((row) => row.id === id);
+function saCatGroup(shopType) {
+    return saCatTree.find((row) => row.shopType === shopType);
+}
+
+function saCatFind(id) {
+    for (const group of saCatTree) {
+        for (const cat of group.categories || []) {
+            if (cat.id === id) return { group, cat, sub: null };
+            for (const sub of cat.subcategories || []) {
+                if (sub.id === id) return { group, cat, sub };
+            }
+        }
+    }
+    return null;
 }

@@ -23,6 +23,22 @@ function categoryLabel(product) {
     return String(raw).trim() || 'Other';
 }
 
+function adminTreeNames(shopType) {
+    try {
+        const { listCategories } = require('./adminCategories');
+        const group = listCategories().find((row) => row.shopType === resolveShopType(shopType));
+        if (!group) return [];
+        const names = [];
+        (group.categories || []).forEach((cat) => {
+            names.push(cat.name);
+            (cat.subcategories || []).forEach((sub) => names.push(sub.name));
+        });
+        return names;
+    } catch (error) {
+        return [];
+    }
+}
+
 function categoriesForShop(shopType, productTypes) {
     const names = [];
     const add = (name) => {
@@ -30,6 +46,7 @@ function categoriesForShop(shopType, productTypes) {
         if (value && !names.includes(value)) names.push(value);
     };
     catalogForType(resolveShopType(shopType)).categories.forEach(add);
+    adminTreeNames(shopType).forEach(add);
     (Array.isArray(productTypes) ? productTypes : []).forEach(add);
     return names;
 }

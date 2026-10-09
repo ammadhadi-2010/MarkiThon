@@ -2,7 +2,13 @@ const express = require('express');
 const { requireRole } = require('../middleware/authGuard');
 const { orders, createOrder, updateOrder } = require('../controllers/adminOrderController');
 const { customers, createCustomer, updateCustomer } = require('../controllers/adminCustomerController');
-const { categories, updateCategory } = require('../controllers/adminCategoryController');
+const {
+    categories,
+    createCategory,
+    createSubcategory,
+    updateCategory,
+    deleteCategory
+} = require('../controllers/adminCategoryController');
 const { tickets, ticketOne, createTicket, updateTicket, bulkTickets } = require('../controllers/adminTicketController');
 const { cms, saveCms, bannerImage } = require('../controllers/adminCmsController');
 const { getFooter, saveFooter } = require('../controllers/cmsFooterController');
@@ -23,8 +29,11 @@ router.get('/customers', adminOnly, customers);
 router.post('/customers', adminOnly, createCustomer);
 router.post('/customers/:id', adminOnly, updateCustomer);
 router.get('/categories', adminOnly, categories);
+router.post('/categories', adminOnly, createCategory);
+router.post('/categories/sub', adminOnly, createSubcategory);
 router.put('/categories/:id', adminOnly, updateCategory);
 router.post('/categories/:id', adminOnly, updateCategory);
+router.delete('/categories/:id', adminOnly, deleteCategory);
 router.post('/cms/pages', adminOnly, savePage);
 router.put('/cms/pages', adminOnly, savePage);
 router.put('/cms/footer', adminOnly, saveFooter);

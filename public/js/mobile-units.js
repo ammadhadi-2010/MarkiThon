@@ -2,9 +2,11 @@ const MOBILE_CATEGORIES = [
     'mobile accessories',
     'chargers',
     'cases & covers',
+    'covers',
     'earphones',
     'power banks',
-    'cables'
+    'cables',
+    'mobiles'
 ];
 
 function isMobileShop() {

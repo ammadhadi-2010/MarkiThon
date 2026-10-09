@@ -46,15 +46,20 @@ function inventoryMarkup() {
                             <option>Set</option>
                             <option>Piece</option>
                         </select></div>
-                    <div class="field" id="invSizesWrap">
-                        <label>Sizes / Variants <span class="wl-hint">(Optional)</span></label>
-                        <div class="inv-size-box" id="invSizeBox">
+                    <div class="field" id="invSizesWrap" hidden>
+                        <label id="invSizeLabel">Sizes / Variants <span class="wl-hint">(Optional)</span></label>
+                        <div class="inv-size-box" id="invSizeBox" hidden>
                             <div class="inv-size-presets" id="invSizePresets"></div>
                             <div class="inv-size-tags" id="invSizeTags"></div>
                             <input id="invSizeInput" name="invSizeInput" autocomplete="off"
                                 placeholder="Type custom size and press Enter">
                         </div>
-                        <p class="wl-hint">Leave blank for products that do not need sizing.</p>
+                        <div id="invFabricLengthWrap" hidden>
+                            <select id="invFabricLength" name="invFabricLength" autocomplete="off">
+                                <option value="">Select fabric length</option>
+                            </select>
+                        </div>
+                        <p class="wl-hint" id="invSizeHint">Leave blank for products that do not need sizing.</p>
                     </div>
                     <input type="hidden" id="invSellUnit" name="invSellUnit" value="Meter">
                     <input type="hidden" id="invConvert" name="invConvert" value="1">

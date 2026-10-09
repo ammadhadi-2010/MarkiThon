@@ -1,0 +1,410 @@
+{
+  "Clothing & Fashion": {
+    "Men": {
+      "locked": true,
+      "subs": [],
+      "icon": "📁"
+    },
+    "Women": {
+      "locked": true,
+      "subs": [],
+      "icon": "📁"
+    },
+    "Kids Wear": {
+      "locked": true,
+      "subs": [],
+      "icon": "📁"
+    },
+    "Lawn": {
+      "locked": true,
+      "subs": [],
+      "icon": "📁"
+    },
+    "Cotton": {
+      "locked": true,
+      "subs": [],
+      "icon": "📁"
+    },
+    "Ready-Made Suits": {
+      "locked": true,
+      "subs": [],
+      "icon": "📁"
+    },
+    "Garments": {
+      "locked": true,
+      "subs": [],
+      "icon": "📁"
+    }
+  },
+  "Electronics & Mobile": {
+    "Mobiles": {
+      "locked": true,
+      "subs": [],
+      "icon": "📁"
+    },
+    "Mobile Accessories": {
+      "locked": true,
+      "subs": [],
+      "icon": "📁"
+    },
+    "Chargers": {
+      "locked": true,
+      "subs": [],
+      "icon": "📁"
+    },
+    "Cases & Covers": {
+      "locked": true,
+      "subs": [],
+      "icon": "📁"
+    },
+    "Earphones": {
+      "locked": true,
+      "subs": [],
+      "icon": "📁"
+    },
+    "Power Banks": {
+      "locked": true,
+      "subs": [],
+      "icon": "📁"
+    }
+  },
+  "Grocery & Food": {
+    "Staples": {
+      "locked": true,
+      "subs": [],
+      "icon": "📁"
+    },
+    "Snacks": {
+      "locked": true,
+      "subs": [],
+      "icon": "📁"
+    },
+    "Beverages": {
+      "locked": true,
+      "subs": [],
+      "icon": "📁"
+    },
+    "Dairy": {
+      "locked": true,
+      "subs": [],
+      "icon": "📁"
+    },
+    "Spices": {
+      "locked": true,
+      "subs": [],
+      "icon": "📁"
+    },
+    "Frozen Food": {
+      "locked": true,
+      "subs": [],
+      "icon": "📁"
+    }
+  },
+  "Beauty & Personal Care": {
+    "Skincare": {
+      "locked": true,
+      "subs": [],
+      "icon": "📁"
+    },
+    "Makeup": {
+      "locked": true,
+      "subs": [],
+      "icon": "📁"
+    },
+    "Hair Care": {
+      "locked": true,
+      "subs": [],
+      "icon": "📁"
+    },
+    "Fragrance": {
+      "locked": true,
+      "subs": [],
+      "icon": "📁"
+    },
+    "Personal Care": {
+      "locked": true,
+      "subs": [],
+      "icon": "📁"
+    }
+  },
+  "Home & Living": {
+    "Bedsheet": {
+      "locked": true,
+      "subs": [],
+      "icon": "📁"
+    },
+    "Blanket / Kambal": {
+      "locked": true,
+      "subs": [],
+      "icon": "📁"
+    },
+    "Takiya / Pillow": {
+      "locked": true,
+      "subs": [],
+      "icon": "📁"
+    },
+    "Quilt / Razai": {
+      "locked": true,
+      "subs": [],
+      "icon": "📁"
+    },
+    "Decor": {
+      "locked": true,
+      "subs": [],
+      "icon": "📁"
+    },
+    "Kitchen": {
+      "locked": true,
+      "subs": [],
+      "icon": "📁"
+    }
+  },
+  "Furniture": {
+    "Sofa": {
+      "locked": true,
+      "subs": [],
+      "icon": "📁"
+    },
+    "Beds": {
+      "locked": true,
+      "subs": [],
+      "icon": "📁"
+    },
+    "Tables": {
+      "locked": true,
+      "subs": [],
+      "icon": "📁"
+    },
+    "Chairs": {
+      "locked": true,
+      "subs": [],
+      "icon": "📁"
+    },
+    "Storage": {
+      "locked": true,
+      "subs": [],
+      "icon": "📁"
+    },
+    "Office Furniture": {
+      "locked": true,
+      "subs": [],
+      "icon": "📁"
+    }
+  },
+  "Sports & Fitness": {
+    "Gym Gear": {
+      "locked": true,
+      "subs": [],
+      "icon": "📁"
+    },
+    "Sportswear": {
+      "locked": true,
+      "subs": [],
+      "icon": "📁"
+    },
+    "Outdoor": {
+      "locked": true,
+      "subs": [],
+      "icon": "📁"
+    },
+    "Footwear": {
+      "locked": true,
+      "subs": [],
+      "icon": "📁"
+    },
+    "Accessories": {
+      "locked": true,
+      "subs": [],
+      "icon": "📁"
+    }
+  },
+  "Books & Stationery": {
+    "Books": {
+      "locked": true,
+      "subs": [],
+      "icon": "📁"
+    },
+    "Notebooks": {
+      "locked": true,
+      "subs": [],
+      "icon": "📁"
+    },
+    "Pens": {
+      "locked": true,
+      "subs": [],
+      "icon": "📁"
+    },
+    "Art Supplies": {
+      "locked": true,
+      "subs": [],
+      "icon": "📁"
+    },
+    "Office Supplies": {
+      "locked": true,
+      "subs": [],
+      "icon": "📁"
+    }
+  },
+  "Automotive": {
+    "Car Care": {
+      "locked": true,
+      "subs": [],
+      "icon": "📁"
+    },
+    "Bike Parts": {
+      "locked": true,
+      "subs": [],
+      "icon": "📁"
+    },
+    "Oils": {
+      "locked": true,
+      "subs": [],
+      "icon": "📁"
+    },
+    "Tyres": {
+      "locked": true,
+      "subs": [],
+      "icon": "📁"
+    },
+    "Accessories": {
+      "locked": true,
+      "subs": [],
+      "icon": "📁"
+    }
+  },
+  "Kids & Toys": {
+    "Toys": {
+      "locked": true,
+      "subs": [],
+      "icon": "📁"
+    },
+    "Baby Care": {
+      "locked": true,
+      "subs": [],
+      "icon": "📁"
+    },
+    "School": {
+      "locked": true,
+      "subs": [],
+      "icon": "📁"
+    },
+    "Games": {
+      "locked": true,
+      "subs": [],
+      "icon": "📁"
+    },
+    "Kids Fashion": {
+      "locked": true,
+      "subs": [],
+      "icon": "📁"
+    }
+  },
+  "Jewellery & Accessories": {
+    "Jewellery": {
+      "locked": true,
+      "subs": [],
+      "icon": "📁"
+    },
+    "Watches": {
+      "locked": true,
+      "subs": [],
+      "icon": "📁"
+    },
+    "Bags": {
+      "locked": true,
+      "subs": [],
+      "icon": "📁"
+    },
+    "Sunglasses": {
+      "locked": true,
+      "subs": [],
+      "icon": "📁"
+    },
+    "Accessories": {
+      "locked": true,
+      "subs": [],
+      "icon": "📁"
+    }
+  },
+  "Hardware & Tools": {
+    "Tools": {
+      "locked": true,
+      "subs": [],
+      "icon": "📁"
+    },
+    "Electrical": {
+      "locked": true,
+      "subs": [],
+      "icon": "📁"
+    },
+    "Plumbing": {
+      "locked": true,
+      "subs": [],
+      "icon": "📁"
+    },
+    "Paint": {
+      "locked": true,
+      "subs": [],
+      "icon": "📁"
+    },
+    "Fasteners": {
+      "locked": true,
+      "subs": [],
+      "icon": "📁"
+    }
+  },
+  "Pharmacy & Health": {
+    "Medicines": {
+      "locked": true,
+      "subs": [],
+      "icon": "📁"
+    },
+    "Vitamins": {
+      "locked": true,
+      "subs": [],
+      "icon": "📁"
+    },
+    "First Aid": {
+      "locked": true,
+      "subs": [],
+      "icon": "📁"
+    },
+    "Medical Devices": {
+      "locked": true,
+      "subs": [],
+      "icon": "📁"
+    },
+    "Wellness": {
+      "locked": true,
+      "subs": [],
+      "icon": "📁"
+    }
+  },
+  "General / Multi-Category": {
+    "General": {
+      "locked": true,
+      "subs": [],
+      "icon": "📁"
+    },
+    "Daily Needs": {
+      "locked": true,
+      "subs": [],
+      "icon": "📁"
+    },
+    "Household": {
+      "locked": true,
+      "subs": [],
+      "icon": "📁"
+    },
+    "Seasonal": {
+      "locked": true,
+      "subs": [],
+      "icon": "📁"
+    },
+    "Other": {
+      "locked": true,
+      "subs": [],
+      "icon": "📁"
+    }
+  }
+}

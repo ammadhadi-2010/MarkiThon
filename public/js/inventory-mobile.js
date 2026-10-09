@@ -27,6 +27,7 @@ function applyInvMobileMode() {
     setInvMobileHint(mobile);
     const preview = document.getElementById('invPreview');
     if (preview) preview.alt = mobile ? 'Product preview' : 'Fabric preview';
+    if (typeof applyInvSizeMode === 'function') applyInvSizeMode();
     if (!mobile) return;
     if (fabric) fabric.hidden = true;
     if (convert) convert.hidden = true;

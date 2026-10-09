@@ -63,6 +63,7 @@ function resetInvForm() {
     if (typeof applyInvBlanketMode === 'function') applyInvBlanketMode();
     if (typeof applyInvMobileMode === 'function') applyInvMobileMode();
     if (typeof setInvSizes === 'function') setInvSizes([]);
+    else if (typeof applyInvSizeMode === 'function') applyInvSizeMode();
     paintInvConvert();
 }
 

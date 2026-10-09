@@ -40,7 +40,9 @@ exports.saveSettings = async (req, res) => {
 
 function safeQrData(raw) {
     const data = String(raw || '').trim().slice(0, 400);
-    if (/^https:\/\/markithon\.com\/[a-z0-9]+$/i.test(data)) return data;
+    if (/^https:\/\/markithon\.com\/[a-z0-9]+(?:\?mode=(?:wholesale|retail))?$/i.test(data)) {
+        return data;
+    }
     return 'https://markithon.com/ammadhadistor';
 }
 

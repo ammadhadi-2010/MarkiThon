@@ -105,7 +105,14 @@ function storefrontHeroMarkup(shop, logo, socials) {
 }
 
 function sfIsWholesaleMode() {
-    return new URLSearchParams(location.search).get('mode') === 'wholesale';
+    const mode = new URLSearchParams(location.search).get('mode');
+    try {
+        if (mode === 'wholesale') { sessionStorage.setItem('sfWholesaleMode', '1'); return true; }
+        if (mode === 'retail') { sessionStorage.removeItem('sfWholesaleMode'); return false; }
+        return sessionStorage.getItem('sfWholesaleMode') === '1';
+    } catch (err) {
+        return mode === 'wholesale';
+    }
 }
 
 function storefrontMarkup(shop, categories) {
@@ -123,7 +130,7 @@ function storefrontMarkup(shop, categories) {
     const themeId = shop.themeId || 'standard-retail';
     const wholesale = sfIsWholesaleMode();
     const modeBanner = wholesale
-        ? `<div class="sf-wholesale-banner" role="status">Wholesale Mode Active - Displaying Bulk Rates</div>`
+        ? `<div class="sf-wholesale-banner" role="status">Wholesale Pricing Unlocked (Bulk Rates Active)</div>`
         : '';
     const globalFoot = typeof mpFooterMarkup === 'function' ? mpFooterMarkup() : '';
     return `
@@ -172,6 +179,7 @@ function sfCardPriceParts(product) {
     if (sfIsWholesaleMode() && wholesale > 0) {
         return {
             wholesale: true,
+            priceLabel: 'Wholesale Price',
             finalPrice: wholesale,
             online: retailWas > wholesale ? retailWas : (retailNow > wholesale ? retailNow : 0),
             hasDiscount: retailWas > wholesale || retailNow > wholesale,
@@ -182,6 +190,7 @@ function sfCardPriceParts(product) {
     }
     return {
         wholesale: false,
+        priceLabel: 'Retail Price',
         online: hasDiscount ? retailWas : retailNow,
         finalPrice: retailNow,
         hasDiscount,
@@ -200,7 +209,7 @@ function storefrontCardMarkup(product) {
     let priceHtml;
     if (parts.wholesale) {
         priceHtml = `<div class="sf-price-block is-wholesale">
-                <div class="sf-price-label">Wholesale Rate</div>
+                <div class="sf-price-label">Wholesale Price</div>
                 <div class="sf-price-now">Rs. ${parts.finalPrice.toLocaleString()}</div>
                 ${parts.online > parts.finalPrice
                     ? `<div class="sf-price-sub"><s class="sf-price-was">Rs. ${parts.online.toLocaleString()}</s></div>`

@@ -45,8 +45,12 @@ function mpPaintProduct(idOrRow) {
     const off = typeof mpOffPercent === 'function' ? mpOffPercent(row) : 0;
     const wholesale = Number(row.wholesalePrice) || 0;
     const moq = Math.max(1, Number(row.minWholesaleQty) || 10);
-    const isWholesale = new URLSearchParams(location.search).get('mode') === 'wholesale'
-        && wholesale > 0;
+    let wantWholesale = new URLSearchParams(location.search).get('mode') === 'wholesale';
+    try {
+        if (wantWholesale) sessionStorage.setItem('sfWholesaleMode', '1');
+        else if (sessionStorage.getItem('sfWholesaleMode') === '1') wantWholesale = true;
+    } catch (err) { /* ignore */ }
+    const isWholesale = wantWholesale && wholesale > 0;
     const cat = row.category || 'Products';
     document.getElementById('mpCrumb').innerHTML =
         `<a href="/">Home</a><span>›</span><a href="/#categories">${mpEscape(cat)}</a><span>›</span><strong>${mpEscape(row.title)}</strong>`;

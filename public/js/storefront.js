@@ -58,13 +58,17 @@ function openWhatsAppOrder(product) {
     const parts = typeof sfCardPriceParts === 'function'
         ? sfCardPriceParts(product)
         : { finalPrice: Number(product.retailPrice || 0) };
-    const price = Number(parts.finalPrice || 0).toLocaleString();
-    const wholesale = typeof sfIsWholesaleMode === 'function' && sfIsWholesaleMode()
+    const wholesaleActive = typeof sfIsWholesaleMode === 'function' && sfIsWholesaleMode()
         && Number(product.wholesalePrice) > 0;
+    const unitPrice = wholesaleActive
+        ? Number(product.wholesalePrice)
+        : Number(parts.finalPrice || 0);
+    const price = unitPrice.toLocaleString();
     const moq = Math.max(1, Number(parts.moq || product.minWholesaleQty) || 10);
-    const text = wholesale
+    const text = wholesaleActive
         ? ('Hi! I scanned your Wholesale QR Code and want to place a Bulk Wholesale Order for '
-            + product.title + ' (Qty: ' + moq + ' Pcs) at Rs. ' + price + '/pc.')
+            + product.title + ' (Qty: ' + moq + ' Pcs) at Wholesale Price Rs. ' + price
+            + '/pc (MOQ ' + moq + ').')
         : ('Hi, I want to buy ' + product.title + ' priced at Rs. ' + price + ' from your MarkiThon store.');
     if (!phone) return sfToast('WhatsApp number is not set for this shop.');
     window.open('https://wa.me/' + phone + '?text=' + encodeURIComponent(text), '_blank', 'noopener');

@@ -2,12 +2,23 @@
     margin: 10px 16px 0;
     padding: 10px 14px;
     border-radius: 12px;
-    background: linear-gradient(90deg, rgba(88, 28, 135, 0.45), rgba(30, 58, 138, 0.4));
-    border: 1px solid rgba(167, 139, 250, 0.4);
-    color: #e9d5ff;
+    background: rgba(245, 158, 11, 0.2);
+    border: 1px solid rgba(245, 158, 11, 0.3);
+    color: #fbbf24;
     font-size: 13px;
     font-weight: 700;
     text-align: center;
+}
+.sf-price-block.is-wholesale .sf-price-label {
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.04em;
+    color: #fbbf24;
+    margin-bottom: 2px;
+}
+.sf-price-block.is-wholesale .sf-price-now {
+    color: #fbbf24;
+    font-weight: 800;
 }
 .sf-price-label {
     font-size: 11px;

@@ -160,21 +160,33 @@ function addCategory(body) {
 }
 
 function addSubcategory(body) {
-    const shopType = clean(body.shopType);
-    const parent = clean(body.parent);
-    const name = clean(body.name);
-    if (!SHOP_CATALOG[shopType]) return { error: 'Choose a valid shop type.' };
-    if (!parent) return { error: 'Choose a main category.' };
+    const name = clean(body.name || body.subcategoryName);
     if (name.length < 2) return { error: 'Enter a subcategory name.' };
     const tree = loadTree();
-    if (!tree[shopType][parent]) return { error: 'Main category not found.' };
+    let shopType = clean(body.shopType);
+    let parent = clean(body.parent || body.categoryName);
+    const categoryId = clean(body.categoryId || body.parentId);
+    if (categoryId) {
+        const target = findTarget(tree, categoryId);
+        if (target && target.kind === 'category') {
+            shopType = target.shopType;
+            parent = target.name;
+        }
+    }
+    if (!SHOP_CATALOG[shopType] && !tree[shopType]) {
+        return { error: 'Choose a valid shop type.' };
+    }
+    if (!parent) return { error: 'Choose a main category.' };
+    if (!tree[shopType] || !tree[shopType][parent]) {
+        return { error: 'Main category not found.' };
+    }
     const subs = tree[shopType][parent].subs || [];
     if (subs.some((item) => item.toLowerCase() === name.toLowerCase())) {
         return { error: 'That subcategory already exists.' };
     }
     tree[shopType][parent].subs = subs.concat(name);
     saveTree(tree);
-    return { ok: true, message: 'Subcategory added.' };
+    return { ok: true, message: 'Subcategory added.', shopType };
 }
 
 function updateCategory(id, body) {

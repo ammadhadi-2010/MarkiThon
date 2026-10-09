@@ -143,19 +143,26 @@ async function saCatDelete(id, kindHint) {
 }
 
 async function saCatQuickSubmit(form) {
-    const shopType = form.getAttribute('data-shop-type');
-    const parent = form.getAttribute('data-parent');
+    const shopType = form.dataset.shopType || form.getAttribute('data-shop-type') || '';
+    const parent = form.dataset.parent || form.getAttribute('data-parent') || '';
+    const categoryId = form.dataset.categoryId || form.getAttribute('data-category-id') || '';
     const input = form.querySelector('input[name="subName"]');
     const name = String(input && input.value || '').trim();
     if (!name) return;
     const btn = form.querySelector('button[type="submit"]');
     if (btn) btn.disabled = true;
-    const ok = await saCatApi('/api/admin/subcategories', 'POST', { shopType, parent, name });
+    const ok = await saCatApi('/api/admin/subcategories', 'POST', {
+        shopType,
+        parent,
+        categoryId,
+        name
+    });
     if (btn) btn.disabled = false;
     if (!ok) return;
+    const catId = categoryId;
     document.querySelectorAll('.sa-cat-quick').forEach((el) => {
-        if (el.getAttribute('data-shop-type') !== shopType) return;
-        if (el.getAttribute('data-parent') !== parent) return;
+        const same = (el.dataset.categoryId || el.getAttribute('data-category-id')) === catId;
+        if (!same) return;
         const next = el.querySelector('input');
         if (!next) return;
         next.value = '';

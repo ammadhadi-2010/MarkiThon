@@ -28,7 +28,11 @@ exports.createSubcategory = async (req, res) => {
     try {
         const result = addSubcategory(req.body || {});
         if (result.error) return res.status(400).json({ message: result.error });
-        res.status(201).json({ message: result.message, shopTypes: listCategories() });
+        res.status(201).json({
+            message: result.message,
+            shopType: result.shopType,
+            shopTypes: listCategories()
+        });
     } catch (error) {
         res.status(500).json({ message: 'Could not add the subcategory.' });
     }

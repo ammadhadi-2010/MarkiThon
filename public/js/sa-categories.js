@@ -23,16 +23,17 @@ function saCatChip(sub) {
     </span>`;
 }
 
-function saCatQuickAdd(shopType, parentName) {
-    return `<form class="sa-cat-quick" data-cat-quick="1" data-shop-type="${saText(shopType)}"
-        data-parent="${saText(parentName)}">
+function saCatQuickAdd(shopType, cat) {
+    return `<form class="sa-cat-quick" data-cat-quick="1"
+        data-shop-type="${saText(shopType)}"
+        data-parent="${saText(cat.name)}"
+        data-category-id="${saText(cat.id)}">
         <input name="subName" autocomplete="off" maxlength="80" placeholder="+ Add Subcategory" required>
         <button type="submit" title="Add subcategory">Add</button>
     </form>`;
 }
 
 function saCatSection(cat, shopType) {
-    const type = saText(shopType);
     const chips = (cat.subcategories || []).map(saCatChip).join('');
     const pen = saCatIcon('<path d="M4 20h4L18 10l-4-4L4 16v4z"/>');
     return `<div class="sa-cat-section" data-cat-id="${saText(cat.id)}">
@@ -49,7 +50,7 @@ function saCatSection(cat, shopType) {
         </div>
         <div class="sa-cat-chips">
             ${chips}
-            ${saCatQuickAdd(type, cat.name)}
+            ${saCatQuickAdd(shopType, cat)}
         </div>
     </div>`;
 }

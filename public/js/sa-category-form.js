@@ -1,5 +1,3 @@
-const SA_CAT_EMOJI = ['📁', '👕', '👗', '👟', '👜', '📱', '💻', '🏠', '🛋️', '🧴', '🧸', '💎', '🔧', '💊'];
-
 function saCatToast(message, isError) {
     let el = document.getElementById('saCatToast');
     if (!el) {
@@ -33,24 +31,9 @@ async function saCatApi(url, method, body) {
     if (modal) modal.remove();
     saCatToast(data.message || 'Saved.');
     if (body && body.shopType) saCatOpen[body.shopType] = true;
+    else if (data.shopType) saCatOpen[data.shopType] = true;
     await saMountCategories();
     return data;
-}
-
-function saCatShopTypeOptions(selected) {
-    return (saCatTree || []).map((row) => {
-        const name = row.shopType;
-        const on = name === selected ? ' selected' : '';
-        return `<option value="${saText(name)}"${on}>${saText(name)}</option>`;
-    }).join('');
-}
-
-function saCatEmojiPicker() {
-    return `<div class="sa-cat-emoji" id="saFormEmojiPick">
-        ${SA_CAT_EMOJI.map((icon) =>
-            `<button type="button" class="sa-cat-emoji-btn" data-emoji="${icon}" aria-label="Pick ${icon}">${icon}</button>`
-        ).join('')}
-    </div>`;
 }
 
 function saCatModalFields(shopType, mode, parents) {
@@ -64,50 +47,35 @@ function saCatModalFields(shopType, mode, parents) {
                 <option value="">Select category</option>${options}
             </select>
             <label>Subcategory Name</label>
-            <input id="saFormCatName" autocomplete="off" required placeholder="e.g. Shalwar Kameez">`;
+            <input id="saFormCatName" name="categoryName" autocomplete="off" required
+                placeholder="e.g. Shalwar Kameez">`;
     }
     if (mode === 'edit') {
-        return `<label>Name</label>
-            <input id="saFormCatName" autocomplete="off" required>`;
+        return `<label>Category Name</label>
+            <input id="saFormCatName" name="categoryName" autocomplete="off" required
+                placeholder="e.g. Cotton">`;
     }
     return `<label>Shop Type</label>
-        <select id="saFormShopType" required>${saCatShopTypeOptions(shopType)}</select>
+        <input id="saFormShopType" value="${saText(shopType)}" disabled>
         <label>Category Name</label>
-        <input id="saFormCatName" autocomplete="off" required placeholder="e.g. Men's Clothing">
-        <label>Category Icon / Emoji <span class="sa-muted">(optional)</span></label>
-        <div class="sa-cat-icon-row">
-            <input id="saFormCatIcon" autocomplete="off" maxlength="8" value="📁" placeholder="📁">
-            ${saCatEmojiPicker()}
-        </div>`;
+        <input id="saFormCatName" name="categoryName" autocomplete="off" required
+            placeholder="e.g. Men's Clothing">`;
 }
 
 function saWireCatModal() {
     document.getElementById('saFormCancel').onclick = () => document.getElementById('saShopModal').remove();
-    const pick = document.getElementById('saFormEmojiPick');
-    if (!pick) return;
-    pick.addEventListener('click', (event) => {
-        const btn = event.target.closest('[data-emoji]');
-        if (!btn) return;
-        const input = document.getElementById('saFormCatIcon');
-        if (input) input.value = btn.dataset.emoji;
-        pick.querySelectorAll('.sa-cat-emoji-btn').forEach((el) => {
-            el.classList.toggle('on', el === btn);
-        });
-    });
 }
 
 function saOpenAddCategory(shopType) {
-    saShopModal('Add Category', saCatModalFields(shopType, 'add'),
-        '<button type="button" id="saFormCancel">Cancel</button><button class="sa-add" type="submit">Save Category</button>');
+    saShopModal('Add New Main Category', saCatModalFields(shopType, 'add'),
+        '<button type="button" id="saFormCancel">Cancel</button><button class="sa-add" type="submit">Create Category</button>');
     saWireCatModal();
     document.querySelector('#saShopModal form').onsubmit = (event) => {
         event.preventDefault();
-        const form = event.currentTarget;
         saCatApi('/api/admin/categories', 'POST', {
-            shopType: document.getElementById('saFormShopType').value,
-            name: document.getElementById('saFormCatName').value,
-            icon: document.getElementById('saFormCatIcon').value
-        }).then((ok) => { if (ok) form.reset(); });
+            shopType,
+            name: document.getElementById('saFormCatName').value
+        });
     };
 }
 
@@ -125,30 +93,30 @@ function saOpenAddSubcategory(shopType, parentName) {
     if (parentName && parents.includes(parentName)) parent.value = parentName;
     document.querySelector('#saShopModal form').onsubmit = (event) => {
         event.preventDefault();
-        const form = event.currentTarget;
         saCatApi('/api/admin/subcategories', 'POST', {
-            shopType: document.getElementById('saFormShopType').value,
+            shopType,
             parent: parent.value,
             name: document.getElementById('saFormCatName').value
-        }).then((ok) => { if (ok) form.reset(); });
+        });
     };
 }
 
 function saOpenCatEdit(hit) {
-    const label = hit.sub ? hit.sub.name : hit.cat.name;
-    const id = hit.sub ? hit.sub.id : hit.cat.id;
-    if (!hit.sub && hit.cat.locked) {
-        saCatToast('Standard categories cannot be renamed.', true);
-        return;
-    }
-    saShopModal('Edit ' + saText(label), saCatModalFields('', 'edit'),
-        '<button type="button" id="saFormCancel">Cancel</button><button class="sa-add" type="submit">Save</button>');
-    document.getElementById('saFormCatName').value = label;
+    if (hit.sub) return;
+    const id = hit.cat.id;
+    const shopType = hit.group.shopType;
+    saShopModal('Edit Category Name', saCatModalFields(shopType, 'edit'),
+        '<button type="button" id="saFormCancel">Cancel</button><button class="sa-add" type="submit">Update Category Name</button>');
+    const input = document.getElementById('saFormCatName');
+    input.value = hit.cat.name;
+    input.focus();
+    input.select();
     saWireCatModal();
     document.querySelector('#saShopModal form').onsubmit = (event) => {
         event.preventDefault();
         saCatApi('/api/admin/categories/' + encodeURIComponent(id), 'PUT', {
-            name: document.getElementById('saFormCatName').value
+            name: input.value,
+            shopType
         });
     };
 }
@@ -159,7 +127,9 @@ async function saCatDelete(id, kindHint) {
     const kind = (hit.sub || kindHint === 'subcategory') ? 'Subcategory' : 'Category';
     const label = hit.sub ? hit.sub.name : hit.cat.name;
     if (!window.confirm('Are you sure you want to delete this ' + kind + '?\n\n"' + label + '"')) return;
-    await saCatApi('/api/admin/categories/' + encodeURIComponent(id), 'DELETE');
+    await saCatApi('/api/admin/categories/' + encodeURIComponent(id), 'DELETE', {
+        shopType: hit.group.shopType
+    });
 }
 
 document.addEventListener('click', (event) => {

@@ -173,7 +173,6 @@ function updateCategory(id, body) {
     const next = clean(body.name);
     if (next.length < 2) return { error: 'Enter a valid name.' };
     if (target.kind === 'category') {
-        if (target.entry.locked) return { error: 'Standard categories cannot be renamed.' };
         if (tree[target.shopType][next] && next !== target.name) {
             return { error: 'That category already exists.' };
         }
@@ -187,7 +186,7 @@ function updateCategory(id, body) {
         target.entry.subs = subs.map((item) => (item === target.sub ? next : item));
     }
     saveTree(tree);
-    return { ok: true, message: 'Updated.' };
+    return { ok: true, message: 'Category name updated.', shopType: target.shopType };
 }
 
 function removeCategory(id) {

@@ -29,11 +29,14 @@ function saCatSection(cat, shopType) {
     const chips = subs.length
         ? subs.map(saCatChip).join('')
         : `<button type="button" class="sa-cat-inline-add" data-cat-sub="${type}" data-cat-parent="${saText(cat.name)}">+ Add Subcategory</button>`;
+    const pen = saCatIcon('<path d="M4 20h4L18 10l-4-4L4 16v4z"/>');
     return `<div class="sa-cat-section">
         <div class="sa-cat-section-head">
             <div class="sa-cat-section-title">
                 <span class="sa-cat-folder" aria-hidden="true">${saText(cat.icon || '📁')}</span>
                 <strong>${saText(cat.name)}</strong>
+                <button type="button" class="sa-cat-edit" data-cat-edit="${saText(cat.id)}"
+                    title="Edit category name" aria-label="Edit ${saText(cat.name)}">${pen}</button>
                 ${cat.locked ? '<span class="sa-cat-lock">Standard</span>' : ''}
             </div>
             <button type="button" class="sa-cat-x is-row" data-cat-del="${saText(cat.id)}"

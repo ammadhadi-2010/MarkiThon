@@ -94,6 +94,23 @@
     overflow: hidden;
     text-overflow: ellipsis;
 }
+.sa-cat-edit {
+    width: 28px;
+    height: 28px;
+    border: 0;
+    border-radius: 8px;
+    background: rgba(59, 130, 246, 0.16);
+    color: #93c5fd;
+    cursor: pointer;
+    display: grid;
+    place-items: center;
+    flex: 0 0 auto;
+}
+.sa-cat-edit:hover {
+    background: rgba(59, 130, 246, 0.32);
+    color: #fff;
+}
+.sa-cat-edit svg { width: 14px; height: 14px; }
 .sa-cat-lock {
     font-size: 10px;
     font-weight: 700;

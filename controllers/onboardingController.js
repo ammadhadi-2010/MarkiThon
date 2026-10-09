@@ -145,13 +145,16 @@ exports.saveStep1 = async (req, res) => {
 
 exports.saveStep2 = async (req, res) => {
     try {
-        const allowed = ShopProfile.PRODUCT_TYPES;
-        const incoming = Array.isArray(req.body.productTypes) ? req.body.productTypes : [];
-        const productTypes = incoming.filter((name) => allowed.includes(name));
+        const { mainNamesForType } = require('../utils/adminCategories');
         const row = await getOrCreate();
+        const allowed = mainNamesForType(row.shopType);
+        const incoming = Array.isArray(req.body.productTypes) ? req.body.productTypes : [];
+        const productTypes = incoming
+            .map((name) => String(name || '').trim())
+            .filter((name) => name && allowed.some((item) => item.toLowerCase() === name.toLowerCase()));
         await row.update({ productTypes });
         res.status(200).json({
-            message: 'Product types saved.',
+            message: 'Categories saved for your shop.',
             profile: row
         });
     } catch (error) {

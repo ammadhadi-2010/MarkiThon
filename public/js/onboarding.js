@@ -22,21 +22,19 @@ function obCanOpenStep(step) {
 }
 
 function stashObPassDraft() {
-    const cur = document.getElementById('obCurrentPass');
-    const neu = document.getElementById('obNewPass');
-    const conf = document.getElementById('obConfirmPass');
-    if (cur) obPassDraft.current = cur.value;
-    if (neu) obPassDraft.next = neu.value;
-    if (conf) obPassDraft.confirm = conf.value;
+    ['obCurrentPass', 'obNewPass', 'obConfirmPass'].forEach((id, i) => {
+        const el = document.getElementById(id);
+        const key = ['current', 'next', 'confirm'][i];
+        if (el) obPassDraft[key] = el.value;
+    });
 }
 
 function restoreObPassDraft() {
-    const cur = document.getElementById('obCurrentPass');
-    const neu = document.getElementById('obNewPass');
-    const conf = document.getElementById('obConfirmPass');
-    if (cur) cur.value = obPassDraft.current;
-    if (neu) neu.value = obPassDraft.next;
-    if (conf) conf.value = obPassDraft.confirm;
+    const map = { obCurrentPass: 'current', obNewPass: 'next', obConfirmPass: 'confirm' };
+    Object.keys(map).forEach((id) => {
+        const el = document.getElementById(id);
+        if (el) el.value = obPassDraft[map[id]];
+    });
 }
 
 function clearObPassDraft() {
@@ -61,6 +59,9 @@ function showObStep(step, fromJump) {
     });
     const passCard = document.getElementById('obPassCard');
     if (passCard) passCard.hidden = Number(step) !== 7;
+    if (step === 2 && typeof loadObCategoriesForShopType === 'function') {
+        loadObCategoriesForShopType(obShopType).catch((err) => showToast(err.message));
+    }
     if (step === 6 && typeof paintSetupSummary === 'function') paintSetupSummary();
     if (step === 6 && typeof updateObEmbedMap === 'function') updateObEmbedMap();
     if (step === 7 && typeof paintVerifyStep === 'function') paintVerifyStep();
@@ -96,25 +97,6 @@ function obPayload() {
         shopType: obShopType,
         businessType: obBusinessType
     };
-}
-
-function renderProductTypes() {
-    document.querySelectorAll('#obTypeGrid .ob-type').forEach((card) => {
-        card.classList.toggle('on', obProductTypes.includes(card.dataset.ptype));
-    });
-    document.getElementById('obSelectedLabel').textContent =
-        `Selected Categories (${obProductTypes.length})`;
-    document.getElementById('obTags').innerHTML = obProductTypes.map((name) => `
-        <span class="ob-tag">${name}
-            <button type="button" data-unpick="${name}" aria-label="Remove">×</button>
-        </span>`).join('');
-}
-
-function toggleProductType(name) {
-    if (obProductTypes.includes(name)) {
-        obProductTypes = obProductTypes.filter((item) => item !== name);
-    } else obProductTypes = obProductTypes.concat(name);
-    renderProductTypes();
 }
 
 function fillOnboarding(row) {
@@ -161,7 +143,11 @@ function fillOnboarding(row) {
         } else banners = obHeroUrls();
         paintObMedia(row.imageUrl, banners);
     }
-    renderProductTypes();
+    if (typeof loadObCategoriesForShopType === 'function') {
+        loadObCategoriesForShopType(obShopType).catch(() => renderProductTypes());
+    } else {
+        renderProductTypes();
+    }
     if (typeof loadStaffStep === 'function') loadStaffStep().catch(() => {});
     if (typeof fillPackage === 'function') fillPackage(row);
     if (typeof fillDigital === 'function') fillDigital(row);
@@ -212,13 +198,14 @@ function bindOnboarding() {
     document.getElementById('obShopType').addEventListener('click', (e) => {
         const btn = e.target.closest('[data-shoptype]');
         if (!btn) return;
-        obShopType = btn.dataset.shoptype;
-        setObChoice('obShopType', 'data-shoptype', obShopType);
-        if (obShopType === 'Electronics & Mobile'
-            && !obProductTypes.includes('Mobile Accessories')) {
-            obProductTypes = obProductTypes.concat('Mobile Accessories');
-            renderProductTypes();
+        if (btn.dataset.shoptype !== obShopType) {
+            obShopType = btn.dataset.shoptype;
+            obProductTypes = [];
+            if (typeof loadObCategoriesForShopType === 'function') {
+                loadObCategoriesForShopType(obShopType).catch((err) => showToast(err.message));
+            }
         }
+        setObChoice('obShopType', 'data-shoptype', obShopType);
     });
     document.getElementById('obBusinessType').addEventListener('click', (e) => {
         const btn = e.target.closest('[data-bustype]');

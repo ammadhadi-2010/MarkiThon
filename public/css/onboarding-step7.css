@@ -46,6 +46,7 @@
 }
 .ob-qr-cards.dual { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 .ob-qr-card {
+    position: relative;
     background: rgba(16, 24, 44, 0.9);
     border: 1px solid rgba(59, 130, 246, 0.28);
     border-radius: 14px;
@@ -54,6 +55,22 @@
     gap: 8px;
     justify-items: center;
 }
+.ob-qr-badge {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    min-width: 28px;
+    padding: 2px 8px;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 800;
+    line-height: 1.4;
+    color: #fff;
+    text-align: center;
+    box-shadow: 0 4px 10px rgba(15, 23, 42, 0.35);
+}
+.ob-qr-badge.is-r { background: #ea580c; }
+.ob-qr-badge.is-h { background: #059669; }
 .ob-qr-shop {
     margin: 0;
     text-align: center;
@@ -61,7 +78,6 @@
     font-weight: 800;
     color: #f8fafc;
 }
-.ob-qr-card .ob-label { margin: 0; text-align: center; }
 .ob-qr-card .primary { width: 100%; }
 .ob-qr-wrap { position: relative; width: 100%; max-width: 280px; }
 .ob-store-qr {

@@ -48,7 +48,8 @@ exports.getStoreQr = async (req, res) => {
     try {
         const size = Math.min(720, Math.max(128, Number(req.query.size) || 220));
         const data = encodeURIComponent(safeQrData(req.query.data));
-        const url = 'https://api.qrserver.com/v1/create-qr-code/?ecc=H&size=' + size + 'x' + size + '&data=' + data;
+        const url = 'https://api.qrserver.com/v1/create-qr-code/?ecc=H&margin=12&size='
+            + size + 'x' + size + '&data=' + data;
         const resp = await fetch(url);
         if (!resp.ok) throw new Error('QR service error');
         const buf = Buffer.from(await resp.arrayBuffer());

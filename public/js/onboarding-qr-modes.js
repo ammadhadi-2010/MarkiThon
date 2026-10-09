@@ -36,8 +36,10 @@ function paintObQrCards() {
     slot.className = 'ob-qr-cards' + (obQrModeList().length > 1 ? ' dual' : '');
     slot.innerHTML = obQrModeList().map((row) => `
         <div class="ob-qr-card${unlocked ? '' : ' ob-qr-lock'}" data-qrmode="${row.mode}">
+            <span class="ob-qr-badge ${row.mode === 'wholesale' ? 'is-h' : 'is-r'}" aria-hidden="true">
+                ${row.mode === 'wholesale' ? 'H' : 'R'}
+            </span>
             <p class="ob-qr-shop">${obEscQr(shopName)}</p>
-            <p class="ob-label">${row.label}</p>
             <div class="ob-qr-wrap">
                 <canvas class="ob-store-qr" data-qr-canvas="${row.mode}" width="280" height="280"
                     aria-label="${row.label}"></canvas>

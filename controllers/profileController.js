@@ -3,6 +3,13 @@ const ShopDigitalSetup = require('../models/ShopDigitalSetup');
 const Setting = require('../models/Setting');
 const { SHOP_TYPES, BUSINESS_TYPES } = ShopProfile;
 const { categoriesForShop } = require('../utils/shopCatalog');
+const { resolveShopType } = require('../utils/shopTypeCatalog');
+
+function pickShopType(raw, fallback) {
+    if (SHOP_TYPES.includes(raw)) return raw;
+    const resolved = resolveShopType(raw);
+    return SHOP_TYPES.includes(resolved) ? resolved : fallback;
+}
 
 async function getOrCreateProfile() {
     let row = await ShopProfile.findOne({ where: { ShopId: 1 } });
@@ -15,7 +22,7 @@ async function getOrCreateProfile() {
             marketName: 'Central Market',
             shopNumber: '12-B',
             shopAddress: 'Main Market, Punjab',
-            shopType: 'Fabric Shop',
+            shopType: 'Clothing & Fashion',
             businessType: 'Both',
             ShopId: 1
         });
@@ -79,7 +86,7 @@ exports.saveProfile = async (req, res) => {
             shopNumber: String(body.shopNumber || row.shopNumber).trim(),
             shopAddress: String(body.shopAddress || row.shopAddress).trim(),
             imageUrl: body.imageUrl === undefined ? row.imageUrl : body.imageUrl,
-            shopType: SHOP_TYPES.includes(body.shopType) ? body.shopType : row.shopType,
+            shopType: pickShopType(body.shopType, row.shopType),
             businessType: BUSINESS_TYPES.includes(body.businessType) ? body.businessType : row.businessType
         });
         const digital = await getOrCreateDigital();

@@ -1,10 +1,12 @@
+const { catalogForType, resolveShopType } = require('./shopTypeCatalog');
+
 const DEFAULT_CATEGORIES = [
-    'Fabric',
-    'Lawn',
-    'Ready-Made Suits',
-    'Bedsheet',
-    'Blanket / Kambal',
-    'Takiya / Pillow',
+    'General',
+    'Men',
+    'Women',
+    'Kids Wear',
+    'Mobiles',
+    'Household',
     'Other'
 ];
 
@@ -21,23 +23,13 @@ function categoryLabel(product) {
     return String(raw).trim() || 'Other';
 }
 
-const SHOP_TYPE_CATEGORIES = {
-    'Mobile Accessories': [
-        'Mobile Accessories',
-        'Chargers',
-        'Cases & Covers',
-        'Earphones',
-        'Power Banks',
-        'Cables'
-    ]
-};
-
 function categoriesForShop(shopType, productTypes) {
     const names = [];
-    const add = (key) => (SHOP_TYPE_CATEGORIES[key] || []).forEach((name) => {
-        if (!names.includes(name)) names.push(name);
-    });
-    add(shopType);
+    const add = (name) => {
+        const value = String(name || '').trim();
+        if (value && !names.includes(value)) names.push(value);
+    };
+    catalogForType(resolveShopType(shopType)).categories.forEach(add);
     (Array.isArray(productTypes) ? productTypes : []).forEach(add);
     return names;
 }

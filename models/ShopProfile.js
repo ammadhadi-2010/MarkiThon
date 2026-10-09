@@ -1,7 +1,22 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../config/database');
 
-const SHOP_TYPES = ['Fabric Shop', 'Suit Shop', 'Home Textile', 'General Store', 'Mobile Accessories'];
+const SHOP_TYPES = [
+    'Clothing & Fashion',
+    'Electronics & Mobile',
+    'Grocery & Food',
+    'Beauty & Personal Care',
+    'Home & Living',
+    'Furniture',
+    'Sports & Fitness',
+    'Books & Stationery',
+    'Automotive',
+    'Kids & Toys',
+    'Jewellery & Accessories',
+    'Hardware & Tools',
+    'Pharmacy & Health',
+    'General / Multi-Category'
+];
 const BUSINESS_TYPES = ['Retail', 'Wholesale', 'Both'];
 
 const ShopProfile = sequelize.define('ShopProfile', {
@@ -15,7 +30,7 @@ const ShopProfile = sequelize.define('ShopProfile', {
     shopNumber: { type: DataTypes.STRING, allowNull: false },
     shopAddress: { type: DataTypes.STRING, allowNull: false },
     imageUrl: { type: DataTypes.TEXT },
-    shopType: { type: DataTypes.STRING, defaultValue: 'Fabric Shop' },
+    shopType: { type: DataTypes.STRING, defaultValue: 'Clothing & Fashion' },
     businessType: { type: DataTypes.STRING, defaultValue: 'Both' },
     productTypes: { type: DataTypes.JSON, defaultValue: [] },
     websiteUrl: { type: DataTypes.STRING },

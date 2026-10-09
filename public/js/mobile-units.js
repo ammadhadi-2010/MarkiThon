@@ -9,7 +9,8 @@ const MOBILE_CATEGORIES = [
 
 function isMobileShop() {
     const type = typeof catalogScope !== 'undefined' ? catalogScope.shopType : '';
-    return String(type || '') === 'Mobile Accessories';
+    const value = String(type || '');
+    return value === 'Electronics & Mobile' || value === 'Mobile Accessories';
 }
 
 function isMobileCategory(name) {

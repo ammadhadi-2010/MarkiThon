@@ -14,7 +14,7 @@ async function loadShop() {
     const profile = await ShopProfile.findOne({ where: { ShopId: 1 } });
     return {
         shopId: profile ? Number(profile.ShopId) : 1,
-        shopType: (profile && profile.shopType) || 'Fabric Shop',
+        shopType: (profile && profile.shopType) || 'Clothing & Fashion',
         ownerName: (profile && profile.ownerName) || '',
         shopName: (profile && profile.shopName) || 'Ammad Hadi Stor'
     };

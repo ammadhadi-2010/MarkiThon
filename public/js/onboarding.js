@@ -1,4 +1,4 @@
-let obShopType = 'Fabric Shop';
+let obShopType = 'Clothing & Fashion';
 let obBusinessType = 'Both';
 let obProductTypes = [];
 let obStep = 1;
@@ -140,10 +140,17 @@ function fillOnboarding(row) {
     if (bio && Object.prototype.hasOwnProperty.call(row, 'shopDescription')) {
         bio.value = row.shopDescription || '';
     }
-    obShopType = row.shopType || 'Fabric Shop';
+    obShopType = typeof normalizeObShopType === 'function'
+        ? normalizeObShopType(row.shopType)
+        : (row.shopType || 'Clothing & Fashion');
     obBusinessType = row.businessType || 'Both';
     obProductTypes = Array.isArray(row.productTypes) ? row.productTypes.slice() : [];
-    setObChoice('obShopType', 'data-shoptype', obShopType);
+    const typeRoot = document.getElementById('obShopType');
+    if (typeRoot && typeof obShopTypeMarkup === 'function') {
+        typeRoot.innerHTML = obShopTypeMarkup(obShopType);
+    } else {
+        setObChoice('obShopType', 'data-shoptype', obShopType);
+    }
     setObChoice('obBusinessType', 'data-bustype', obBusinessType);
     if (typeof paintObMedia === 'function') {
         let banners;
@@ -207,7 +214,8 @@ function bindOnboarding() {
         if (!btn) return;
         obShopType = btn.dataset.shoptype;
         setObChoice('obShopType', 'data-shoptype', obShopType);
-        if (obShopType === 'Mobile Accessories' && !obProductTypes.includes('Mobile Accessories')) {
+        if (obShopType === 'Electronics & Mobile'
+            && !obProductTypes.includes('Mobile Accessories')) {
             obProductTypes = obProductTypes.concat('Mobile Accessories');
             renderProductTypes();
         }

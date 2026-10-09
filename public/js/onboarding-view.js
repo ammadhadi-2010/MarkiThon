@@ -71,12 +71,10 @@ function onboardingStep1Markup() {
                     autocomplete="off"></textarea>
             </div>
             <p class="ob-label">Shop Type</p>
-            <div class="ob-choice" id="obShopType">
-                <button type="button" class="ob-chip on" data-shoptype="Fabric Shop"><span>🧥</span>Fabric Shop</button>
-                <button type="button" class="ob-chip" data-shoptype="Suit Shop"><span>👔</span>Suit Shop</button>
-                <button type="button" class="ob-chip" data-shoptype="Home Textile"><span>🏠</span>Home Textile</button>
-                <button type="button" class="ob-chip" data-shoptype="General Store"><span>🏪</span>General Store</button>
-                <button type="button" class="ob-chip" data-shoptype="Mobile Accessories"><span>📱</span>Mobile Accessories</button>
+            <div class="ob-choice shop-types" id="obShopType">
+                ${typeof obShopTypeMarkup === 'function'
+                    ? obShopTypeMarkup('Clothing & Fashion')
+                    : '<button type="button" class="ob-chip on" data-shoptype="Clothing & Fashion"><span>👗</span>Clothing & Fashion</button>'}
             </div>
             <p class="ob-label">Business Type</p>
             <div class="ob-choice slim" id="obBusinessType">

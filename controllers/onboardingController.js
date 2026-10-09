@@ -3,7 +3,14 @@ const ShopSubscription = require('../models/ShopSubscription');
 const ShopDigitalSetup = require('../models/ShopDigitalSetup');
 const { SHOP_TYPES, BUSINESS_TYPES } = ShopProfile;
 const { categoriesForShop } = require('../utils/shopCatalog');
+const { resolveShopType } = require('../utils/shopTypeCatalog');
 const Setting = require('../models/Setting');
+
+function pickShopType(raw, fallback) {
+    if (SHOP_TYPES.includes(raw)) return raw;
+    const resolved = resolveShopType(raw);
+    return SHOP_TYPES.includes(resolved) ? resolved : (fallback || 'Clothing & Fashion');
+}
 
 function payloadFromBody(body) {
     return {
@@ -17,7 +24,7 @@ function payloadFromBody(body) {
         shopNumber: String(body.shopNumber || '').trim(),
         shopAddress: String(body.shopAddress || '').trim(),
         imageUrl: body.imageUrl || null,
-        shopType: SHOP_TYPES.includes(body.shopType) ? body.shopType : 'Fabric Shop',
+        shopType: pickShopType(body.shopType, 'Clothing & Fashion'),
         businessType: BUSINESS_TYPES.includes(body.businessType) ? body.businessType : 'Both',
         ShopId: body.ShopId || 1
     };
@@ -39,7 +46,7 @@ async function getOrCreate() {
             marketName: 'Central Market',
             shopNumber: '12-B',
             shopAddress: 'Main Market, Punjab',
-            shopType: 'Fabric Shop',
+            shopType: 'Clothing & Fashion',
             businessType: 'Both',
             ShopId: 1
         });

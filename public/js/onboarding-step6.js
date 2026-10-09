@@ -29,7 +29,8 @@ function markSocialFilled() {
 }
 
 function typeSummary() {
-    const shop = String(typeof obShopType === 'string' ? obShopType : 'Fabric Shop').replace(' Shop', '');
+    const shop = String(typeof obShopType === 'string' ? obShopType : 'Clothing & Fashion')
+        .replace(' & ', ' / ');
     if (typeof obBusinessType === 'string' && obBusinessType === 'Both') {
         return shop + ' + Wholesale + Retail';
     }

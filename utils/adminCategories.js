@@ -148,15 +148,25 @@ function findTarget(tree, id) {
 
 function addCategory(body) {
     const shopType = clean(body.shopType);
-    const name = clean(body.name);
+    const name = clean(body.name || body.categoryName);
     const icon = cleanIcon(body.icon);
+    const rawSubs = Array.isArray(body.subCategories)
+        ? body.subCategories
+        : (Array.isArray(body.subs) ? body.subs : []);
+    const subs = [];
+    rawSubs.forEach((item) => {
+        const value = clean(item);
+        if (value.length < 2) return;
+        if (!subs.some((row) => row.toLowerCase() === value.toLowerCase())) subs.push(value);
+    });
     if (!SHOP_CATALOG[shopType]) return { error: 'Choose a valid shop type.' };
     if (name.length < 2) return { error: 'Enter a category name.' };
     const tree = loadTree();
     if (tree[shopType][name]) return { error: 'That category already exists.' };
-    tree[shopType][name] = { locked: false, subs: [], icon };
+    tree[shopType][name] = { locked: false, subs, icon };
     saveTree(tree);
-    return { ok: true, message: 'Category added.' };
+    const message = subs.length ? 'Category and subcategories added.' : 'Category added.';
+    return { ok: true, message, shopType };
 }
 
 function addSubcategory(body) {

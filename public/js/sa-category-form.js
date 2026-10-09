@@ -1,18 +1,3 @@
-function saCatToast(message, isError) {
-    let el = document.getElementById('saCatToast');
-    if (!el) {
-        el = document.createElement('div');
-        el.id = 'saCatToast';
-        el.className = 'sa-cat-toast';
-        document.body.appendChild(el);
-    }
-    el.textContent = message || '';
-    el.classList.toggle('is-error', Boolean(isError));
-    el.classList.add('on');
-    clearTimeout(saCatToast._t);
-    saCatToast._t = setTimeout(() => el.classList.remove('on'), 2400);
-}
-
 async function saCatApi(url, method, body) {
     const response = await fetch(url, {
         method,
@@ -59,9 +44,14 @@ function saCatModalFields(shopType, mode, parents) {
     }
     return `<label>Shop Type</label>
         <input id="saFormShopType" value="${saText(shopType)}" disabled>
-        <label>Category Name</label>
+        <label>Main Category Name</label>
         <input id="saFormCatName" name="categoryName" autocomplete="off" required
-            placeholder="e.g. Men's Clothing">`;
+            placeholder="e.g. Unstitched Fabric">
+        <label>Subcategories <span class="sa-muted">(Enter or comma)</span></label>
+        <div class="sa-cat-tags" id="saFormSubTags">
+            <div class="sa-cat-tag-list" id="saFormSubList"></div>
+            <input id="saFormSubInput" autocomplete="off" placeholder="Type subcategory and press Enter">
+        </div>`;
 }
 
 function saWireCatModal() {
@@ -69,14 +59,20 @@ function saWireCatModal() {
 }
 
 function saOpenAddCategory(shopType) {
-    saShopModal('Add New Main Category', saCatModalFields(shopType, 'add'),
-        '<button type="button" id="saFormCancel">Cancel</button><button class="sa-add" type="submit">Create Category</button>');
+    const tags = [];
+    saShopModal('Add New Main Category & Subcategories', saCatModalFields(shopType, 'add'),
+        '<button type="button" id="saFormCancel">Cancel</button><button class="sa-add" type="submit">Save All</button>');
     saWireCatModal();
+    saWireSubTags(tags);
     document.querySelector('#saShopModal form').onsubmit = (event) => {
         event.preventDefault();
+        saFlushSubDraft(tags);
+        const categoryName = document.getElementById('saFormCatName').value;
         saCatApi('/api/admin/categories', 'POST', {
             shopType,
-            name: document.getElementById('saFormCatName').value
+            categoryName,
+            name: categoryName,
+            subCategories: tags.slice()
         });
     };
 }
@@ -132,14 +128,11 @@ async function saCatDelete(id, kindHint) {
     const kind = (hit.sub || kindHint === 'subcategory') ? 'Subcategory' : 'Category';
     const label = hit.sub ? hit.sub.name : hit.cat.name;
     if (!window.confirm('Are you sure you want to delete this ' + kind + '?\n\n"' + label + '"')) return;
-    const shopType = hit.group.shopType;
-    const ok = await saCatApi(
+    await saCatApi(
         '/api/admin/categories/' + encodeURIComponent(id) + '/delete',
         'POST',
-        { shopType }
+        { shopType: hit.group.shopType }
     );
-    if (!ok) return;
-    saCatDropLocal(id);
 }
 
 async function saCatQuickSubmit(form) {
@@ -152,17 +145,12 @@ async function saCatQuickSubmit(form) {
     const btn = form.querySelector('button[type="submit"]');
     if (btn) btn.disabled = true;
     const ok = await saCatApi('/api/admin/subcategories', 'POST', {
-        shopType,
-        parent,
-        categoryId,
-        name
+        shopType, parent, categoryId, name
     });
     if (btn) btn.disabled = false;
     if (!ok) return;
-    const catId = categoryId;
     document.querySelectorAll('.sa-cat-quick').forEach((el) => {
-        const same = (el.dataset.categoryId || el.getAttribute('data-category-id')) === catId;
-        if (!same) return;
+        if ((el.dataset.categoryId || el.getAttribute('data-category-id')) !== categoryId) return;
         const next = el.querySelector('input');
         if (!next) return;
         next.value = '';
@@ -177,16 +165,11 @@ document.addEventListener('click', (event) => {
     const edit = event.target.closest('[data-cat-edit]');
     const del = event.target.closest('[data-cat-del]');
     if (toggle) {
-        const key = toggle.dataset.catToggle;
-        saCatOpen[key] = !saCatOpen[key];
+        saCatOpen[toggle.dataset.catToggle] = !saCatOpen[toggle.dataset.catToggle];
         saPaintCategories();
         return;
     }
-    if (add) {
-        event.preventDefault();
-        saOpenAddCategory(add.dataset.catAdd);
-        return;
-    }
+    if (add) { event.preventDefault(); saOpenAddCategory(add.dataset.catAdd); return; }
     if (sub) {
         event.preventDefault();
         saOpenAddSubcategory(sub.dataset.catSub, sub.dataset.catParent || '');

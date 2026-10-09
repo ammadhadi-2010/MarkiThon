@@ -29,8 +29,7 @@ body {
     width: 64px;
     height: 64px;
     border-radius: 16px;
-    object-fit: contain;
-    object-position: center;
+    object-fit: cover;
     background: #10192c;
     flex: 0 0 64px;
 }

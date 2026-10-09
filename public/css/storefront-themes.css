@@ -73,11 +73,7 @@
     -moz-osx-font-smoothing: grayscale;
     text-rendering: geometricPrecision;
 }
-[data-sf-theme="urban-streetwear"] .sf-logo {
-    border-radius: 0;
-    object-fit: contain;
-    background: #0a0a12;
-}
+[data-sf-theme="urban-streetwear"] .sf-logo { border-radius: 0; }
 [data-sf-theme="urban-streetwear"] .sf-chip,
 [data-sf-theme="urban-streetwear"] .sf-card,
 [data-sf-theme="urban-streetwear"] .sf-shot { border-radius: 0; }
@@ -88,27 +84,12 @@
 }
 [data-sf-theme="urban-streetwear"] .sf-card img,
 [data-sf-theme="urban-streetwear"] .os-th-ph {
+    clip-path: polygon(0 0, 100% 0, 100% 88%, 0 100%);
     height: 140px;
-    object-fit: contain;
-    object-position: center;
-    background: #0a0a12;
+    object-fit: cover;
 }
 [data-sf-theme="urban-streetwear"] .sf-grid { gap: 10px; }
 [data-sf-theme="urban-streetwear"] .sf-chip.on { background: #f43f5e; }
-[data-sf-theme="urban-streetwear"] .sf-shot {
-    background-size: contain;
-    background-repeat: no-repeat;
-    background-position: center;
-    background-color: #0a0a12;
-    min-height: 140px;
-}
-[data-sf-theme="urban-streetwear"] .sf-head {
-    background-size: contain;
-    background-repeat: no-repeat;
-    background-position: center;
-    background-color: #0a0a12;
-    min-height: 160px;
-}
 
 .sf-showcase {
     display: grid;
@@ -119,7 +100,7 @@
 .sf-shot {
     min-height: 120px;
     border-radius: 16px;
-    background: #161f36 center/contain no-repeat;
+    background: #161f36 center/cover no-repeat;
     border: 1px solid rgba(59, 130, 246, 0.2);
 }
 .sf-shot-empty {

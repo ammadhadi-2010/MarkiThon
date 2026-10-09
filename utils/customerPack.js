@@ -1,12 +1,10 @@
-const { fallbackOrders, paymentsFromOrders } = require('./customerHistory');
+const { paymentsFromOrders } = require('./customerHistory');
 
 function packCustomer(row) {
     const json = row && row.toJSON ? row.toJSON() : row || {};
     const status = json.status === 'Inactive' ? 'Inactive' : 'Active';
     const details = json.details && typeof json.details === 'object' ? json.details : {};
-    const orders = Array.isArray(details.orders) && details.orders.length
-        ? details.orders
-        : fallbackOrders(json);
+    const orders = Array.isArray(details.orders) ? details.orders : [];
     const payments = Array.isArray(details.payments) && details.payments.length
         ? details.payments
         : paymentsFromOrders(orders);

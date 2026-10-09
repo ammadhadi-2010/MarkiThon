@@ -40,19 +40,30 @@ function saOrderMatch(row) {
     return true;
 }
 
-function saOrderCards(rows) {
+function saOrderCounts(rows) {
     const count = (status) => rows.filter((row) => row.status === status).length;
+    return {
+        total: rows.length,
+        new: count('New') + count('Confirmed'),
+        processing: count('Processing') + count('Dispatched'),
+        completed: count('Completed'),
+        cancelled: count('Cancelled')
+    };
+}
+
+function saOrderCards(rows) {
+    const counts = saOrderCounts(rows);
     const cart = saSvg('<circle cx="9" cy="20" r="1.4"/><circle cx="17" cy="20" r="1.4"/><path d="M3 4h2l2.2 10h10.2l2-7H7"/>');
     const clock = saSvg('<circle cx="12" cy="12" r="8"/><path d="M12 8v5l3 2"/>');
     const gear = saSvg('<circle cx="12" cy="12" r="3"/><path d="M12 3v2M12 19v2M3 12h2M19 12h2M5.6 5.6l1.4 1.4M17 17l1.4 1.4M18.4 5.6L17 7M7 17l-1.4 1.4"/>');
     const check = saSvg('<circle cx="12" cy="12" r="8"/><path d="M8 12l2.5 2.5L16 9"/>');
     const stop = saSvg('<circle cx="12" cy="12" r="8"/><path d="M9 9l6 6M15 9l-6 6"/>');
     const cards = [
-        ['blue', cart, 'Total Orders', rows.length, 'up'],
-        ['purple', clock, 'New Orders', count('New'), 'down'],
-        ['orange', gear, 'Processing', count('Processing'), 'up'],
-        ['green', check, 'Completed', count('Completed'), 'up'],
-        ['pink', stop, 'Cancelled', count('Cancelled'), 'down']
+        ['blue', cart, 'Total Orders', counts.total, 'up'],
+        ['purple', clock, 'New Orders', counts.new, 'down'],
+        ['orange', gear, 'Processing', counts.processing, 'up'],
+        ['green', check, 'Completed', counts.completed, 'up'],
+        ['pink', stop, 'Cancelled', counts.cancelled, 'down']
     ];
     return `<div class="sa-shop-stats sa-order-stats">${cards.map(([tone, icon, label, value, trend]) =>
         `<article class="sa-card sa-stat sa-tone-${tone}"><div class="sa-stat-top"><span class="sa-ico">${icon}</span><span>${label}</span></div><strong>${saCount(value)}</strong><div class="sa-trend">${trend === 'down' ? '<span class="sa-down">↓</span>' : '<span class="sa-up">↑</span>'}</div></article>`
@@ -117,7 +128,7 @@ function saPaintOrders() {
         </div>
         <section class="sa-card sa-shop-board"><div class="sa-scroll"><table class="sa-table sa-shop-table sa-order-table">
             <thead><tr><th>#</th><th>Order ID</th><th>Customer</th><th>Shop</th><th>Total Amount</th><th>Status</th><th>Date</th><th>Actions</th></tr></thead>
-            <tbody>${slice.map((row, index) => saOrderRow(row, (saOrderPage - 1) * SA_ORDER_SIZE + index)).join('') || `<tr><td colspan="8">${saOrderRows.length ? 'No orders match these filters.' : 'No marketplace orders yet.'}</td></tr>`}</tbody>
+            <tbody>${slice.map((row, index) => saOrderRow(row, (saOrderPage - 1) * SA_ORDER_SIZE + index)).join('') || `<tr><td colspan="8">${saOrderRows.length ? 'No orders match these filters.' : 'No marketplace orders found yet.'}</td></tr>`}</tbody>
         </table></div>${saOrderPager(saOrderShown.length)}</section>
         <p class="sa-note-line" id="saOrderNote">${saText(saOrderFlash)}</p>
         <p class="sa-muted">Status changes stay in this admin list. Shop bills are not changed.</p>`;
@@ -141,8 +152,14 @@ function saPaintOrders() {
 
 async function saMountOrders() {
     const response = await fetch('/api/admin/orders');
-    const data = await response.json();
-    saOrderRows = data.orders || [];
+    const data = await response.json().catch(() => ({}));
+    if (!response.ok) {
+        saOrderRows = [];
+        saOrderFlash = data.message || 'Could not load orders.';
+        saPaintOrders();
+        return;
+    }
+    saOrderRows = Array.isArray(data.orders) ? data.orders : [];
     saPaintOrders();
 }
 

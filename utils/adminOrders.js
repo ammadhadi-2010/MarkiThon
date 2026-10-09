@@ -42,10 +42,24 @@ function shape(row) {
     };
 }
 
+function countOrders(rows) {
+    const count = (name) => rows.filter((row) => row.status === name).length;
+    return {
+        total: rows.length,
+        new: count('New') + count('Confirmed'),
+        processing: count('Processing') + count('Dispatched'),
+        completed: count('Completed'),
+        cancelled: count('Cancelled')
+    };
+}
+
 async function liveOrders() {
     const [orders, profiles] = await Promise.all([
         StoreOrder.findAll({
-            attributes: ['id', 'orderNumber', 'customerName', 'customerPhone', 'items', 'total', 'status', 'note', 'ShopId', 'createdAt'],
+            attributes: [
+                'id', 'orderNumber', 'customerName', 'customerPhone', 'items',
+                'total', 'status', 'note', 'ShopId', 'createdAt'
+            ],
             order: [['createdAt', 'DESC']],
             raw: true
         }),
@@ -76,10 +90,11 @@ async function listOrders() {
     } catch (error) {
         live = [];
     }
-    return live.map((row) => {
+    const orders = live.map((row) => {
         const flag = flags[row.id];
         return flag && flag.status ? shape({ ...row, status: flag.status }) : row;
     });
+    return { orders, counts: countOrders(orders) };
 }
 
 function cleanOrder(body) {
@@ -126,7 +141,8 @@ async function createOrder(body) {
 async function updateOrder(id, body) {
     const status = statuses.includes(body.status) ? body.status : '';
     if (!status) return null;
-    const current = (await listOrders()).find((row) => row.id === id);
+    const packed = await listOrders();
+    const current = packed.orders.find((row) => row.id === id);
     if (!current) return { missing: true };
     const order = await StoreOrder.findByPk(id);
     if (order) {
@@ -139,4 +155,4 @@ async function updateOrder(id, body) {
     return shape({ ...current, status, locked: true });
 }
 
-module.exports = { listOrders, createOrder, updateOrder };
+module.exports = { listOrders, createOrder, updateOrder, countOrders };

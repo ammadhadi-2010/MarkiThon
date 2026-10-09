@@ -115,6 +115,15 @@ async function connectDatabase() {
         try {
             await sequelize.authenticate();
             await sequelize.sync({ alter: true });
+            try {
+                const { purgeDemoMarketplace } = require('./utils/purgeDemoMarketplace');
+                const purged = await purgeDemoMarketplace();
+                if (purged.ordersRemoved || purged.customersRemoved) {
+                    console.log('[db] Removed demo marketplace rows:', purged);
+                }
+            } catch (purgeError) {
+                console.warn('[db] Demo marketplace cleanup skipped:', purgeError.message);
+            }
             markDbReady();
             console.log('PostgreSQL connection and models synced');
             console.log('[db] Ready:', {

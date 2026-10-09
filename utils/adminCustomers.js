@@ -37,7 +37,7 @@ function fresh(value) {
 }
 
 function bucket() {
-    return { orders: 0, spent: 0, history: [], name: '', phone: '' };
+    return { orders: 0, spent: 0, history: [], name: '', phone: '', createdAt: null };
 }
 
 function indexOrders(orders) {
@@ -54,8 +54,15 @@ function indexOrders(orders) {
         slot.spent += Number(row.total) || 0;
         if (!slot.name) slot.name = row.customerName || '';
         if (!slot.phone) slot.phone = row.customerPhone || '';
-        if (slot.history.length < 6) {
-            slot.history.push({ number: row.orderNumber, total: Number(row.total) || 0, createdAt: row.createdAt });
+        if (!slot.createdAt || new Date(row.createdAt) < new Date(slot.createdAt)) {
+            slot.createdAt = row.createdAt;
+        }
+        if (slot.history.length < 8) {
+            slot.history.push({
+                number: row.orderNumber,
+                total: Number(row.total) || 0,
+                createdAt: row.createdAt
+            });
         }
         map[key] = slot;
     });
@@ -64,7 +71,7 @@ function indexOrders(orders) {
 
 function spendFor(phone, name, stats) {
     if (phone && stats.byPhone[phone]) return stats.byPhone[phone];
-    if (!phone && name && stats.byName[name]) return stats.byName[name];
+    if (name && stats.byName[name]) return stats.byName[name];
     return bucket();
 }
 
@@ -79,21 +86,17 @@ function shape(row, hit) {
         orders: hit.orders,
         spent: hit.spent,
         history: hit.history,
-        createdAt: row.createdAt,
-        fresh: fresh(row.createdAt),
-        locked: true
+        createdAt: row.createdAt || hit.createdAt,
+        fresh: fresh(row.createdAt || hit.createdAt),
+        locked: true,
+        source: row.source || 'marketplace'
     };
 }
 
 async function liveCustomers() {
-    const [retail, buyers, orders] = await Promise.all([
-        RetailCustomer.findAll({
-            attributes: ['id', 'name', 'phone', 'whatsapp', 'address', 'area', 'city', 'status', 'createdAt'],
-            order: [['createdAt', 'DESC']],
-            raw: true
-        }),
+    const [buyers, orders] = await Promise.all([
         BuyerAccount.findAll({
-            attributes: ['id', 'name', 'phone', 'createdAt'],
+            attributes: ['id', 'name', 'phone', 'email', 'createdAt'],
             order: [['createdAt', 'DESC']],
             raw: true
         }),
@@ -107,37 +110,55 @@ async function liveCustomers() {
     const seenPhone = new Set();
     const seenName = new Set();
     const rows = [];
-    retail.forEach((row) => {
-        const phone = digits(row.phone || row.whatsapp);
+
+    buyers.forEach((row) => {
+        const phone = digits(row.phone);
         const name = norm(row.name);
         if (phone) seenPhone.add(phone);
         if (name) seenName.add(name);
-        const address = [row.address, row.area].filter(Boolean).join(', ');
-        rows.push(shape({
-            id: 'ret-' + row.id,
-            name: row.name,
-            phone: row.phone || row.whatsapp || '',
-            address,
-            city: row.city || '',
-            status: row.status || 'Active',
-            createdAt: row.createdAt
-        }, spendFor(phone, name, stats)));
-    });
-    buyers.forEach((row) => {
-        const phone = digits(row.phone);
-        if (phone && seenPhone.has(phone)) return;
-        if (phone) seenPhone.add(phone);
         rows.push(shape({
             id: 'buy-' + row.id,
             name: row.name,
             phone: row.phone || '',
+            address: row.email || '',
+            city: '',
+            status: 'Active',
+            createdAt: row.createdAt,
+            source: 'buyer'
+        }, spendFor(phone, name, stats)));
+    });
+
+    Object.values(stats.byPhone).concat(Object.values(stats.byName)).forEach((hit) => {
+        const phone = digits(hit.phone);
+        const name = norm(hit.name);
+        if (phone && seenPhone.has(phone)) return;
+        if (!phone && name && seenName.has(name)) return;
+        if (phone) seenPhone.add(phone);
+        if (name) seenName.add(name);
+        rows.push(shape({
+            id: 'ord-' + (phone || name || hit.name),
+            name: hit.name || 'Customer',
+            phone: hit.phone || '',
             address: '',
             city: '',
             status: 'Active',
-            createdAt: row.createdAt
-        }, spendFor(phone, norm(row.name), stats)));
+            createdAt: hit.createdAt,
+            source: 'order'
+        }, hit));
     });
+
+    rows.sort((a, b) => String(b.createdAt || '').localeCompare(String(a.createdAt || '')));
     return rows;
+}
+
+function countCustomers(rows) {
+    return {
+        total: rows.length,
+        active: rows.filter((row) => row.status === 'Active').length,
+        inactive: rows.filter((row) => row.status === 'Inactive').length,
+        fresh: rows.filter((row) => row.fresh).length,
+        spent: rows.reduce((sum, row) => sum + (Number(row.spent) || 0), 0)
+    };
 }
 
 async function listCustomers() {
@@ -148,10 +169,11 @@ async function listCustomers() {
     } catch (error) {
         live = [];
     }
-    return live.map((row) => {
+    const rows = live.map((row) => {
         const flag = flags[row.id];
         return flag && flag.status ? { ...row, status: flag.status } : row;
     });
+    return { customers: rows, counts: countCustomers(rows) };
 }
 
 function cleanCustomer(body) {
@@ -182,14 +204,16 @@ async function createCustomer(body) {
         address: row.address || '',
         city: row.city || '',
         status: row.status || 'Active',
-        createdAt: row.createdAt
+        createdAt: row.createdAt,
+        source: 'retail'
     }, bucket());
 }
 
 async function updateCustomer(id, body) {
     const status = statuses.includes(body.status) ? body.status : '';
     if (!status) return null;
-    const current = (await listCustomers()).find((row) => row.id === id);
+    const packed = await listCustomers();
+    const current = packed.customers.find((row) => row.id === id);
     if (!current) return { missing: true };
     const retailId = String(id).startsWith('ret-') ? String(id).slice(4) : '';
     if (retailId) {
@@ -205,4 +229,4 @@ async function updateCustomer(id, body) {
     return { ...current, status, locked: true };
 }
 
-module.exports = { listCustomers, createCustomer, updateCustomer };
+module.exports = { listCustomers, createCustomer, updateCustomer, countCustomers };

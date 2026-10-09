@@ -37,10 +37,10 @@ function applyInvMobileMode() {
     if (subInput) subInput.value = '';
     if (fabricInput) fabricInput.value = '';
     const unitEl = document.getElementById('invUnit');
-    const sellEl = document.getElementById('invSellUnit');
-    if (!unitEl || !sellEl || typeof fillInvSelect !== 'function') return;
+    if (!unitEl || typeof fillInvSelect !== 'function') return;
     fillInvSelect('invUnit', INV_MOBILE_UNITS, unitEl.value);
-    fillInvSelect('invSellUnit', INV_MOBILE_UNITS, sellEl.value);
+    const sellEl = document.getElementById('invSellUnit');
+    if (sellEl) sellEl.value = unitEl.value || 'Pcs';
     const conv = document.getElementById('invConvert');
     if (conv) conv.value = '1';
     if (typeof paintInvConvert === 'function') paintInvConvert();
@@ -61,10 +61,9 @@ function fillInvMobileFields(product) {
     const sell = typeof hardwareUnitName === 'function'
         ? (hardwareUnitName(product.sellUnit) || unit)
         : unit;
-    if (typeof fillInvSelect === 'function') {
-        fillInvSelect('invUnit', INV_MOBILE_UNITS, unit);
-        fillInvSelect('invSellUnit', INV_MOBILE_UNITS, sell);
-    }
+    if (typeof fillInvSelect === 'function') fillInvSelect('invUnit', INV_MOBILE_UNITS, unit);
+    const sellEl = document.getElementById('invSellUnit');
+    if (sellEl) sellEl.value = sell || unit;
 }
 
 function invMobilePayload() {
@@ -86,8 +85,9 @@ function bindInvMobile() {
     if (unit && !unit.dataset.mobileUnit) {
         unit.dataset.mobileUnit = '1';
         unit.addEventListener('change', () => {
-            if (!isInvMobile() || typeof fillInvSelect !== 'function') return;
-            fillInvSelect('invSellUnit', INV_MOBILE_UNITS, unit.value);
+            if (!isInvMobile()) return;
+            const sellEl = document.getElementById('invSellUnit');
+            if (sellEl) sellEl.value = unit.value;
         });
     }
     applyInvMobileMode();

@@ -23,11 +23,8 @@ function applyInvBlanketMode() {
     if (convert) convert.hidden = true;
     if (sheet) sheet.hidden = true;
     if (typeof fillInvSelect === 'function') {
-        fillInvSelect('invUnit', INV_BLANKET_UNITS, 'Piece');
-        fillInvSelect('invSellUnit', INV_BLANKET_UNITS, document.getElementById('invUnit').value || 'Piece');
+        fillInvSelect('invUnit', ['Pcs', 'Pack', 'Piece', 'Carton', 'Bag'], 'Pcs');
     }
-    const conv = document.getElementById('invConvert');
-    if (conv) conv.value = '1';
     const mat = document.getElementById('invBlanketMaterial');
     const type = document.getElementById('invFabricType');
     if (mat && type) type.value = mat.value;

@@ -16,10 +16,9 @@ function setInvSaveBusy(on) {
 function paintInvConvert() {
     const sell = document.getElementById('invSellUnit');
     const conv = document.getElementById('invConvert');
-    const hint = document.getElementById('invConvertHint');
-    if (!sell || !conv || !hint) return;
-    const n = Number(conv.value) || 0;
-    hint.textContent = `1 ${sell.value} = ${n} Meter. Stock In receives in Meter. POS sells in ${sell.value}.`;
+    const unit = document.getElementById('invUnit');
+    if (sell && unit) sell.value = unit.value || 'Meter';
+    if (conv) conv.value = 1;
 }
 
 function setInvTab(name) {
@@ -63,11 +62,7 @@ function resetInvForm() {
     if (typeof applyInvBedsheetMode === 'function') applyInvBedsheetMode();
     if (typeof applyInvBlanketMode === 'function') applyInvBlanketMode();
     if (typeof applyInvMobileMode === 'function') applyInvMobileMode();
-    const sell = document.getElementById('invSellUnit');
-    const conv = document.getElementById('invConvert');
-    const hardware = typeof isInvMobile === 'function' && isInvMobile();
-    if (!hardware && sell) sell.value = 'Gaz';
-    if (conv) conv.value = hardware ? 1 : (typeof defaultMetersForSell === 'function' ? defaultMetersForSell('Gaz') : 0.9144);
+    if (typeof setInvSizes === 'function') setInvSizes([]);
     paintInvConvert();
 }
 
@@ -82,8 +77,9 @@ function invPayload() {
         sku: document.getElementById('invSku').value,
         imageUrl: document.getElementById('invImageUrl').value,
         stockUnit: document.getElementById('invUnit').value,
-        sellUnit: document.getElementById('invSellUnit').value,
-        metersPerSellUnit: document.getElementById('invConvert').value,
+        sellUnit: document.getElementById('invUnit').value,
+        metersPerSellUnit: 1,
+        sizes: typeof invSizesPayload === 'function' ? invSizesPayload() : [],
         supplierId: document.getElementById('invSupplierId').value,
         openingStock: document.getElementById('invOpening').value,
         minSellingRate: document.getElementById('invMinRate')?.value || 0,
@@ -108,24 +104,17 @@ function fillInvForm(p) {
     document.getElementById('invSku').value = p.sku || '';
     document.getElementById('invImageUrl').value = p.imageUrl || '';
     document.getElementById('invUnit').value = p.stockUnit === 'Than' ? 'Thaan' : (p.stockUnit || 'Meter');
-    const sell = document.getElementById('invSellUnit');
-    const conv = document.getElementById('invConvert');
-    if (sell) sell.value = p.sellUnit || 'Gaz';
-    if (conv) conv.value = Number(p.metersPerSellUnit) > 0 ? p.metersPerSellUnit : (typeof defaultMetersForSell === 'function' ? defaultMetersForSell(sell.value) : 0.9144);
     if (typeof isInvBedsheet === 'function' && isInvBedsheet()) {
-        const sheetUnit = /set/i.test(String(p.stockUnit || p.sellUnit || '')) ? 'Set' : 'Pieces';
+        const sheetUnit = /set/i.test(String(p.stockUnit || p.sellUnit || '')) ? 'Set' : 'Pcs';
         document.getElementById('invUnit').value = sheetUnit;
-        if (sell) sell.value = /set/i.test(String(p.sellUnit || '')) ? 'Set' : sheetUnit;
-        if (conv) conv.value = 1;
     }
     if (typeof isInvBlanket === 'function' && isInvBlanket()) {
-        const unit = /carton/i.test(String(p.stockUnit || '')) ? 'Carton'
-            : (/bag/i.test(String(p.stockUnit || '')) ? 'Bag' : 'Piece');
+        const unit = /carton/i.test(String(p.stockUnit || '')) ? 'Pack'
+            : (/bag/i.test(String(p.stockUnit || '')) ? 'Pack' : 'Pcs');
         document.getElementById('invUnit').value = unit;
-        if (sell) sell.value = unit;
-        if (conv) conv.value = 1;
     }
     if (typeof fillInvMobileFields === 'function') fillInvMobileFields(p);
+    if (typeof setInvSizes === 'function') setInvSizes(p.sizes || []);
     paintInvConvert();
     document.getElementById('invOpeningWrap').hidden = true;
     document.getElementById('invOnHand').hidden = false;
@@ -225,16 +214,9 @@ document.addEventListener('DOMContentLoaded', () => {
     if (typeof bindInvBedsheet === 'function') bindInvBedsheet();
     if (typeof bindInvBlanket === 'function') bindInvBlanket();
     if (typeof bindInvMobile === 'function') bindInvMobile();
-    document.getElementById('invSellUnit').addEventListener('change', () => {
-        const sheet = typeof isInvBedsheet === 'function' && isInvBedsheet();
-        const blanket = typeof isInvBlanket === 'function' && isInvBlanket();
-        const hardware = typeof isInvMobile === 'function' && isInvMobile();
-        document.getElementById('invConvert').value = (sheet || blanket || hardware)
-            ? 1
-            : defaultMetersForSell(document.getElementById('invSellUnit').value);
-        paintInvConvert();
-    });
-    document.getElementById('invConvert').addEventListener('input', paintInvConvert);
+    if (typeof bindInvSizes === 'function') bindInvSizes();
+    if (typeof setInvSizes === 'function') setInvSizes([]);
+    document.getElementById('invUnit')?.addEventListener('change', paintInvConvert);
     document.getElementById('invImageUrl').addEventListener('input', previewImage);
     if (typeof bindInvImageCompress === 'function') bindInvImageCompress();
     document.getElementById('invTable').addEventListener('click', async (e) => {

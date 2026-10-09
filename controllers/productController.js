@@ -30,10 +30,11 @@ function identityFromBody(body) {
             return url;
         })(),
         stockUnit: body.stockUnit || 'Meter',
-        sellUnit: blank(body.sellUnit) || 'Gaz',
-        metersPerSellUnit: toNum(body.metersPerSellUnit) > 0
-            ? toNum(body.metersPerSellUnit)
-            : (/^meter/i.test(String(body.sellUnit || 'Gaz')) ? 1 : 0.9144),
+        sellUnit: blank(body.sellUnit) || body.stockUnit || 'Meter',
+        metersPerSellUnit: toNum(body.metersPerSellUnit) > 0 ? toNum(body.metersPerSellUnit) : 1,
+        sizes: Array.isArray(body.sizes)
+            ? body.sizes.map((item) => String(item || '').trim()).filter(Boolean).slice(0, 40)
+            : [],
         supplierId: body.supplierId ? Number(body.supplierId) : null
     };
     if (body.minSellingRate !== undefined && body.minSellingRate !== '') {

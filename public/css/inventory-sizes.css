@@ -1,0 +1,57 @@
+.inv-size-box {
+    border: 1px solid rgba(59, 130, 246, 0.22);
+    border-radius: 12px;
+    background: #10192c;
+    padding: 10px;
+    display: grid;
+    gap: 8px;
+}
+.inv-size-presets,
+.inv-size-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    align-items: center;
+}
+.inv-size-chip,
+.inv-size-tag {
+    border: 1px solid rgba(148, 163, 184, 0.28);
+    background: rgba(15, 23, 42, 0.65);
+    color: #dbeafe;
+    border-radius: 999px;
+    padding: 5px 10px;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+}
+.inv-size-chip.on {
+    background: rgba(37, 99, 235, 0.28);
+    border-color: rgba(59, 130, 246, 0.55);
+    color: #fff;
+}
+.inv-size-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding-right: 6px;
+    cursor: default;
+}
+.inv-size-tag em { font-style: normal; }
+.inv-size-tag button {
+    width: 18px;
+    height: 18px;
+    border: 0;
+    border-radius: 999px;
+    background: rgba(220, 38, 38, 0.25);
+    color: #fca5a5;
+    cursor: pointer;
+    line-height: 1;
+    font-weight: 700;
+}
+.inv-size-box input {
+    border: 0;
+    background: transparent;
+    color: #e2e8f0;
+    outline: none;
+    padding: 4px 2px;
+}

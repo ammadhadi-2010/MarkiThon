@@ -33,25 +33,31 @@ function inventoryMarkup() {
                         <div class="field"><label>SKU / Code</label>
                             <input id="invSku" name="invSku" placeholder="Leave blank to auto-generate" autocomplete="off"></div>
                     </div>
-                    <div class="grid-2">
-                        <div class="field"><label>Stock Unit (Purchase)</label>
-                            <select id="invUnit" name="invUnit" autocomplete="off">
-                                <option selected>Meter</option><option>Thaan</option><option>Yard</option>
-                                <option>Unit</option><option>Suit</option>
-                            </select></div>
-                        <div class="field"><label>Selling Unit</label>
-                            <select id="invSellUnit" name="invSellUnit" autocomplete="off">
-                                <option selected>Gaz</option><option>Meter</option><option>Yard</option>
-                                <option>Thaan</option><option>Unit</option><option>Suit</option>
-                            </select></div>
-                    </div>
-                    <div class="field" id="invConvertWrap">
-                        <label>Selling Unit &amp; Conversion Rule</label>
-                        <div class="grid-2">
-                            <input id="invConvert" name="invConvert" type="number" min="0.0001" step="0.0001" value="0.9144" autocomplete="off">
-                            <p class="wl-hint" id="invConvertHint">1 Gaz = 0.9144 Meter. POS deducts converted meters.</p>
+                    <div class="field"><label>Unit</label>
+                        <select id="invUnit" name="invUnit" autocomplete="off">
+                            <option>Pcs</option>
+                            <option>Suit</option>
+                            <option selected>Meter</option>
+                            <option>Gaz</option>
+                            <option>Yard</option>
+                            <option>Kg</option>
+                            <option>Pack</option>
+                            <option>Thaan</option>
+                            <option>Set</option>
+                            <option>Piece</option>
+                        </select></div>
+                    <div class="field" id="invSizesWrap">
+                        <label>Sizes / Variants <span class="wl-hint">(Optional)</span></label>
+                        <div class="inv-size-box" id="invSizeBox">
+                            <div class="inv-size-presets" id="invSizePresets"></div>
+                            <div class="inv-size-tags" id="invSizeTags"></div>
+                            <input id="invSizeInput" name="invSizeInput" autocomplete="off"
+                                placeholder="Type custom size and press Enter">
                         </div>
+                        <p class="wl-hint">Leave blank for products that do not need sizing.</p>
                     </div>
+                    <input type="hidden" id="invSellUnit" name="invSellUnit" value="Meter">
+                    <input type="hidden" id="invConvert" name="invConvert" value="1">
                     <div class="field">
                         <label>Default Supplier</label>
                         <select id="invSupplierId" name="invSupplierId" autocomplete="off">

@@ -15,8 +15,11 @@ function fillInvSelect(id, names, selected) {
     const el = document.getElementById(id);
     if (!el) return;
     const keep = selected || el.value || names[0];
-    el.innerHTML = names.map((name) => `<option>${name}</option>`).join('');
-    el.value = names.includes(keep) ? keep : names[0];
+    const value = names.includes(keep) ? keep : names[0];
+    if (el.tagName === 'SELECT') {
+        el.innerHTML = names.map((name) => `<option>${name}</option>`).join('');
+    }
+    el.value = value;
 }
 
 function applyInvSheetPreset() {
@@ -37,15 +40,10 @@ function applyInvBedsheetMode() {
     const blanket = typeof isInvBlanket === 'function' && isInvBlanket();
     const wrap = document.getElementById('invBedsheetWrap');
     const fabric = document.getElementById('invFabricWrap');
-    const convert = document.getElementById('invConvertWrap');
     if (wrap) wrap.hidden = !sheet;
     if (fabric) fabric.hidden = sheet || blanket;
-    if (convert) convert.hidden = sheet || blanket;
     if (sheet) {
-        fillInvSelect('invUnit', INV_SHEET_UNITS, document.getElementById('invUnit').value);
-        fillInvSelect('invSellUnit', INV_SHEET_UNITS, document.getElementById('invSellUnit').value);
-        const conv = document.getElementById('invConvert');
-        if (conv) conv.value = '1';
+        fillInvSelect('invUnit', ['Pcs', 'Set', 'Pieces'], document.getElementById('invUnit').value);
         const mat = document.getElementById('invSheetMaterial');
         const type = document.getElementById('invFabricType');
         if (mat && type) type.value = mat.value;
@@ -56,12 +54,7 @@ function applyInvBedsheetMode() {
         return;
     }
     if (blanket) return;
-    fillInvSelect('invUnit', INV_FABRIC_UNITS, 'Meter');
-    fillInvSelect('invSellUnit', INV_FABRIC_SELL, 'Gaz');
-    const conv = document.getElementById('invConvert');
-    if (conv && typeof defaultMetersForSell === 'function') {
-        conv.value = defaultMetersForSell(document.getElementById('invSellUnit').value);
-    }
+    fillInvSelect('invUnit', ['Pcs', 'Suit', 'Meter', 'Gaz', 'Yard', 'Kg', 'Pack', 'Thaan'], 'Meter');
     paintInvConvert();
 }
 

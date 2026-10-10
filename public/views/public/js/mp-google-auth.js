@@ -80,7 +80,13 @@ async function mpHandleGoogleCredential(response) {
             body: JSON.stringify({ credential })
         });
         const data = await res.json().catch(() => ({}));
-        if (!res.ok) throw new Error(data.message || 'Google sign-in failed.');
+        if (!res.ok) {
+            if (data.pending && typeof mpApplyBuyerSession === 'function') {
+                mpApplyBuyerSession(data);
+                return;
+            }
+            throw new Error(data.message || 'Google sign-in failed.');
+        }
         if (typeof mpApplyBuyerSession === 'function') {
             mpApplyBuyerSession(data);
         } else if (data.role === 'shopkeeper' || data.role === 'vendor') {

@@ -6,12 +6,19 @@ function mpCleanLabel(value) {
 
 function mpDisplayName(user) {
     if (!user) return '';
-    return mpCleanLabel(user.fullName)
-        || mpCleanLabel(user.shopName)
+    /* Prefer DB shop / profile names; never prefer raw Gmail titles when those exist. */
+    return mpCleanLabel(user.shopName)
+        || mpCleanLabel(user.fullName)
         || mpCleanLabel(user.ownerName)
         || mpCleanLabel(user.name)
         || String(user.email || '').trim()
         || 'Account';
+}
+
+function mpIsShopkeeperRole(user) {
+    if (!user) return false;
+    const role = String(user.role || '').toLowerCase();
+    return role === 'shopkeeper' || role === 'vendor' || user.isVendor === true || user.hasShop === true;
 }
 
 function mpIsAdminLoggedIn() {
@@ -24,11 +31,22 @@ function mpIsAdminLoggedIn() {
 
 function mpIsActiveShopkeeper(user) {
     if (!user) return false;
-    const role = String(user.role || '').toLowerCase();
-    const shopRole = role === 'shopkeeper' || role === 'vendor' || user.isVendor || user.hasShop;
-    if (!shopRole && typeof mpIsVendorLoggedIn === 'function' && !mpIsVendorLoggedIn()) return false;
+    const shopRole = mpIsShopkeeperRole(user)
+        || (typeof mpIsVendorLoggedIn === 'function' && mpIsVendorLoggedIn());
     if (!shopRole) return false;
-    return user.isApproved === true || user.status === 'Active' || user.verified === true;
+    return user.isApproved === true || user.status === 'Active';
+}
+
+function mpMaybeRedirectShopkeeper(user, force) {
+    const row = user || (typeof mpMenuSessionUser === 'function' ? mpMenuSessionUser() : null);
+    if (!mpIsActiveShopkeeper(row)) return false;
+    const path = String(location.pathname || '/');
+    const onApp = path === '/app' || path.indexOf('/app/') === 0;
+    if (onApp) return false;
+    const onHome = path === '/' || path === '';
+    if (!force && !onHome) return false;
+    location.replace('/app');
+    return true;
 }
 
 const MP_BUYER_USER_KEY = 'mpBuyerUser';
@@ -77,12 +95,24 @@ function mpApplyVendorSession(data) {
 }
 
 function mpApplyBuyerSession(data) {
+    if (data && data.pending) {
+        if (typeof mpToast === 'function') {
+            mpToast(data.message || 'Your account is Pending Admin Approval.');
+        }
+        if (typeof mpCloseAuth === 'function') mpCloseAuth();
+        return;
+    }
     const role = String((data && data.role) || '').toLowerCase();
     const asVendor = role === 'shopkeeper' || role === 'vendor'
         || (data.user && (data.user.shopName || data.user.role === 'vendor'));
     if (asVendor && mpApplyVendorSession(data)) {
         if (typeof mpCloseAuth === 'function') mpCloseAuth();
         if (typeof mpPaintAuth === 'function') mpPaintAuth();
+        const goApp = data.redirect === '/app' || mpIsActiveShopkeeper(data.user);
+        if (goApp) {
+            location.assign('/app');
+            return;
+        }
         return;
     }
     if (data.token) localStorage.setItem('mpBuyerToken', data.token);
@@ -129,12 +159,7 @@ function mpDashboardHref(user) {
     if (role === 'admin' || (typeof mpIsAdminLoggedIn === 'function' && mpIsAdminLoggedIn() && mpAdmin)) {
         return '/admin';
     }
-    if (typeof mpIsActiveShopkeeper === 'function' && mpIsActiveShopkeeper(user)) return '/app';
-    const shop = role === 'shopkeeper' || role === 'vendor'
-        || (user && (user.isVendor || user.hasShop));
-    if (shop && user && (user.isApproved === true || user.status === 'Active' || user.verified === true)) {
-        return '/app';
-    }
+    if (mpIsActiveShopkeeper(user)) return '/app';
     return '';
 }
 

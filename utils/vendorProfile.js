@@ -14,12 +14,15 @@ function publicVendor(row) {
         shopkeeperId: vendor.shopkeeperId,
         shopName: vendor.shopName,
         ownerName: vendor.ownerName,
+        fullName: vendor.ownerName || '',
+        name: vendor.shopName || vendor.ownerName || '',
         email: vendor.email,
         phone: vendor.phone,
         address: vendor.address,
         imageUrl: vendor.imageUrl || '',
         status: vendor.status,
         isApproved: vendor.status === 'Active',
+        verified: vendor.status === 'Active',
         biometricEnabled: Boolean(vendor.biometricEnabled),
         hasWebAuthn: Boolean(vendor.webauthnCredId)
     };

@@ -19,7 +19,12 @@ function authLoginRedirect(data) {
 
 function authShowUnauthorized() {
     const params = new URLSearchParams(location.search);
-    if (params.get('reason') !== 'unauthorized') return;
+    const reason = params.get('reason');
+    if (reason === 'pending') {
+        authShow('authError', 'Your account is Pending Admin Approval. You can open Inventory after an admin approves it.');
+        return;
+    }
+    if (reason !== 'unauthorized') return;
     authShow('authError', 'Unauthorized. Sign in with a Super Admin account to open the Admin Dashboard.');
 }
 

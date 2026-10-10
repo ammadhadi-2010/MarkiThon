@@ -65,14 +65,19 @@ function mpOpenVendorEntry() {
 function mpManageMenuMarkup(user) {
     const shop = mpHasVendorSession() || mpIsShopVendor(user);
     const admin = String((user && user.role) || '').toLowerCase() === 'admin';
+    const active = typeof mpIsActiveShopkeeper === 'function' && mpIsActiveShopkeeper(user);
     const storeLink = shop
         ? '<a href="/settings" data-mp-go="/settings">Online Store Settings</a>'
+        : '';
+    const inventory = active
+        ? '<a href="/app" class="mp-menu-inventory" data-mp-go="/app">Inventory Dashboard</a>'
         : '';
     return `
             <p class="mp-menu-label">Manage</p>
             <div class="mp-menu-links">
+                ${inventory}
                 ${storeLink}
-                <button type="button" data-mp-dashboard="1"${admin || shop ? '' : ' class="is-locked"'}>Dashboard</button>
+                <button type="button" data-mp-dashboard="1"${admin || active ? '' : ' class="is-locked"'}>Dashboard</button>
             </div>`;
 }
 
@@ -113,7 +118,7 @@ function mpProfileMenuMarkup(user) {
         || Boolean(user && (user.isVendor || user.hasShop)));
     const displayName = typeof mpDisplayName === 'function'
         ? mpDisplayName(user)
-        : (user.shopName || user.fullName || user.name || user.email || 'Account');
+        : (user.shopName || user.fullName || user.ownerName || user.name || user.email || 'Account');
     const name = mpEscAttr(displayName);
     const letter = String(displayName).trim().charAt(0).toUpperCase() || 'A';
     const badge = mpEscAttr(admin

@@ -217,6 +217,7 @@ async function mpBindAuth() {
     if (typeof mpLoadAdmin === 'function') loads.push(mpLoadAdmin());
     await Promise.all(loads);
     mpPaintAuth();
+    if (typeof mpMaybeRedirectShopkeeper === 'function' && mpMaybeRedirectShopkeeper()) return;
     if (!mpBuyer && !mpVendor && !mpAdmin && typeof mpPromptGoogleOneTap === 'function') {
         mpPromptGoogleOneTap();
     }

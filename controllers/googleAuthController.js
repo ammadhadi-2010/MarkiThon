@@ -36,9 +36,19 @@ async function verifyGoogleCredential(credential) {
 }
 
 function sendVendorSession(res, vendor) {
+    const user = publicVendor(vendor);
+    if (vendor.status !== 'Active') {
+        return res.status(403).json({
+            message: 'Your account is Pending Admin Approval. You can sign in after an admin approves it.',
+            role: 'shopkeeper',
+            pending: true,
+            user,
+            shopName: user.shopName,
+            fullName: user.ownerName || user.shopName
+        });
+    }
     const token = signAuth({ sub: vendor.id, role: 'vendor', status: vendor.status }, '30d');
     setAuthCookie(res, token);
-    const user = publicVendor(vendor);
     return res.status(200).json({
         token,
         role: 'shopkeeper',

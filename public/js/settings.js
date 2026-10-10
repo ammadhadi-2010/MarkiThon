@@ -1,15 +1,21 @@
+function shopDisplayLabel(row) {
+    if (!row) return '';
+    return String(row.shopName || row.fullName || row.ownerName || row.name || '').trim();
+}
+
 function applyShopProfile(row) {
     if (!row) return;
+    const label = shopDisplayLabel(row);
     const shop = document.getElementById('shopName');
-    if (shop && row.shopName) shop.textContent = row.shopName;
+    if (shop && (row.shopName || label)) shop.textContent = row.shopName || label;
     const owner = document.querySelector('.profile strong');
-    if (owner && row.ownerName) owner.textContent = row.ownerName;
+    if (owner && label) owner.textContent = label;
     const role = document.querySelector('.profile span');
     if (role) role.textContent = 'Shopkeeper';
     const avatar = document.querySelector('.profile .avatar');
-    if (avatar && row.ownerName) avatar.textContent = String(row.ownerName).trim().charAt(0).toUpperCase();
+    if (avatar && label) avatar.textContent = label.charAt(0).toUpperCase();
     const title = document.querySelector('title');
-    if (title && row.shopName) title.textContent = 'MarkiThon — ' + row.shopName;
+    if (title && (row.shopName || label)) title.textContent = 'MarkiThon — ' + (row.shopName || label);
 }
 
 async function loadShopProfile() {

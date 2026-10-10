@@ -3,6 +3,7 @@ const MP_VENDOR_KEY = 'vendor';
 const MP_VENDOR_ALT = 'mtVendorUser';
 let mpBuyer = null;
 let mpVendor = null;
+let mpAdmin = null;
 
 function mpBuyerToken() {
     return localStorage.getItem(MP_BUYER_KEY) || '';
@@ -105,6 +106,38 @@ async function mpLoadVendor() {
     mpVendor = stored || null;
 }
 
+async function mpLoadAdmin() {
+    if (!mpIsAdminLoggedIn()) {
+        mpAdmin = null;
+        return;
+    }
+    try {
+        const token = localStorage.getItem('mtAuthToken:admin') || '';
+        const res = await fetch('/api/auth/admin/me', {
+            credentials: 'include',
+            headers: token ? { Authorization: 'Bearer ' + token } : {}
+        });
+        const data = await res.json().catch(() => ({}));
+        if (!res.ok || !data.user) {
+            mpAdmin = null;
+            return;
+        }
+        const row = data.user;
+        mpAdmin = {
+            id: row.id,
+            role: 'admin',
+            name: row.name || 'Super Admin',
+            fullName: row.name || '',
+            email: row.email || '',
+            imageUrl: row.avatarUrl || '',
+            subtitle: 'Super Admin',
+            verified: true
+        };
+    } catch (error) {
+        mpAdmin = null;
+    }
+}
+
 function mpMapVendorUser(vendor) {
     const status = String(vendor.status || '');
     const approved = status === 'Active' || vendor.isApproved === true;
@@ -172,6 +205,7 @@ function mpBuyerAsVendor() {
 }
 
 function mpMenuSessionUser() {
+    if (mpAdmin) return mpAdmin;
     if (mpIsVendorLoggedIn()) {
         const raw = mpVendor || mpReadStoredVendor();
         if (raw) return mpOverlayStorefront(mpMapVendorUser(raw));
@@ -181,20 +215,10 @@ function mpMenuSessionUser() {
     }
     const asVendor = mpBuyerAsVendor();
     if (asVendor) return asVendor;
-    if (mpBuyer && typeof sfShop !== 'undefined' && sfShop && sfShop.shopName) {
-        return mpOverlayStorefront(mpMapVendorUser({
-            shopName: sfShop.shopName,
-            ownerName: mpBuyer.name || '',
-            imageUrl: (sfShop.themeAssets && sfShop.themeAssets.logo) || sfShop.imageUrl || mpBuyer.imageUrl || '',
-            email: mpBuyer.email || '',
-            phone: mpBuyer.phone || '',
-            status: sfShop.isApproved ? 'Active' : 'Pending Admin Approval',
-            isApproved: Boolean(sfShop.isApproved)
-        }));
-    }
     if (!mpBuyer) return null;
     return Object.assign({}, mpBuyer, {
-        name: mpBuyer.name || mpBuyer.email || 'Account',
+        name: mpDisplayName(mpBuyer),
+        role: mpBuyer.role || 'customer',
         subtitle: mpBuyer.subtitle && mpBuyer.subtitle !== 'Customer' ? mpBuyer.subtitle : 'Account'
     });
 }

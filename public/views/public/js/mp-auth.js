@@ -35,14 +35,23 @@ function mpBindProfileMenu(slot) {
     }
     slot.querySelectorAll('[data-mp-account]').forEach((btn) => {
         btn.addEventListener('click', () => {
+            if (!mpRequireAuth('login')) return;
             mpCloseProfileMenu();
             if (typeof mpOpenAccount === 'function') mpOpenAccount(btn.getAttribute('data-mp-account'));
+        });
+    });
+    slot.querySelectorAll('[data-mp-dashboard]').forEach((btn) => {
+        btn.addEventListener('click', (event) => {
+            event.preventDefault();
+            event.stopPropagation();
+            mpOpenDashboard();
         });
     });
     slot.querySelectorAll('[data-mp-go]').forEach((link) => {
         link.addEventListener('click', (event) => {
             event.preventDefault();
             event.stopPropagation();
+            if (!mpRequireAuth('login')) return;
             mpVendorGo(link.getAttribute('data-mp-go') || link.getAttribute('href'));
         });
     });
@@ -64,7 +73,8 @@ function mpPaintAuth() {
     const sessionUser = typeof mpMenuSessionUser === 'function' ? mpMenuSessionUser() : mpBuyer;
     if (!sessionUser) {
         slot.innerHTML = mpGuestPillMarkup();
-        slot.querySelector('#mpAuthOpen').addEventListener('click', () => mpOpenAuth('login'));
+        const open = slot.querySelector('#mpAuthOpen');
+        if (open) open.addEventListener('click', () => mpOpenAuth('register'));
         if (typeof sfWireShopBadgeAuth === 'function') sfWireShopBadgeAuth();
         return;
     }
@@ -178,10 +188,12 @@ function mpLogoutBuyer() {
     localStorage.removeItem(MP_BUYER_KEY);
     localStorage.removeItem('mtAuthToken:vendor');
     localStorage.removeItem('mtAuthToken');
+    localStorage.removeItem('mtAuthToken:admin');
     localStorage.removeItem('vendor');
     localStorage.removeItem('mtVendorUser');
     mpBuyer = null;
     mpVendor = null;
+    mpAdmin = null;
     mpCloseProfileMenu();
     mpPaintAuth();
     if (typeof mpCloseAccount === 'function') mpCloseAccount();
@@ -198,7 +210,11 @@ async function mpBindAuth() {
             mpCloseProfileMenu();
         });
     }
-    await Promise.all([mpLoadBuyer(), mpLoadVendor()]);
+    const loads = [mpLoadBuyer(), mpLoadVendor()];
+    if (typeof mpLoadAdmin === 'function') loads.push(mpLoadAdmin());
+    await Promise.all(loads);
     mpPaintAuth();
-    if (!mpBuyer && !mpVendor && typeof mpPromptGoogleOneTap === 'function') mpPromptGoogleOneTap();
+    if (!mpBuyer && !mpVendor && !mpAdmin && typeof mpPromptGoogleOneTap === 'function') {
+        mpPromptGoogleOneTap();
+    }
 }

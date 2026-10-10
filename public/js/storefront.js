@@ -85,8 +85,10 @@ function sfWireShopBadgeAuth() {
         const loggedIn = typeof mpBuyer !== 'undefined' && mpBuyer;
         const vendor = (typeof mpIsVendorLoggedIn === 'function' && mpIsVendorLoggedIn())
             || (typeof mpHasVendorSession === 'function' && mpHasVendorSession());
-        if (!loggedIn && !vendor) {
-            if (typeof mpOpenAuth === 'function') mpOpenAuth('login');
+        const admin = typeof mpAdmin !== 'undefined' && mpAdmin;
+        if (!loggedIn && !vendor && !admin) {
+            if (typeof mpRequireAuth === 'function') mpRequireAuth('register');
+            else if (typeof mpOpenAuth === 'function') mpOpenAuth('register');
             return;
         }
         if (typeof mpToggleProfileMenu === 'function') mpToggleProfileMenu();

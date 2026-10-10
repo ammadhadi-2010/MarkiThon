@@ -72,9 +72,6 @@ async function saLoadAdminWho() {
         if (!response.ok) return;
         const data = await response.json();
         saAdminUser = data.user || null;
-        if (typeof saAdminSyncFormFields === 'function' && document.getElementById('saAdminProfileForm')) {
-            saAdminSyncFormFields(saAdminUser);
-        }
         if (typeof saPaintTop === 'function' && document.getElementById('saTop')) saPaintTop();
     } catch (error) {
         /* Keep default admin label until next paint. */

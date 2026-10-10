@@ -58,7 +58,7 @@ async function adminUpdateProfile(req, res) {
         const user = await updateAdminProfile(payload.email || '', {
             name: req.body.name,
             email: req.body.email,
-            phone: req.body.phone,
+            phone: req.body.phone != null ? req.body.phone : req.body.phoneNumber,
             avatarUrl: req.body.avatarUrl || req.body.avatar
         });
         if (user && user.conflict) {

@@ -56,13 +56,19 @@ async function readAdmins() {
     return seeded;
 }
 
+function adminPhone(user) {
+    return String((user && (user.phone || user.phoneNumber)) || '').trim().slice(0, 24);
+}
+
 function publicAdmin(user) {
+    const phone = adminPhone(user);
     return {
         id: user.id,
         role: 'admin',
         name: user.name || 'Super Admin',
         email: user.email || '',
-        phone: user.phone || '',
+        phone,
+        phoneNumber: phone,
         avatarUrl: user.avatarUrl || ''
     };
 }
@@ -122,9 +128,11 @@ async function updateAdminProfile(email, patch) {
     if (!user) return null;
     const name = String(patch.name || '').trim().slice(0, 80);
     const nextEmail = cleanEmail(patch.email);
-    const phone = String(patch.phone || '').trim().slice(0, 24);
     if (name.length >= 2) user.name = name;
-    if (patch.phone !== undefined) user.phone = phone;
+    if (patch.phone !== undefined || patch.phoneNumber !== undefined) {
+        user.phone = String(patch.phone || patch.phoneNumber || '').trim().slice(0, 24);
+        delete user.phoneNumber;
+    }
     if (patch.avatarUrl !== undefined || patch.avatar !== undefined) {
         user.avatarUrl = safeAdminAvatarUrl(patch.avatarUrl || patch.avatar);
     }

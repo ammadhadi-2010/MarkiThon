@@ -13,5 +13,5 @@ function saShowToast(message, tone) {
     window.setTimeout(() => {
         item.classList.add('is-out');
         window.setTimeout(() => item.remove(), 320);
-    }, 4200);
+    }, 4000);
 }

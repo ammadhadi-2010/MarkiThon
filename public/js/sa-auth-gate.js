@@ -53,8 +53,8 @@ async function saLogoutAdmin() {
 
 window.saLogoutAdmin = saLogoutAdmin;
 
-saRequireAdmin().then((ok) => {
+saRequireAdmin().then(async (ok) => {
     if (!ok) return;
-    if (typeof saLoadAdminWho === 'function') saLoadAdminWho();
+    if (typeof saLoadAdminWho === 'function') await saLoadAdminWho();
     if (typeof window.saBoot === 'function') window.saBoot();
 });

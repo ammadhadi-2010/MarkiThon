@@ -39,7 +39,7 @@ exports.updateProfile = async (req, res) => {
         const user = await updateAdminProfile(payload.email || '', {
             name: body.name,
             email: body.email,
-            phone: body.phone,
+            phone: body.phone != null ? body.phone : body.phoneNumber,
             avatarUrl: body.avatarUrl || body.avatar
         });
         if (user && user.conflict) {

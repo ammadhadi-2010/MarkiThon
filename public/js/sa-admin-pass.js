@@ -19,21 +19,21 @@ function saAdminPassMarkup() {
                 <input id="saAdminEmail" name="saAdminEmail" type="email" autocomplete="username" required>
             </label>
             <label>Phone number
-                <input id="saAdminPhone" name="saAdminPhone" type="tel" autocomplete="tel" placeholder="+92 300 0000000">
+                <input id="saAdminPhone" name="saAdminPhone" type="tel" autocomplete="tel" inputmode="tel">
             </label>
             <button class="sa-add" type="submit">Save Profile</button>
             <p class="sa-note" id="saProfileNote"></p>
         </form>
         <h3 class="sa-pass-title">Change Password</h3>
-        <form id="saAdminPassForm" class="sa-pass-form" autocomplete="off">
+        <form id="saAdminPassForm" class="sa-pass-form sa-pass-form--secret" autocomplete="off">
             <label>Current password
-                <input id="saCurrentPass" name="saCurrentPass" type="password" autocomplete="current-password" required>
+                <input id="saCurrentPass" name="saCurrentPass" type="password" autocomplete="off" required>
             </label>
             <label>New password
-                <input id="saNewPass" name="saNewPass" type="password" autocomplete="new-password" required>
+                <input id="saNewPass" name="saNewPass" type="password" autocomplete="off" required>
             </label>
             <label>Confirm new password
-                <input id="saConfirmPass" name="saConfirmPass" type="password" autocomplete="new-password" required>
+                <input id="saConfirmPass" name="saConfirmPass" type="password" autocomplete="off" required>
             </label>
             <button class="sa-add" type="submit">Update Password</button>
             <p class="sa-pass-badge is-ok" id="saPassSuccess" hidden role="status">Password updated successfully</p>
@@ -54,6 +54,11 @@ function saAdminPaintAvatar(user) {
     box.textContent = String(name).trim().charAt(0).toUpperCase() || 'A';
 }
 
+function saAdminPhoneFromUser(user) {
+    if (!user) return '';
+    return String(user.phone || user.phoneNumber || '').trim();
+}
+
 function saAdminSyncFormFields(user) {
     if (!user) return;
     const name = document.getElementById('saAdminName');
@@ -61,8 +66,24 @@ function saAdminSyncFormFields(user) {
     const phone = document.getElementById('saAdminPhone');
     if (name) name.value = user.name || '';
     if (email) email.value = user.email || '';
-    if (phone) phone.value = user.phone || '';
+    if (phone) {
+        phone.value = saAdminPhoneFromUser(user);
+        phone.placeholder = phone.value ? '' : 'Add mobile number';
+    }
     saAdminPaintAvatar(user);
+}
+
+let saPassBadgeTimer = 0;
+
+function saShowPassSuccess() {
+    const badge = document.getElementById('saPassSuccess');
+    if (saPassBadgeTimer) window.clearTimeout(saPassBadgeTimer);
+    if (badge) badge.hidden = false;
+    if (typeof saShowToast === 'function') saShowToast('Password updated successfully', 'success');
+    saPassBadgeTimer = window.setTimeout(() => {
+        if (badge) badge.hidden = true;
+        saPassBadgeTimer = 0;
+    }, 4000);
 }
 
 function saAdminRefreshUser(user) {
@@ -135,10 +156,7 @@ async function saAdminPassSubmit(event) {
             document.getElementById('saNewPass').value = '';
             document.getElementById('saConfirmPass').value = '';
         }
-        if (badge) badge.hidden = false;
-        if (typeof saShowToast === 'function') {
-            saShowToast('Password updated successfully', 'success');
-        }
+        saShowPassSuccess();
     } catch (error) {
         if (badge) badge.hidden = true;
         if (note) note.textContent = error.message || 'Could not update the password.';
@@ -150,9 +168,11 @@ async function saLoadAdminProfile() {
         const response = await fetch('/api/admin/profile', { credentials: 'include' });
         if (!response.ok) return;
         const data = await response.json();
-        const user = data.user || {};
-        saAdminUser = user;
-        saAdminSyncFormFields(user);
+        const user = data.user || data.profile || {};
+        saAdminUser = Object.assign({}, saAdminUser || {}, user, {
+            phone: saAdminPhoneFromUser(user)
+        });
+        saAdminSyncFormFields(saAdminUser);
     } catch (error) {
         /* Fields stay empty until reload. */
     }

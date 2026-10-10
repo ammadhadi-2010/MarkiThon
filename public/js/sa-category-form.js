@@ -17,9 +17,8 @@ async function saCatApi(url, method, body) {
     saCatToast(data.message || 'Saved.');
     if (body && body.shopType) saCatOpen[body.shopType] = true;
     else if (data.shopType) saCatOpen[data.shopType] = true;
-    if (data.shopTypes) saCatTree = data.shopTypes;
-    else await saMountCategories();
-    saPaintCategories();
+    /* Always re-fetch from API so the UI matches persisted DB/file state. */
+    await saMountCategories();
     return data;
 }
 

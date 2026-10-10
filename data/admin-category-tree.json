@@ -2,36 +2,43 @@
   "Clothing & Fashion": {
     "Men": {
       "locked": true,
+      "isCustomized": false,
       "subs": [],
       "icon": "📁"
     },
     "Women": {
       "locked": true,
+      "isCustomized": false,
       "subs": [],
       "icon": "📁"
     },
     "Kids Wear": {
       "locked": true,
+      "isCustomized": false,
       "subs": [],
       "icon": "📁"
     },
     "Lawn": {
       "locked": true,
-      "subs": [],
-      "icon": "📁"
-    },
-    "Cotton": {
-      "locked": true,
+      "isCustomized": false,
       "subs": [],
       "icon": "📁"
     },
     "Ready-Made Suits": {
       "locked": true,
+      "isCustomized": false,
       "subs": [],
       "icon": "📁"
     },
     "Garments": {
       "locked": true,
+      "isCustomized": false,
+      "subs": [],
+      "icon": "📁"
+    },
+    "Cotton": {
+      "locked": false,
+      "isCustomized": true,
       "subs": [],
       "icon": "📁"
     }
@@ -39,31 +46,37 @@
   "Electronics & Mobile": {
     "Mobiles": {
       "locked": true,
+      "isCustomized": false,
       "subs": [],
       "icon": "📁"
     },
     "Mobile Accessories": {
       "locked": true,
+      "isCustomized": false,
       "subs": [],
       "icon": "📁"
     },
     "Chargers": {
       "locked": true,
+      "isCustomized": false,
       "subs": [],
       "icon": "📁"
     },
     "Cases & Covers": {
       "locked": true,
+      "isCustomized": false,
       "subs": [],
       "icon": "📁"
     },
     "Earphones": {
       "locked": true,
+      "isCustomized": false,
       "subs": [],
       "icon": "📁"
     },
     "Power Banks": {
       "locked": true,
+      "isCustomized": false,
       "subs": [],
       "icon": "📁"
     }
@@ -71,31 +84,37 @@
   "Grocery & Food": {
     "Staples": {
       "locked": true,
+      "isCustomized": false,
       "subs": [],
       "icon": "📁"
     },
     "Snacks": {
       "locked": true,
+      "isCustomized": false,
       "subs": [],
       "icon": "📁"
     },
     "Beverages": {
       "locked": true,
+      "isCustomized": false,
       "subs": [],
       "icon": "📁"
     },
     "Dairy": {
       "locked": true,
+      "isCustomized": false,
       "subs": [],
       "icon": "📁"
     },
     "Spices": {
       "locked": true,
+      "isCustomized": false,
       "subs": [],
       "icon": "📁"
     },
     "Frozen Food": {
       "locked": true,
+      "isCustomized": false,
       "subs": [],
       "icon": "📁"
     }
@@ -103,26 +122,31 @@
   "Beauty & Personal Care": {
     "Skincare": {
       "locked": true,
+      "isCustomized": false,
       "subs": [],
       "icon": "📁"
     },
     "Makeup": {
       "locked": true,
+      "isCustomized": false,
       "subs": [],
       "icon": "📁"
     },
     "Hair Care": {
       "locked": true,
+      "isCustomized": false,
       "subs": [],
       "icon": "📁"
     },
     "Fragrance": {
       "locked": true,
+      "isCustomized": false,
       "subs": [],
       "icon": "📁"
     },
     "Personal Care": {
       "locked": true,
+      "isCustomized": false,
       "subs": [],
       "icon": "📁"
     }
@@ -130,31 +154,37 @@
   "Home & Living": {
     "Bedsheet": {
       "locked": true,
+      "isCustomized": false,
       "subs": [],
       "icon": "📁"
     },
     "Blanket / Kambal": {
       "locked": true,
+      "isCustomized": false,
       "subs": [],
       "icon": "📁"
     },
     "Takiya / Pillow": {
       "locked": true,
+      "isCustomized": false,
       "subs": [],
       "icon": "📁"
     },
     "Quilt / Razai": {
       "locked": true,
+      "isCustomized": false,
       "subs": [],
       "icon": "📁"
     },
     "Decor": {
       "locked": true,
+      "isCustomized": false,
       "subs": [],
       "icon": "📁"
     },
     "Kitchen": {
       "locked": true,
+      "isCustomized": false,
       "subs": [],
       "icon": "📁"
     }
@@ -162,31 +192,37 @@
   "Furniture": {
     "Sofa": {
       "locked": true,
+      "isCustomized": false,
       "subs": [],
       "icon": "📁"
     },
     "Beds": {
       "locked": true,
+      "isCustomized": false,
       "subs": [],
       "icon": "📁"
     },
     "Tables": {
       "locked": true,
+      "isCustomized": false,
       "subs": [],
       "icon": "📁"
     },
     "Chairs": {
       "locked": true,
+      "isCustomized": false,
       "subs": [],
       "icon": "📁"
     },
     "Storage": {
       "locked": true,
+      "isCustomized": false,
       "subs": [],
       "icon": "📁"
     },
     "Office Furniture": {
       "locked": true,
+      "isCustomized": false,
       "subs": [],
       "icon": "📁"
     }
@@ -194,26 +230,31 @@
   "Sports & Fitness": {
     "Gym Gear": {
       "locked": true,
+      "isCustomized": false,
       "subs": [],
       "icon": "📁"
     },
     "Sportswear": {
       "locked": true,
+      "isCustomized": false,
       "subs": [],
       "icon": "📁"
     },
     "Outdoor": {
       "locked": true,
+      "isCustomized": false,
       "subs": [],
       "icon": "📁"
     },
     "Footwear": {
       "locked": true,
+      "isCustomized": false,
       "subs": [],
       "icon": "📁"
     },
     "Accessories": {
       "locked": true,
+      "isCustomized": false,
       "subs": [],
       "icon": "📁"
     }
@@ -221,26 +262,31 @@
   "Books & Stationery": {
     "Books": {
       "locked": true,
+      "isCustomized": false,
       "subs": [],
       "icon": "📁"
     },
     "Notebooks": {
       "locked": true,
+      "isCustomized": false,
       "subs": [],
       "icon": "📁"
     },
     "Pens": {
       "locked": true,
+      "isCustomized": false,
       "subs": [],
       "icon": "📁"
     },
     "Art Supplies": {
       "locked": true,
+      "isCustomized": false,
       "subs": [],
       "icon": "📁"
     },
     "Office Supplies": {
       "locked": true,
+      "isCustomized": false,
       "subs": [],
       "icon": "📁"
     }
@@ -248,26 +294,31 @@
   "Automotive": {
     "Car Care": {
       "locked": true,
+      "isCustomized": false,
       "subs": [],
       "icon": "📁"
     },
     "Bike Parts": {
       "locked": true,
+      "isCustomized": false,
       "subs": [],
       "icon": "📁"
     },
     "Oils": {
       "locked": true,
+      "isCustomized": false,
       "subs": [],
       "icon": "📁"
     },
     "Tyres": {
       "locked": true,
+      "isCustomized": false,
       "subs": [],
       "icon": "📁"
     },
     "Accessories": {
       "locked": true,
+      "isCustomized": false,
       "subs": [],
       "icon": "📁"
     }
@@ -275,26 +326,31 @@
   "Kids & Toys": {
     "Toys": {
       "locked": true,
+      "isCustomized": false,
       "subs": [],
       "icon": "📁"
     },
     "Baby Care": {
       "locked": true,
+      "isCustomized": false,
       "subs": [],
       "icon": "📁"
     },
     "School": {
       "locked": true,
+      "isCustomized": false,
       "subs": [],
       "icon": "📁"
     },
     "Games": {
       "locked": true,
+      "isCustomized": false,
       "subs": [],
       "icon": "📁"
     },
     "Kids Fashion": {
       "locked": true,
+      "isCustomized": false,
       "subs": [],
       "icon": "📁"
     }
@@ -302,26 +358,31 @@
   "Jewellery & Accessories": {
     "Jewellery": {
       "locked": true,
+      "isCustomized": false,
       "subs": [],
       "icon": "📁"
     },
     "Watches": {
       "locked": true,
+      "isCustomized": false,
       "subs": [],
       "icon": "📁"
     },
     "Bags": {
       "locked": true,
+      "isCustomized": false,
       "subs": [],
       "icon": "📁"
     },
     "Sunglasses": {
       "locked": true,
+      "isCustomized": false,
       "subs": [],
       "icon": "📁"
     },
     "Accessories": {
       "locked": true,
+      "isCustomized": false,
       "subs": [],
       "icon": "📁"
     }
@@ -329,26 +390,31 @@
   "Hardware & Tools": {
     "Tools": {
       "locked": true,
+      "isCustomized": false,
       "subs": [],
       "icon": "📁"
     },
     "Electrical": {
       "locked": true,
+      "isCustomized": false,
       "subs": [],
       "icon": "📁"
     },
     "Plumbing": {
       "locked": true,
+      "isCustomized": false,
       "subs": [],
       "icon": "📁"
     },
     "Paint": {
       "locked": true,
+      "isCustomized": false,
       "subs": [],
       "icon": "📁"
     },
     "Fasteners": {
       "locked": true,
+      "isCustomized": false,
       "subs": [],
       "icon": "📁"
     }
@@ -356,26 +422,31 @@
   "Pharmacy & Health": {
     "Medicines": {
       "locked": true,
+      "isCustomized": false,
       "subs": [],
       "icon": "📁"
     },
     "Vitamins": {
       "locked": true,
+      "isCustomized": false,
       "subs": [],
       "icon": "📁"
     },
     "First Aid": {
       "locked": true,
+      "isCustomized": false,
       "subs": [],
       "icon": "📁"
     },
     "Medical Devices": {
       "locked": true,
+      "isCustomized": false,
       "subs": [],
       "icon": "📁"
     },
     "Wellness": {
       "locked": true,
+      "isCustomized": false,
       "subs": [],
       "icon": "📁"
     }
@@ -383,26 +454,31 @@
   "General / Multi-Category": {
     "General": {
       "locked": true,
+      "isCustomized": false,
       "subs": [],
       "icon": "📁"
     },
     "Daily Needs": {
       "locked": true,
+      "isCustomized": false,
       "subs": [],
       "icon": "📁"
     },
     "Household": {
       "locked": true,
+      "isCustomized": false,
       "subs": [],
       "icon": "📁"
     },
     "Seasonal": {
       "locked": true,
+      "isCustomized": false,
       "subs": [],
       "icon": "📁"
     },
     "Other": {
       "locked": true,
+      "isCustomized": false,
       "subs": [],
       "icon": "📁"
     }

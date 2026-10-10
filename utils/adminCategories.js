@@ -1,25 +1,9 @@
 const fs = require('fs');
 const path = require('path');
 const { SHOP_CATALOG, resolveShopType } = require('./shopTypeCatalog');
+const { SHOP_TYPE_ICONS } = require('./adminCategoryIcons');
 
 const treeFile = path.join(__dirname, '../data/admin-category-tree.json');
-
-const SHOP_TYPE_ICONS = {
-    'Clothing & Fashion': '👗',
-    'Electronics & Mobile': '📱',
-    'Grocery & Food': '🛒',
-    'Beauty & Personal Care': '💄',
-    'Home & Living': '🏠',
-    'Furniture': '🛋️',
-    'Sports & Fitness': '🏋️',
-    'Books & Stationery': '📚',
-    'Automotive': '🚗',
-    'Kids & Toys': '🧸',
-    'Jewellery & Accessories': '💎',
-    'Hardware & Tools': '🔧',
-    'Pharmacy & Health': '💊',
-    'General / Multi-Category': '🏪'
-};
 
 function readJson(target, fallback) {
     try {
@@ -47,17 +31,6 @@ function makeId(parts) {
     return parts.map(slugify).join('__');
 }
 
-function emptyTree() {
-    const tree = {};
-    Object.keys(SHOP_CATALOG).forEach((shopType) => {
-        tree[shopType] = {};
-        SHOP_CATALOG[shopType].categories.forEach((name) => {
-            tree[shopType][name] = { locked: true, subs: [], icon: '📁' };
-        });
-    });
-    return tree;
-}
-
 function cleanIcon(value) {
     const icon = String(value || '').trim().slice(0, 8);
     return icon || '📁';
@@ -66,34 +39,55 @@ function cleanIcon(value) {
 function packEntry(entry, fallbackLocked) {
     const row = entry || {};
     const subs = Array.isArray(row.subs) ? row.subs.map(clean).filter(Boolean) : [];
+    const customized = Boolean(row.isCustomized);
     return {
-        locked: row.locked !== undefined ? Boolean(row.locked) : Boolean(fallbackLocked),
+        locked: customized ? false : (row.locked !== undefined ? Boolean(row.locked) : Boolean(fallbackLocked)),
+        isCustomized: customized,
         subs: [...new Set(subs)],
         icon: cleanIcon(row.icon)
     };
 }
 
-function loadTree() {
-    const saved = readJson(treeFile, null);
-    if (!saved || typeof saved !== 'object') {
-        const tree = emptyTree();
-        writeJson(treeFile, tree);
-        return tree;
-    }
+function emptyTree() {
     const tree = {};
     Object.keys(SHOP_CATALOG).forEach((shopType) => {
-        const row = saved[shopType];
         tree[shopType] = {};
-        if (!row || typeof row !== 'object') {
-            SHOP_CATALOG[shopType].categories.forEach((name) => {
-                tree[shopType][name] = { locked: true, subs: [], icon: '📁' };
-            });
-            return;
-        }
-        Object.keys(row).forEach((name) => {
-            const isStandard = SHOP_CATALOG[shopType].categories.includes(name);
-            tree[shopType][name] = packEntry(row[name], isStandard);
+        SHOP_CATALOG[shopType].categories.forEach((name) => {
+            tree[shopType][name] = { locked: true, isCustomized: false, subs: [], icon: '📁' };
         });
+    });
+    return tree;
+}
+
+function isTreeEmpty(saved) {
+    if (!saved || typeof saved !== 'object') return true;
+    return !Object.keys(saved).some((shopType) => {
+        const row = saved[shopType];
+        return row && typeof row === 'object' && Object.keys(row).length > 0;
+    });
+}
+
+/** Load saved tree only. Seed defaults once when the file is completely empty. */
+function loadTree() {
+    const saved = readJson(treeFile, null);
+    if (isTreeEmpty(saved)) {
+        const seeded = emptyTree();
+        writeJson(treeFile, seeded);
+        return seeded;
+    }
+    const tree = {};
+    Object.keys(saved).forEach((shopType) => {
+        const row = saved[shopType];
+        if (!row || typeof row !== 'object') return;
+        tree[shopType] = {};
+        Object.keys(row).forEach((name) => {
+            const standard = SHOP_CATALOG[shopType]
+                && SHOP_CATALOG[shopType].categories.includes(name);
+            tree[shopType][name] = packEntry(row[name], Boolean(standard));
+        });
+    });
+    Object.keys(SHOP_CATALOG).forEach((shopType) => {
+        if (!tree[shopType]) tree[shopType] = {};
     });
     return tree;
 }
@@ -104,7 +98,10 @@ function saveTree(tree) {
 
 function listCategories() {
     const tree = loadTree();
-    return Object.keys(SHOP_CATALOG).map((shopType) => {
+    const types = Object.keys(SHOP_CATALOG).concat(
+        Object.keys(tree).filter((key) => !SHOP_CATALOG[key])
+    );
+    return [...new Set(types)].map((shopType) => {
         const cats = Object.keys(tree[shopType] || {}).sort((a, b) => a.localeCompare(b));
         return {
             shopType,
@@ -117,6 +114,7 @@ function listCategories() {
                     name,
                     icon: cleanIcon(entry.icon),
                     locked: Boolean(entry.locked),
+                    isCustomized: Boolean(entry.isCustomized),
                     subcategories: (entry.subs || []).map((sub) => ({
                         id: makeId([shopType, name, sub]),
                         name: sub,
@@ -129,15 +127,15 @@ function listCategories() {
 }
 
 function findTarget(tree, id) {
-    const parts = String(id || '').split('__').filter(Boolean);
-    if (parts.length < 2) return null;
+    const key = String(id || '');
+    if (!key) return null;
     for (const shopType of Object.keys(tree)) {
-        for (const name of Object.keys(tree[shopType])) {
-            if (makeId([shopType, name]) === id) {
+        for (const name of Object.keys(tree[shopType] || {})) {
+            if (makeId([shopType, name]) === key) {
                 return { kind: 'category', shopType, name, entry: tree[shopType][name] };
             }
             for (const sub of tree[shopType][name].subs || []) {
-                if (makeId([shopType, name, sub]) === id) {
+                if (makeId([shopType, name, sub]) === key) {
                     return { kind: 'sub', shopType, name, sub, entry: tree[shopType][name] };
                 }
             }
@@ -150,23 +148,23 @@ function addCategory(body) {
     const shopType = clean(body.shopType);
     const name = clean(body.name || body.categoryName);
     const icon = cleanIcon(body.icon);
-    const rawSubs = Array.isArray(body.subCategories)
-        ? body.subCategories
+    const raw = Array.isArray(body.subCategories) ? body.subCategories
         : (Array.isArray(body.subs) ? body.subs : []);
-    const subs = [];
-    rawSubs.forEach((item) => {
-        const value = clean(item);
-        if (value.length < 2) return;
-        if (!subs.some((row) => row.toLowerCase() === value.toLowerCase())) subs.push(value);
-    });
-    if (!SHOP_CATALOG[shopType]) return { error: 'Choose a valid shop type.' };
+    const subs = [...new Set(raw.map(clean).filter((v) => v.length >= 2))];
+    if (!SHOP_CATALOG[shopType] && !loadTree()[shopType]) {
+        return { error: 'Choose a valid shop type.' };
+    }
     if (name.length < 2) return { error: 'Enter a category name.' };
     const tree = loadTree();
+    if (!tree[shopType]) tree[shopType] = {};
     if (tree[shopType][name]) return { error: 'That category already exists.' };
-    tree[shopType][name] = { locked: false, subs, icon };
+    tree[shopType][name] = { locked: false, isCustomized: true, subs, icon };
     saveTree(tree);
-    const message = subs.length ? 'Category and subcategories added.' : 'Category added.';
-    return { ok: true, message, shopType };
+    return {
+        ok: true,
+        message: subs.length ? 'Category and subcategories added.' : 'Category added.',
+        shopType
+    };
 }
 
 function addSubcategory(body) {
@@ -183,18 +181,15 @@ function addSubcategory(body) {
             parent = target.name;
         }
     }
-    if (!SHOP_CATALOG[shopType] && !tree[shopType]) {
-        return { error: 'Choose a valid shop type.' };
-    }
+    if (!tree[shopType]) return { error: 'Choose a valid shop type.' };
     if (!parent) return { error: 'Choose a main category.' };
-    if (!tree[shopType] || !tree[shopType][parent]) {
-        return { error: 'Main category not found.' };
-    }
+    if (!tree[shopType][parent]) return { error: 'Main category not found.' };
     const subs = tree[shopType][parent].subs || [];
     if (subs.some((item) => item.toLowerCase() === name.toLowerCase())) {
         return { error: 'That subcategory already exists.' };
     }
     tree[shopType][parent].subs = subs.concat(name);
+    tree[shopType][parent].isCustomized = true;
     saveTree(tree);
     return { ok: true, message: 'Subcategory added.', shopType };
 }
@@ -209,7 +204,11 @@ function updateCategory(id, body) {
         if (tree[target.shopType][next] && next !== target.name) {
             return { error: 'That category already exists.' };
         }
-        tree[target.shopType][next] = target.entry;
+        const entry = packEntry(target.entry, false);
+        entry.isCustomized = true;
+        entry.locked = false;
+        if (body.icon !== undefined) entry.icon = cleanIcon(body.icon);
+        tree[target.shopType][next] = entry;
         if (next !== target.name) delete tree[target.shopType][target.name];
     } else {
         const subs = target.entry.subs || [];
@@ -217,6 +216,8 @@ function updateCategory(id, body) {
             return { error: 'That subcategory already exists.' };
         }
         target.entry.subs = subs.map((item) => (item === target.sub ? next : item));
+        target.entry.isCustomized = true;
+        target.entry.locked = false;
     }
     saveTree(tree);
     return { ok: true, message: 'Category name updated.', shopType: target.shopType };
@@ -230,6 +231,7 @@ function removeCategory(id) {
         delete tree[target.shopType][target.name];
     } else {
         target.entry.subs = (target.entry.subs || []).filter((item) => item !== target.sub);
+        target.entry.isCustomized = true;
     }
     saveTree(tree);
     const kind = target.kind === 'sub' ? 'Subcategory' : 'Category';
@@ -242,7 +244,6 @@ function mainNamesForType(shopType) {
     if (group && group.categories.length) return group.categories.map((row) => row.name);
     return (SHOP_CATALOG[key] || SHOP_CATALOG['General / Multi-Category']).categories.slice();
 }
-
 module.exports = {
     SHOP_TYPE_ICONS, listCategories, mainNamesForType,
     addCategory, addSubcategory, updateCategory, removeCategory

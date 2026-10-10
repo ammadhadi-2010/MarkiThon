@@ -1,12 +1,13 @@
-const CACHE_NAME = 'markithon-pwa-v2';
+const CACHE_NAME = 'markithon-pwa-v3';
 const CORE_ASSETS = [
     '/',
     '/index.html',
     '/app',
     '/manifest.json',
-    '/icons/icon.svg',
-    '/icons/icon-192.png',
-    '/icons/icon-512.png',
+    '/logo192.png',
+    '/logo512.png',
+    '/css/pwa-install.css',
+    '/js/pwa-install.js',
     '/views/public/marketplace.html',
     '/views/public/css/mp-shell.css',
     '/views/public/js/mp-app.js',

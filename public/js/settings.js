@@ -12,8 +12,16 @@ function applyShopProfile(row) {
     if (owner && label) owner.textContent = label;
     const role = document.querySelector('.profile span');
     if (role) role.textContent = 'Shopkeeper';
-    const avatar = document.querySelector('.profile .avatar');
-    if (avatar && label) avatar.textContent = label.charAt(0).toUpperCase();
+    if (typeof topbarPaintAvatar === 'function') topbarPaintAvatar(row);
+    else {
+        const avatar = document.querySelector('.profile .avatar');
+        const url = String(row.imageUrl || row.avatarUrl || row.avatar || row.profileImage || '').trim();
+        if (avatar && url) {
+            avatar.innerHTML = `<img class="avatar-img" src="${url.replace(/"/g, '&quot;')}" alt="">`;
+        } else if (avatar && label) {
+            avatar.textContent = label.charAt(0).toUpperCase();
+        }
+    }
     const title = document.querySelector('title');
     if (title && (row.shopName || label)) title.textContent = 'MarkiThon — ' + (row.shopName || label);
 }

@@ -19,6 +19,11 @@ const {
     removeProduct,
     bulkProducts
 } = require('../controllers/adminProductController');
+const {
+    getProfile,
+    updateProfile,
+    updatePassword
+} = require('../controllers/adminProfileController');
 
 const router = express.Router();
 const adminOnly = requireRole('admin');
@@ -28,6 +33,11 @@ router.get('/cms/pages', getPages);
 router.get('/cms/footer', getFooter);
 router.get('/cms', cms);
 
+router.get('/profile', adminOnly, getProfile);
+router.put('/profile', adminOnly, updateProfile);
+router.post('/profile', adminOnly, updateProfile);
+router.put('/profile/password', adminOnly, updatePassword);
+router.post('/profile/password', adminOnly, updatePassword);
 router.get('/orders', adminOnly, orders);
 router.post('/orders', adminOnly, createOrder);
 router.post('/orders/:id', adminOnly, updateOrder);

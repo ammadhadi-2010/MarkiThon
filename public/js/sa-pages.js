@@ -25,14 +25,8 @@ function saRoute(id, data) {
             : '<section class="sa-card"><h2>Subscription packages are unavailable.</h2></section>';
     }
     if (id === 'settings') {
-        return `${saHead('Settings', 'Admin display settings stay separate from shopkeeper POS setup.')}
+        return `${saHead('Profile Settings', 'Manage Super Admin identity, contact details, and password.')}
             <div class="sa-low">
-                <section class="sa-card">
-                    <h3>Panel</h3>
-                    <p>Language <strong>English</strong></p>
-                    <p>Theme <strong>Dark</strong></p>
-                    <p class="sa-note">Inventory schemas are not edited from this screen.</p>
-                </section>
                 ${typeof saAdminPassMarkup === 'function' ? saAdminPassMarkup() : ''}
                 ${saHealth(data.health)}
             </div>`;

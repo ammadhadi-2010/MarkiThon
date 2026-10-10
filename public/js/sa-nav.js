@@ -9,7 +9,7 @@ const SA_NAV = [
     ['subscriptions', 'Subscription Packages'],
     ['reports', 'Reports'],
     ['complaints', 'Complaints / Support'],
-    ['settings', 'Settings']
+    ['settings', 'Profile Settings']
 ];
 
 function saPaintNav(active) {
@@ -36,16 +36,21 @@ function saAdminInitial(user) {
     return (name[0] || 'A').toUpperCase();
 }
 
+function saTopAvatarHtml(user) {
+    const url = user && user.avatarUrl;
+    if (url) return `<img class="sa-avatar-img" src="${saText(url)}" alt="">`;
+    return saText(saAdminInitial(user));
+}
+
 function saPaintTop() {
     const user = saAdminUser || {};
     const label = user.name || 'Admin';
     const role = user.role === 'admin' ? 'Super Admin' : (user.role || 'Super Admin');
-    const initial = saAdminInitial(user);
     document.getElementById('saTop').innerHTML = `
         <button class="sa-menu" id="saMenu" type="button">Menu</button>
         <input class="sa-search" id="saSearch" type="search" placeholder="Search shops, products, customers, orders..." autocomplete="off">
         <div class="sa-who">
-            <div class="sa-avatar" title="${saText(label)}">${saText(initial)}</div>
+            <div class="sa-avatar" title="${saText(label)}">${saTopAvatarHtml(user)}</div>
             <div><strong>${saText(label)}</strong><div class="sa-muted">${saText(role)}</div></div>
             <button class="sa-cms-copy" id="saLogout" type="button">Sign Out</button>
         </div>`;
@@ -60,6 +65,9 @@ async function saLoadAdminWho() {
         const data = await response.json();
         saAdminUser = data.user || null;
         if (typeof saPaintTop === 'function' && document.getElementById('saTop')) saPaintTop();
+        if (typeof saAdminApplyUser === 'function' && document.getElementById('saAdminProfileForm')) {
+            saAdminApplyUser(saAdminUser);
+        }
     } catch (error) {
         /* Keep default admin label until next paint. */
     }

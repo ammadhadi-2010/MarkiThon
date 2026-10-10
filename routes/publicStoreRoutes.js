@@ -82,6 +82,7 @@ router.get('/vendor/dashboard/*', sendAdminApp);
 router.get('/store/:shopSlug', sendShopCatalog);
 router.get('/admin/login', sendAdminLogin);
 router.get('/admin', requireAdminPage, sendPlatformAdmin);
+router.get('/admin/settings', (req, res) => res.redirect(302, '/admin#settings'));
 router.get('/admin/shops/:id', requireAdminPage, sendPlatformAdmin);
 router.get('/admin/support/:id', requireAdminPage, sendPlatformAdmin);
 router.get('/app', sendAdminApp);

@@ -56,7 +56,14 @@ async function readAdmins() {
 }
 
 function publicAdmin(user) {
-    return { id: user.id, role: 'admin', name: user.name, email: user.email };
+    return {
+        id: user.id,
+        role: 'admin',
+        name: user.name || 'Super Admin',
+        email: user.email || '',
+        phone: user.phone || '',
+        avatarUrl: user.avatarUrl || ''
+    };
 }
 
 async function findAdminByEmail(email) {
@@ -95,6 +102,18 @@ async function updateAdminPassword(email, nextPassword) {
     return user;
 }
 
+async function changeAdminPassword(email, currentPassword, nextPassword) {
+    const store = await readAdmins();
+    const cleaned = cleanEmail(email);
+    const user = store.users.find((row) => row.email === cleaned);
+    if (!user) return { missing: true };
+    const ok = await matchPassword(String(currentPassword || ''), user.password);
+    if (!ok) return { invalidCurrent: true };
+    user.password = await hashPassword(nextPassword);
+    await writeAdmins(store);
+    return user;
+}
+
 async function updateAdminProfile(email, patch) {
     const store = await readAdmins();
     const cleaned = cleanEmail(email);
@@ -102,7 +121,11 @@ async function updateAdminProfile(email, patch) {
     if (!user) return null;
     const name = String(patch.name || '').trim().slice(0, 80);
     const nextEmail = cleanEmail(patch.email);
+    const phone = String(patch.phone || '').trim().slice(0, 24);
+    const avatarUrl = String(patch.avatarUrl || patch.avatar || '').trim().slice(0, 2000);
     if (name.length >= 2) user.name = name;
+    if (patch.phone !== undefined) user.phone = phone;
+    if (patch.avatarUrl !== undefined || patch.avatar !== undefined) user.avatarUrl = avatarUrl;
     if (nextEmail && validEmail(nextEmail)) {
         const clash = store.users.find((row) => row.email === nextEmail && row.id !== user.id);
         if (clash) return { conflict: true };
@@ -150,6 +173,7 @@ module.exports = {
     ensureOfficialAdmin,
     resolveAdminBypass,
     updateAdminPassword,
+    changeAdminPassword,
     updateAdminProfile,
     upsertSuperAdmin,
     OFFICIAL_ADMIN_EMAIL

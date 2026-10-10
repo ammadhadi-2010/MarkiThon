@@ -49,13 +49,21 @@ function saPaintTop() {
     document.getElementById('saTop').innerHTML = `
         <button class="sa-menu" id="saMenu" type="button">Menu</button>
         <input class="sa-search" id="saSearch" type="search" placeholder="Search shops, products, customers, orders..." autocomplete="off">
-        <div class="sa-who">
-            <div class="sa-avatar" title="${saText(label)}">${saTopAvatarHtml(user)}</div>
-            <div><strong>${saText(label)}</strong><div class="sa-muted">${saText(role)}</div></div>
-            <button class="sa-cms-copy" id="saLogout" type="button">Sign Out</button>
+        <div class="sa-user-menu">
+            <button class="sa-user-trigger" id="saUserTrigger" type="button" aria-expanded="false" aria-haspopup="true">
+                <span class="sa-avatar" title="${saText(label)}">${saTopAvatarHtml(user)}</span>
+                <span class="sa-user-label">
+                    <strong>${saText(label)}</strong>
+                    <span class="sa-muted">${saText(role)}</span>
+                </span>
+                <span class="sa-user-caret" aria-hidden="true"></span>
+            </button>
+            <div class="sa-user-drop" id="saUserMenu" hidden role="menu">
+                <button type="button" id="saMenuProfile" role="menuitem">Profile Settings</button>
+                <button type="button" id="saMenuLogout" role="menuitem">Sign Out</button>
+            </div>
         </div>`;
-    const out = document.getElementById('saLogout');
-    if (out) out.addEventListener('click', () => typeof saLogoutAdmin === 'function' && saLogoutAdmin());
+    if (typeof saBindTopMenu === 'function') saBindTopMenu();
 }
 
 async function saLoadAdminWho() {
@@ -64,10 +72,10 @@ async function saLoadAdminWho() {
         if (!response.ok) return;
         const data = await response.json();
         saAdminUser = data.user || null;
-        if (typeof saPaintTop === 'function' && document.getElementById('saTop')) saPaintTop();
-        if (typeof saAdminApplyUser === 'function' && document.getElementById('saAdminProfileForm')) {
-            saAdminApplyUser(saAdminUser);
+        if (typeof saAdminSyncFormFields === 'function' && document.getElementById('saAdminProfileForm')) {
+            saAdminSyncFormFields(saAdminUser);
         }
+        if (typeof saPaintTop === 'function' && document.getElementById('saTop')) saPaintTop();
     } catch (error) {
         /* Keep default admin label until next paint. */
     }

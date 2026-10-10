@@ -22,7 +22,8 @@ const {
 const {
     getProfile,
     updateProfile,
-    updatePassword
+    updatePassword,
+    uploadAvatar
 } = require('../controllers/adminProfileController');
 
 const router = express.Router();
@@ -38,6 +39,7 @@ router.put('/profile', adminOnly, updateProfile);
 router.post('/profile', adminOnly, updateProfile);
 router.put('/profile/password', adminOnly, updatePassword);
 router.post('/profile/password', adminOnly, updatePassword);
+router.post('/profile/avatar', adminOnly, uploadAvatar);
 router.get('/orders', adminOnly, orders);
 router.post('/orders', adminOnly, createOrder);
 router.post('/orders/:id', adminOnly, updateOrder);

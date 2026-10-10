@@ -1,10 +1,15 @@
 function saAdminPassMarkup() {
-    return `<section class="sa-card sa-pass-card">
+    return `<section class="sa-card sa-pass-card" id="saPassCard">
         <h3>Profile Settings</h3>
         <p class="sa-note">Update Super Admin name, contact details, avatar, and password.</p>
         <div class="sa-profile-head">
             <div class="sa-profile-avatar" id="saAdminAvatar">A</div>
-            <p class="sa-muted">Avatar preview updates when you save a valid image URL.</p>
+            <div class="sa-profile-upload">
+                <label class="sa-file-label">Profile photo
+                    <input id="saAdminAvatarFile" type="file" accept="image/png,image/jpeg,image/jpg,image/webp">
+                </label>
+                <p class="sa-muted" id="saAvatarNote">PNG, JPG, or WebP up to 2 MB.</p>
+            </div>
         </div>
         <form id="saAdminProfileForm" class="sa-pass-form" autocomplete="off">
             <label>Full name
@@ -15,9 +20,6 @@ function saAdminPassMarkup() {
             </label>
             <label>Phone number
                 <input id="saAdminPhone" name="saAdminPhone" type="tel" autocomplete="tel" placeholder="+92 300 0000000">
-            </label>
-            <label>Avatar image URL
-                <input id="saAdminAvatarUrl" name="saAdminAvatarUrl" autocomplete="off" placeholder="https://...">
             </label>
             <button class="sa-add" type="submit">Save Profile</button>
             <p class="sa-note" id="saProfileNote"></p>
@@ -34,6 +36,7 @@ function saAdminPassMarkup() {
                 <input id="saConfirmPass" name="saConfirmPass" type="password" autocomplete="new-password" required>
             </label>
             <button class="sa-add" type="submit">Update Password</button>
+            <p class="sa-pass-badge is-ok" id="saPassSuccess" hidden role="status">Password updated successfully</p>
             <p class="sa-note" id="saPassNote"></p>
         </form>
     </section>`;
@@ -51,19 +54,26 @@ function saAdminPaintAvatar(user) {
     box.textContent = String(name).trim().charAt(0).toUpperCase() || 'A';
 }
 
-function saAdminApplyUser(user) {
+function saAdminSyncFormFields(user) {
     if (!user) return;
-    saAdminUser = user;
     const name = document.getElementById('saAdminName');
     const email = document.getElementById('saAdminEmail');
     const phone = document.getElementById('saAdminPhone');
-    const avatar = document.getElementById('saAdminAvatarUrl');
     if (name) name.value = user.name || '';
     if (email) email.value = user.email || '';
     if (phone) phone.value = user.phone || '';
-    if (avatar) avatar.value = user.avatarUrl || '';
     saAdminPaintAvatar(user);
-    if (typeof saPaintTop === 'function') saPaintTop();
+}
+
+function saAdminRefreshUser(user) {
+    if (!user) return;
+    saAdminUser = user;
+    saAdminSyncFormFields(user);
+    if (typeof saPaintTop === 'function' && document.getElementById('saTop')) saPaintTop();
+}
+
+function saAdminApplyUser(user) {
+    saAdminRefreshUser(user);
 }
 
 async function saAdminProfileSubmit(event) {
@@ -71,16 +81,16 @@ async function saAdminProfileSubmit(event) {
     const note = document.getElementById('saProfileNote');
     if (note) note.textContent = '';
     try {
+        const body = {
+            name: document.getElementById('saAdminName').value.trim(),
+            email: document.getElementById('saAdminEmail').value.trim(),
+            phone: document.getElementById('saAdminPhone').value.trim()
+        };
+        if (saAdminUser && saAdminUser.avatarUrl) body.avatarUrl = saAdminUser.avatarUrl;
         const response = await fetch('/api/admin/profile', {
             method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
             credentials: 'include',
-            body: JSON.stringify({
-                name: document.getElementById('saAdminName').value.trim(),
-                email: document.getElementById('saAdminEmail').value.trim(),
-                phone: document.getElementById('saAdminPhone').value.trim(),
-                avatarUrl: document.getElementById('saAdminAvatarUrl').value.trim()
-            })
+            body: JSON.stringify(body)
         });
         const data = await response.json().catch(() => ({}));
         if (!response.ok) throw new Error(data.message || 'Could not update the profile.');
@@ -88,8 +98,9 @@ async function saAdminProfileSubmit(event) {
             localStorage.setItem('mtAuthToken:admin', data.token);
             localStorage.setItem('mtAuthToken', data.token);
         }
-        saAdminApplyUser(data.user);
+        saAdminRefreshUser(data.user);
         if (note) note.textContent = 'Profile saved.';
+        if (typeof saShowToast === 'function') saShowToast('Profile saved.', 'success');
     } catch (error) {
         if (note) note.textContent = error.message || 'Could not update the profile.';
     }
@@ -97,15 +108,18 @@ async function saAdminProfileSubmit(event) {
 
 async function saAdminPassSubmit(event) {
     event.preventDefault();
+    event.stopPropagation();
     const note = document.getElementById('saPassNote');
+    const badge = document.getElementById('saPassSuccess');
+    const form = document.getElementById('saAdminPassForm');
     const current = document.getElementById('saCurrentPass').value;
     const next = document.getElementById('saNewPass').value;
     const confirm = document.getElementById('saConfirmPass').value;
     if (note) note.textContent = '';
+    if (badge) badge.hidden = true;
     try {
         const response = await fetch('/api/admin/profile/password', {
             method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
             credentials: 'include',
             body: JSON.stringify({
                 currentPassword: current,
@@ -115,11 +129,18 @@ async function saAdminPassSubmit(event) {
         });
         const data = await response.json().catch(() => ({}));
         if (!response.ok) throw new Error(data.message || 'Could not update the password.');
-        document.getElementById('saCurrentPass').value = '';
-        document.getElementById('saNewPass').value = '';
-        document.getElementById('saConfirmPass').value = '';
-        if (note) note.textContent = data.message || 'Password updated.';
+        if (typeof resetPasswordFields === 'function' && form) resetPasswordFields(form);
+        else {
+            document.getElementById('saCurrentPass').value = '';
+            document.getElementById('saNewPass').value = '';
+            document.getElementById('saConfirmPass').value = '';
+        }
+        if (badge) badge.hidden = false;
+        if (typeof saShowToast === 'function') {
+            saShowToast('Password updated successfully', 'success');
+        }
     } catch (error) {
+        if (badge) badge.hidden = true;
         if (note) note.textContent = error.message || 'Could not update the password.';
     }
 }
@@ -129,7 +150,9 @@ async function saLoadAdminProfile() {
         const response = await fetch('/api/admin/profile', { credentials: 'include' });
         if (!response.ok) return;
         const data = await response.json();
-        saAdminApplyUser(data.user || {});
+        const user = data.user || {};
+        saAdminUser = user;
+        saAdminSyncFormFields(user);
     } catch (error) {
         /* Fields stay empty until reload. */
     }
@@ -146,18 +169,9 @@ function saMountAdminPass() {
         form.dataset.bound = '1';
         form.addEventListener('submit', saAdminPassSubmit);
     }
-    const avatarInput = document.getElementById('saAdminAvatarUrl');
-    if (avatarInput && !avatarInput.dataset.bound) {
-        avatarInput.dataset.bound = '1';
-        avatarInput.addEventListener('input', () => {
-            saAdminPaintAvatar({
-                name: document.getElementById('saAdminName').value,
-                avatarUrl: avatarInput.value.trim()
-            });
-        });
-    }
+    if (typeof saBindAdminAvatarInput === 'function') saBindAdminAvatarInput();
     saLoadAdminProfile();
     if (typeof bindPasswordToggles === 'function') {
-        bindPasswordToggles(document.getElementById('viewRoot') || document);
+        bindPasswordToggles(document.getElementById('saAdminPassForm'));
     }
 }

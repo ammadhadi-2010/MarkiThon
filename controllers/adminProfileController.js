@@ -5,6 +5,7 @@ const {
     updateAdminProfile,
     changeAdminPassword
 } = require('../utils/adminAuthStore');
+const { writeAdminAvatar } = require('../utils/adminAvatarUpload');
 
 function adminPayload(req) {
     const payload = verifyAuth(readAuthToken(req));
@@ -51,6 +52,22 @@ exports.updateProfile = async (req, res) => {
     }
 };
 
+exports.uploadAvatar = async (req, res) => {
+    try {
+        const payload = adminPayload(req);
+        if (!payload) return res.status(401).json({ message: 'Sign in as an admin to continue.' });
+        const url = writeAdminAvatar(req.body || {});
+        if (!url) {
+            return res.status(400).json({ message: 'Choose a PNG, JPG, or WebP image under 2 MB.' });
+        }
+        const user = await updateAdminProfile(payload.email || '', { avatarUrl: url });
+        if (!user) return res.status(404).json({ message: 'Admin account was not found.' });
+        return sendAdminSession(res, user);
+    } catch (error) {
+        return res.status(500).json({ message: 'Could not upload the profile image.' });
+    }
+};
+
 exports.updatePassword = async (req, res) => {
     try {
         const payload = adminPayload(req);
@@ -70,7 +87,7 @@ exports.updatePassword = async (req, res) => {
         if (user && user.invalidCurrent) {
             return res.status(400).json({ message: 'Current password is incorrect.' });
         }
-        return res.status(200).json({ message: 'Admin password updated.', user: publicAdmin(user) });
+        return res.status(200).json({ message: 'Password updated successfully.', user: publicAdmin(user) });
     } catch (error) {
         return res.status(500).json({ message: 'Could not update the admin password.' });
     }

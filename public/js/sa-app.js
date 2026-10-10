@@ -63,6 +63,7 @@ async function saLoad(page) {
     }
     saPaintNav(active);
     saPaintTop();
+    if (typeof saCloseUserMenu === 'function') saCloseUserMenu();
     document.getElementById('saView').innerHTML = saPage(active, saData);
     document.getElementById('saSearch').addEventListener('input', saFilter);
     document.getElementById('saMenu').addEventListener('click', () => {

@@ -25,7 +25,18 @@
 .sa-ok { color: #4ade80; }
 .sa-note { color: var(--sa-muted); font-size: 13px; }
 .sa-pass-title { margin: 18px 0 8px; font-size: 16px; }
-.sa-profile-head { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
+.sa-profile-head { display: flex; align-items: flex-start; gap: 12px; margin-bottom: 12px; flex-wrap: wrap; }
+.sa-profile-upload { flex: 1; min-width: 180px; }
+.sa-file-label { display: block; font-size: 13px; }
+.sa-file-label input[type="file"] {
+    display: block; margin-top: 6px; width: 100%; max-width: 320px; font-size: 12px;
+    color: var(--sa-muted);
+}
+.sa-pass-badge {
+    display: inline-block; margin-top: 12px; padding: 8px 12px; border-radius: 8px;
+    font-size: 13px; font-weight: 600;
+}
+.sa-pass-badge.is-ok { background: rgba(34, 197, 94, 0.15); border: 1px solid #22c55e; color: #bbf7d0; }
 .sa-profile-avatar {
     width: 56px; height: 56px; border-radius: 50%; overflow: hidden;
     display: grid; place-items: center; background: #2563eb; color: #fff; font-weight: 800;

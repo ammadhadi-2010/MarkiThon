@@ -1,6 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 const { hashPassword, matchPassword, cleanEmail, validEmail } = require('./authCrypto');
+const { safeAdminAvatarUrl } = require('./adminAvatarUpload');
 
 const file = path.join(__dirname, '../data/admin-auth.json');
 
@@ -122,10 +123,11 @@ async function updateAdminProfile(email, patch) {
     const name = String(patch.name || '').trim().slice(0, 80);
     const nextEmail = cleanEmail(patch.email);
     const phone = String(patch.phone || '').trim().slice(0, 24);
-    const avatarUrl = String(patch.avatarUrl || patch.avatar || '').trim().slice(0, 2000);
     if (name.length >= 2) user.name = name;
     if (patch.phone !== undefined) user.phone = phone;
-    if (patch.avatarUrl !== undefined || patch.avatar !== undefined) user.avatarUrl = avatarUrl;
+    if (patch.avatarUrl !== undefined || patch.avatar !== undefined) {
+        user.avatarUrl = safeAdminAvatarUrl(patch.avatarUrl || patch.avatar);
+    }
     if (nextEmail && validEmail(nextEmail)) {
         const clash = store.users.find((row) => row.email === nextEmail && row.id !== user.id);
         if (clash) return { conflict: true };

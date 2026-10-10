@@ -186,6 +186,7 @@ function mpBindAuthModal() {
 
 function mpLogoutBuyer() {
     localStorage.removeItem(MP_BUYER_KEY);
+    localStorage.removeItem(MP_BUYER_USER_KEY);
     localStorage.removeItem('mtAuthToken:vendor');
     localStorage.removeItem('mtAuthToken');
     localStorage.removeItem('mtAuthToken:admin');
@@ -210,6 +211,8 @@ async function mpBindAuth() {
             mpCloseProfileMenu();
         });
     }
+    if (typeof mpHydrateSessions === 'function') mpHydrateSessions();
+    mpPaintAuth();
     const loads = [mpLoadBuyer(), mpLoadVendor()];
     if (typeof mpLoadAdmin === 'function') loads.push(mpLoadAdmin());
     await Promise.all(loads);

@@ -25,12 +25,16 @@ function publicBuyer(row) {
     const prefs = buyer.preferences || {};
     const roleRaw = String(buyer.role || 'buyer').toLowerCase();
     const isVendor = roleRaw === 'shopkeeper' || roleRaw === 'vendor' || prefs.isVendor === true;
+    const name = String(buyer.name || '').trim();
+    const shopName = String(prefs.shopName || '').trim();
     return {
         id: buyer.id,
         role: isVendor ? 'shopkeeper' : 'customer',
         isVendor,
         hasShop: isVendor || Boolean(prefs.hasShop),
-        name: buyer.name,
+        name,
+        fullName: name,
+        shopName,
         email: buyer.email || '',
         phone: buyer.phone || '',
         authProvider: buyer.authProvider,

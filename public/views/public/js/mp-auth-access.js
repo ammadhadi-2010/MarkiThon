@@ -31,6 +31,71 @@ function mpIsActiveShopkeeper(user) {
     return user.isApproved === true || user.status === 'Active' || user.verified === true;
 }
 
+const MP_BUYER_USER_KEY = 'mpBuyerUser';
+
+function mpSaveBuyerCache(buyer) {
+    if (!buyer) {
+        localStorage.removeItem(MP_BUYER_USER_KEY);
+        return;
+    }
+    try {
+        localStorage.setItem(MP_BUYER_USER_KEY, JSON.stringify(buyer));
+    } catch (error) {
+        /* Ignore quota errors. */
+    }
+}
+
+function mpReadBuyerCache() {
+    try {
+        const row = JSON.parse(localStorage.getItem(MP_BUYER_USER_KEY) || 'null');
+        return row && typeof row === 'object' ? row : null;
+    } catch (error) {
+        return null;
+    }
+}
+
+function mpHydrateSessions() {
+    if (typeof mpBuyerToken === 'function' && mpBuyerToken()) {
+        const cached = mpReadBuyerCache();
+        if (cached) mpBuyer = cached;
+    }
+    if (!mpVendor && typeof mpReadStoredVendor === 'function') {
+        const stored = mpReadStoredVendor();
+        if (stored) mpVendor = stored;
+    }
+}
+
+function mpApplyVendorSession(data) {
+    const user = data.user || data.vendor || null;
+    if (!user || !data.token) return false;
+    localStorage.setItem('mtAuthToken:vendor', data.token);
+    localStorage.setItem('mtAuthToken', data.token);
+    if (typeof authSaveToken === 'function') authSaveToken('vendor', data.token);
+    mpVendor = user;
+    if (typeof mpSaveStoredVendor === 'function') mpSaveStoredVendor(user);
+    return true;
+}
+
+function mpApplyBuyerSession(data) {
+    const role = String((data && data.role) || '').toLowerCase();
+    const asVendor = role === 'shopkeeper' || role === 'vendor'
+        || (data.user && (data.user.shopName || data.user.role === 'vendor'));
+    if (asVendor && mpApplyVendorSession(data)) {
+        if (typeof mpCloseAuth === 'function') mpCloseAuth();
+        if (typeof mpPaintAuth === 'function') mpPaintAuth();
+        return;
+    }
+    if (data.token) localStorage.setItem('mpBuyerToken', data.token);
+    mpBuyer = data.buyer || data.user || null;
+    mpSaveBuyerCache(mpBuyer);
+    if (typeof mpCloseAuth === 'function') mpCloseAuth();
+    if (typeof mpPaintAuth === 'function') mpPaintAuth();
+    if (typeof mpPaintHearts === 'function') mpPaintHearts(document);
+    if (location.pathname.indexOf('/profile/orders') === 0 && typeof mpMountOrders === 'function') {
+        mpMountOrders((location.pathname.split('/')[3]) || '');
+    }
+}
+
 function mpToast(message) {
     let host = document.getElementById('mpToastHost');
     if (!host) {

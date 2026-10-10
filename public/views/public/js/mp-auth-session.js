@@ -70,40 +70,55 @@ async function mpBuyerFetch(path, options) {
 async function mpLoadBuyer() {
     if (!mpBuyerToken()) {
         mpBuyer = null;
+        mpSaveBuyerCache(null);
         return;
     }
+    if (!mpBuyer) mpBuyer = mpReadBuyerCache();
     try {
-        mpBuyer = (await mpBuyerFetch('/me')).buyer;
+        const data = await mpBuyerFetch('/me');
+        mpBuyer = data.buyer || null;
+        mpSaveBuyerCache(mpBuyer);
     } catch (error) {
-        localStorage.removeItem(MP_BUYER_KEY);
-        mpBuyer = null;
+        const message = String((error && error.message) || '');
+        if (/sign in|unauthorized|401|403/i.test(message) || !mpBuyer) {
+            localStorage.removeItem(MP_BUYER_KEY);
+            mpSaveBuyerCache(null);
+            mpBuyer = null;
+        }
     }
 }
 
 async function mpLoadVendor() {
     const token = mpVendorToken();
     const stored = mpReadStoredVendor();
-    if (!token && !stored) {
-        mpVendor = null;
-        return;
-    }
-    if (token) {
-        try {
-            const res = await fetch('/api/auth/vendor/me', {
-                headers: { Authorization: 'Bearer ' + token },
-                credentials: 'include'
-            });
-            const data = await res.json().catch(() => ({}));
-            if (res.ok && data.user) {
-                mpVendor = data.user;
-                mpSaveStoredVendor(data.user);
-                return;
+    if (!mpVendor && stored) mpVendor = stored;
+    try {
+        const headers = {};
+        if (token) headers.Authorization = 'Bearer ' + token;
+        const res = await fetch('/api/auth/vendor/me', {
+            headers,
+            credentials: 'include'
+        });
+        const data = await res.json().catch(() => ({}));
+        if (res.ok && data.user) {
+            mpVendor = data.user;
+            mpSaveStoredVendor(data.user);
+            if (data.token) {
+                localStorage.setItem('mtAuthToken:vendor', data.token);
+                localStorage.setItem('mtAuthToken', data.token);
+            } else if (token) {
+                localStorage.setItem('mtAuthToken:vendor', token);
             }
-        } catch (error) {
-            /* use stored vendor */
+            return;
         }
+        if (res.status === 401 && !stored) {
+            mpVendor = null;
+            return;
+        }
+    } catch (error) {
+        /* Keep cached vendor when offline. */
     }
-    mpVendor = stored || null;
+    mpVendor = mpVendor || stored || null;
 }
 
 async function mpLoadAdmin() {
@@ -223,13 +238,3 @@ function mpMenuSessionUser() {
     });
 }
 
-function mpApplyBuyerSession(data) {
-    localStorage.setItem(MP_BUYER_KEY, data.token);
-    mpBuyer = data.buyer;
-    if (typeof mpCloseAuth === 'function') mpCloseAuth();
-    if (typeof mpPaintAuth === 'function') mpPaintAuth();
-    if (typeof mpPaintHearts === 'function') mpPaintHearts(document);
-    if (location.pathname.indexOf('/profile/orders') === 0 && typeof mpMountOrders === 'function') {
-        mpMountOrders((location.pathname.split('/')[3]) || '');
-    }
-}

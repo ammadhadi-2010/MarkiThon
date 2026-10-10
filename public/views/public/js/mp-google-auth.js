@@ -81,13 +81,33 @@ async function mpHandleGoogleCredential(response) {
         });
         const data = await res.json().catch(() => ({}));
         if (!res.ok) throw new Error(data.message || 'Google sign-in failed.');
-        if (typeof mpApplyBuyerSession === 'function') mpApplyBuyerSession(data);
-        else {
-            localStorage.setItem('mpBuyerToken', data.token);
-            if (typeof mpPaintAuth === 'function') {
-                window.mpBuyer = data.buyer;
-                mpPaintAuth();
+        if (typeof mpApplyBuyerSession === 'function') {
+            mpApplyBuyerSession(data);
+        } else if (data.role === 'shopkeeper' || data.role === 'vendor') {
+            if (data.token) {
+                localStorage.setItem('mtAuthToken:vendor', data.token);
+                localStorage.setItem('mtAuthToken', data.token);
             }
+            if (data.user) {
+                localStorage.setItem('vendor', JSON.stringify(data.user));
+                localStorage.setItem('mtVendorUser', JSON.stringify(data.user));
+                window.mpVendor = data.user;
+            }
+            if (typeof mpCloseAuth === 'function') mpCloseAuth();
+            if (typeof mpPaintAuth === 'function') mpPaintAuth();
+        } else {
+            if (data.token) localStorage.setItem('mpBuyerToken', data.token);
+            if (data.buyer || data.user) {
+                const buyer = data.buyer || data.user;
+                window.mpBuyer = buyer;
+                try {
+                    localStorage.setItem('mpBuyerUser', JSON.stringify(buyer));
+                } catch (error) {
+                    /* ignore */
+                }
+            }
+            if (typeof mpCloseAuth === 'function') mpCloseAuth();
+            if (typeof mpPaintAuth === 'function') mpPaintAuth();
         }
     } catch (error) {
         if (typeof mpSetAuthError === 'function') mpSetAuthError(error.message);

@@ -63,21 +63,26 @@ function mpOpenVendorEntry() {
 }
 
 function mpManageMenuMarkup(user) {
-    const shop = mpHasVendorSession() || mpIsShopVendor(user);
+    const shop = mpHasVendorSession() || mpIsShopVendor(user)
+        || (typeof mpHasRegisteredShop === 'function' && mpHasRegisteredShop(user));
     const admin = String((user && user.role) || '').toLowerCase() === 'admin';
     const active = typeof mpIsActiveShopkeeper === 'function' && mpIsActiveShopkeeper(user);
     const storeLink = shop
         ? '<a href="/settings" data-mp-go="/settings">Online Store Settings</a>'
         : '';
-    const inventory = active
-        ? '<a href="/app" class="mp-menu-inventory" data-mp-go="/app">Inventory Dashboard</a>'
-        : '';
+    const sellerLink = shop || active
+        ? '<a href="/app" class="mp-menu-inventory" data-mp-go="/app">My Shop / POS Inventory</a>'
+        : '<a href="/register-shop" class="mp-menu-seller" data-mp-go="/register-shop">Become a Seller</a>';
+    const registerExtra = shop || active || admin
+        ? ''
+        : '<a href="/register-shop" data-mp-go="/register-shop">Register New Shop</a>';
     return `
             <p class="mp-menu-label">Manage</p>
             <div class="mp-menu-links">
-                ${inventory}
+                ${sellerLink}
+                ${registerExtra}
                 ${storeLink}
-                <button type="button" data-mp-dashboard="1"${admin || active ? '' : ' class="is-locked"'}>Dashboard</button>
+                <button type="button" class="mp-menu-dash" data-mp-dashboard="1">Dashboard</button>
             </div>`;
 }
 

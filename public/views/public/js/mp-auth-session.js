@@ -157,11 +157,14 @@ function mpMapVendorUser(vendor) {
     const status = String(vendor.status || '');
     const approved = status === 'Active' || vendor.isApproved === true;
     const pending = !approved && (status === 'Pending Admin Approval' || vendor.verifyState === 'pending');
-    const shopName = vendor.shopName || vendor.name || vendor.ownerName || 'Shopkeeper';
+    const shopName = String(vendor.shopName || '').trim();
+    const ownerName = String(vendor.ownerName || vendor.fullName || '').trim();
+    const label = shopName || ownerName || 'Shopkeeper';
     return {
         id: vendor.id,
-        name: shopName,
-        shopName,
+        name: label,
+        shopName: shopName || label,
+        fullName: ownerName,
         imageUrl: vendor.imageUrl || '',
         role: 'shopkeeper',
         isVendor: true,
@@ -174,7 +177,7 @@ function mpMapVendorUser(vendor) {
         shopkeeperId: vendor.shopkeeperId || '',
         email: vendor.email || '',
         phone: vendor.phone || '',
-        ownerName: vendor.ownerName || ''
+        ownerName
     };
 }
 
@@ -208,9 +211,12 @@ function mpBuyerAsVendor() {
     if (!mpBuyer) return null;
     const role = String(mpBuyer.role || '').toLowerCase();
     if (!(mpBuyer.isVendor || mpBuyer.hasShop || role === 'shopkeeper' || role === 'vendor')) return null;
+    const shopName = (typeof sfShop !== 'undefined' && sfShop && sfShop.shopName)
+        || mpBuyer.shopName
+        || '';
     return mpOverlayStorefront(mpMapVendorUser({
-        shopName: (typeof sfShop !== 'undefined' && sfShop && sfShop.shopName) || mpBuyer.name,
-        ownerName: mpBuyer.name,
+        shopName,
+        ownerName: mpBuyer.fullName || mpBuyer.name || '',
         imageUrl: mpBuyer.imageUrl || '',
         email: mpBuyer.email || '',
         phone: mpBuyer.phone || '',

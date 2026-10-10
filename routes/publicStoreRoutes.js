@@ -8,7 +8,8 @@ const SKIP = new Set([
     'app', 'dashboard', 'market', 'views', 'components', 'online-store', 'customers',
     'about', 'contact', 'blog', 'product', 'store', 'admin', 'profile',
     'mission', 'careers', 'terms', 'privacy', 'faqs', 'delivery', 'returns',
-    'vendor', 'login', 'signup', 'forgot-password', 'settings', 'store-settings', 'inventory', 'expenses'
+    'vendor', 'login', 'signup', 'forgot-password', 'settings', 'store-settings', 'inventory', 'expenses',
+    'register-shop'
 ]);
 
 function sendMarketplace(req, res) {
@@ -77,6 +78,7 @@ router.get('/forgot-password', sendCustomerForgot);
 router.get('/vendor/login', sendVendorLogin);
 router.get('/vendor/register', sendVendorRegister);
 router.get('/vendor-register.html', sendVendorRegister);
+router.get('/register-shop', sendVendorRegister);
 router.get('/vendor/dashboard', sendAdminApp);
 router.get('/vendor/dashboard/*', sendAdminApp);
 router.get('/store/:shopSlug', sendShopCatalog);

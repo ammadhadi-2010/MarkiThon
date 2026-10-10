@@ -6,9 +6,10 @@ function mpCleanLabel(value) {
 
 function mpDisplayName(user) {
     if (!user) return '';
-    /* Prefer DB shop / profile names; never prefer raw Gmail titles when those exist. */
-    return mpCleanLabel(user.shopName)
-        || mpCleanLabel(user.fullName)
+    /* Registered shopName always wins over Google/owner personal titles. */
+    const shop = mpCleanLabel(user.shopName);
+    if (shop) return shop;
+    return mpCleanLabel(user.fullName)
         || mpCleanLabel(user.ownerName)
         || mpCleanLabel(user.name)
         || String(user.email || '').trim()
@@ -154,23 +155,27 @@ function mpRequireAuth(mode) {
     return false;
 }
 
+function mpHasRegisteredShop(user) {
+    if (!user) return false;
+    if (mpIsShopkeeperRole(user)) return true;
+    if (typeof mpHasVendorSession === 'function' && mpHasVendorSession()) return true;
+    if (typeof mpIsVendorLoggedIn === 'function' && mpIsVendorLoggedIn()) return true;
+    return Boolean(mpCleanLabel(user.shopName));
+}
+
 function mpDashboardHref(user) {
     const role = String((user && user.role) || '').toLowerCase();
     if (role === 'admin' || (typeof mpIsAdminLoggedIn === 'function' && mpIsAdminLoggedIn() && mpAdmin)) {
         return '/admin';
     }
-    if (mpIsActiveShopkeeper(user)) return '/app';
-    return '';
+    if (mpHasRegisteredShop(user) || mpIsActiveShopkeeper(user)) return '/app';
+    return '/register-shop';
 }
 
 function mpOpenDashboard() {
     if (!mpRequireAuth('login')) return;
     const user = typeof mpMenuSessionUser === 'function' ? mpMenuSessionUser() : null;
-    const href = mpDashboardHref(user);
+    const href = mpDashboardHref(user) || '/register-shop';
     if (typeof mpCloseProfileMenu === 'function') mpCloseProfileMenu();
-    if (href) {
-        location.assign(href);
-        return;
-    }
-    mpToast('Dashboard access is only available for active Shopkeepers or Admins.');
+    location.assign(href);
 }

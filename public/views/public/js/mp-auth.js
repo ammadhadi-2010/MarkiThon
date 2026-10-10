@@ -51,8 +51,12 @@ function mpBindProfileMenu(slot) {
         link.addEventListener('click', (event) => {
             event.preventDefault();
             event.stopPropagation();
-            if (!mpRequireAuth('login')) return;
-            mpVendorGo(link.getAttribute('data-mp-go') || link.getAttribute('href'));
+            const href = link.getAttribute('data-mp-go') || link.getAttribute('href') || '';
+            const openRegister = href.indexOf('/register-shop') === 0;
+            if (!openRegister && !mpRequireAuth('login')) return;
+            if (openRegister && !mpRequireAuth('register')) return;
+            mpCloseProfileMenu();
+            mpVendorGo(href);
         });
     });
     const lang = slot.querySelector('[data-mp-lang]');

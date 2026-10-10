@@ -9,7 +9,8 @@
         "build": "node -e \"console.log('Static public assets are ready for Vercel.')\"",
         "deploy:check": "node -e \"require('./config/cloudEnv'); console.log('Deploy env OK')\"",
         "purge:dup-products": "node scripts/purge-duplicate-products.js",
-        "purge:dup-products:dry": "node scripts/purge-duplicate-products.js --dry-run"
+        "purge:dup-products:dry": "node scripts/purge-duplicate-products.js --dry-run",
+        "seed:admin": "node scripts/createAdmin.js"
     },
     "engines": {
         "node": ">=18"

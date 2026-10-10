@@ -7,7 +7,7 @@ const file = path.join(__dirname, '../data/admin-auth.json');
 const OFFICIAL_ADMIN_EMAIL = 'markithon.official@gmail.com';
 
 async function seedAdmins() {
-    const password = await hashPassword('MarkiThon@Admin1');
+    const password = await hashPassword('Admin@MarkiThon2026');
     return {
         users: [{
             id: 'admin-1',
@@ -30,7 +30,7 @@ async function ensureOfficialAdmin() {
     const user = store.users.find((row) => row.email === OFFICIAL_ADMIN_EMAIL);
     if (user) return store;
     const bootstrap = String(process.env.ADMIN_BOOTSTRAP_PASSWORD || process.env.ADMIN_PASSWORD || '').trim()
-        || 'MarkiThon@Admin1';
+        || 'Admin@MarkiThon2026';
     store.users.unshift({
         id: 'admin-official',
         role: 'admin',
@@ -112,6 +112,36 @@ async function updateAdminProfile(email, patch) {
     return user;
 }
 
+/** Create or update Super Admin (used by scripts/createAdmin.js). */
+async function upsertSuperAdmin(opts) {
+    const email = cleanEmail((opts && opts.email) || OFFICIAL_ADMIN_EMAIL);
+    const name = String((opts && opts.name) || 'Super Admin').trim().slice(0, 80) || 'Super Admin';
+    const password = String((opts && opts.password) || 'Admin@MarkiThon2026');
+    const role = String((opts && opts.role) || 'admin');
+    if (!validEmail(email)) throw new Error('A valid admin email is required.');
+    if (password.length < 6) throw new Error('Admin password must be at least 6 characters.');
+
+    const store = await readAdmins();
+    let user = store.users.find((row) => row.email === email);
+    const created = !user;
+    if (!user) {
+        user = {
+            id: 'admin-' + Date.now().toString(36),
+            role: 'admin',
+            name,
+            email,
+            password: ''
+        };
+        store.users.unshift(user);
+    }
+    user.role = role === 'admin' ? 'admin' : 'admin';
+    user.name = name;
+    user.email = email;
+    user.password = await hashPassword(password);
+    await writeAdmins(store);
+    return { ...publicAdmin(user), created };
+}
+
 module.exports = {
     publicAdmin,
     findAdminByEmail,
@@ -121,5 +151,6 @@ module.exports = {
     resolveAdminBypass,
     updateAdminPassword,
     updateAdminProfile,
+    upsertSuperAdmin,
     OFFICIAL_ADMIN_EMAIL
 };

@@ -3,7 +3,9 @@ const router = express.Router();
 const { createBill, listBills, getBill, deleteBill, addCustomer, listCustomers } = require('../controllers/retailController');
 const { listCustomerHub, updateCustomer, destroyCustomer } = require('../controllers/customerHubController');
 const { updateRetail } = require('../controllers/billReviseController');
+const { requireVendorShop } = require('../middleware/requireVendorShop');
 
+router.use(requireVendorShop);
 router.post('/create', createBill);
 router.get('/list', listBills);
 router.get('/customers/hub', listCustomerHub);

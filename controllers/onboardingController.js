@@ -5,6 +5,7 @@ const { SHOP_TYPES, BUSINESS_TYPES } = ShopProfile;
 const { categoriesForShop } = require('../utils/shopCatalog');
 const { resolveShopType } = require('../utils/shopTypeCatalog');
 const Setting = require('../models/Setting');
+const { activeShopId } = require('../utils/shopScope');
 
 function pickShopType(raw, fallback) {
     if (SHOP_TYPES.includes(raw)) return raw;
@@ -25,8 +26,7 @@ function payloadFromBody(body) {
         shopAddress: String(body.shopAddress || '').trim(),
         imageUrl: body.imageUrl || null,
         shopType: pickShopType(body.shopType, 'Clothing & Fashion'),
-        businessType: BUSINESS_TYPES.includes(body.businessType) ? body.businessType : 'Both',
-        ShopId: body.ShopId || 1
+        businessType: BUSINESS_TYPES.includes(body.businessType) ? body.businessType : 'Both'
     };
 }
 
@@ -36,7 +36,8 @@ function missingField(data) {
 }
 
 async function getOrCreate() {
-    let row = await ShopProfile.findOne({ where: { ShopId: 1 } });
+    const shopId = await activeShopId();
+    let row = await ShopProfile.findOne({ where: { ShopId: shopId } });
     if (!row) {
         row = await ShopProfile.create({
             shopName: 'Ammad Hadi Stor',
@@ -48,14 +49,15 @@ async function getOrCreate() {
             shopAddress: 'Main Market, Punjab',
             shopType: 'Clothing & Fashion',
             businessType: 'Both',
-            ShopId: 1
+            ShopId: shopId
         });
     }
     return row;
 }
 
 async function syncSettings(data) {
-    const setting = await Setting.findOne({ where: { ShopId: 1 } });
+    const shopId = await activeShopId();
+    const setting = await Setting.findOne({ where: { ShopId: shopId } });
     if (!setting) return;
     await setting.update({
         shopName: data.shopName,
@@ -66,7 +68,8 @@ async function syncSettings(data) {
 }
 
 async function getOrCreateSub() {
-    let row = await ShopSubscription.findOne({ where: { ShopId: 1 } });
+    const shopId = await activeShopId();
+    let row = await ShopSubscription.findOne({ where: { ShopId: shopId } });
     if (!row) {
         row = await ShopSubscription.create({
             selectedPackage: 'Basic',
@@ -76,15 +79,16 @@ async function getOrCreateSub() {
             productLimit: 50,
             orderLimit: 100,
             paymentStatus: 'free',
-            ShopId: 1
+            ShopId: shopId
         });
     }
     return row;
 }
 
 async function getOrCreateDigital() {
-    let row = await ShopDigitalSetup.findOne({ where: { ShopId: 1 } });
-    if (!row) row = await ShopDigitalSetup.create({ ShopId: 1 });
+    const shopId = await activeShopId();
+    let row = await ShopDigitalSetup.findOne({ where: { ShopId: shopId } });
+    if (!row) row = await ShopDigitalSetup.create({ ShopId: shopId });
     return row;
 }
 
@@ -202,7 +206,7 @@ exports.saveStep6 = async (req, res) => {
             longitude: req.body.longitude == null || req.body.longitude === '' ? null : Number(req.body.longitude),
             marketPosition: spots.includes(req.body.marketPosition) ? req.body.marketPosition : null,
             landmarkNote: req.body.landmarkNote || null,
-            ShopId: 1
+            ShopId: await activeShopId()
         };
         if (req.body.finishSetup === true) digital.isSetupCompleted = true;
         await row.update(digital);

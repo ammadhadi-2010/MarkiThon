@@ -2,6 +2,7 @@ const { Op } = require('sequelize');
 const Wholesaler = require('../models/Wholesaler');
 const WholesalerLedger = require('../models/WholesalerLedger');
 const WholesaleOrder = require('../models/WholesaleOrder');
+const { activeShopId } = require('../utils/shopScope');
 
 function balanceOf(entries) {
     let due = 0;
@@ -38,6 +39,7 @@ exports.recordSale = async function recordSale({ wholesalerId, amount, ref, paid
     const value = Number(amount);
     if (!id || !value) return;
     const opts = transaction ? { transaction } : {};
+    const shopId = await activeShopId();
     await WholesalerLedger.create({
         wholesalerId: id,
         type: 'SALE',
@@ -45,7 +47,7 @@ exports.recordSale = async function recordSale({ wholesalerId, amount, ref, paid
         note: 'Bulk order',
         ref: ref || null,
         entryDate: new Date(),
-        ShopId: 1
+        ShopId: shopId
     }, opts);
     if (paid) {
         await WholesalerLedger.create({
@@ -55,7 +57,7 @@ exports.recordSale = async function recordSale({ wholesalerId, amount, ref, paid
             note: 'Cash settlement',
             ref: ref || null,
             entryDate: new Date(),
-            ShopId: 1
+            ShopId: shopId
         }, opts);
     }
 };
@@ -87,7 +89,7 @@ exports.addPayment = async (req, res) => {
             note: req.body.note || 'Wholesaler payment',
             ref: req.body.ref || null,
             entryDate: req.body.entryDate ? new Date(req.body.entryDate) : new Date(),
-            ShopId: 1
+            ShopId: await activeShopId()
         });
         res.status(201).json({ message: 'Payment recorded.', entry: row });
     } catch (error) {

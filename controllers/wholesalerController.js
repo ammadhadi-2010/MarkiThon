@@ -2,8 +2,9 @@ const { Op } = require('sequelize');
 const Wholesaler = require('../models/Wholesaler');
 const WholesalerLedger = require('../models/WholesalerLedger');
 const { withStats } = require('./wholesalerLedgerController');
+const { activeShopId, sameShop } = require('../utils/shopScope');
 
-function payloadFrom(body) {
+async function payloadFrom(body) {
     return {
         name: String(body.name || '').trim(),
         shopName: body.shopName || '',
@@ -12,13 +13,13 @@ function payloadFrom(body) {
         city: body.city || '',
         creditLimit: Number(body.creditLimit) || 0,
         notes: body.notes || '',
-        ShopId: body.ShopId || 1
+        ShopId: await activeShopId()
     };
 }
 
 exports.addWholesaler = async (req, res) => {
     try {
-        const data = payloadFrom(req.body);
+        const data = await payloadFrom(req.body);
         if (!data.name) return res.status(400).json({ message: 'Wholesaler name is required.' });
         if (!data.phone) return res.status(400).json({ message: 'Phone number is required.' });
         const wholesaler = await Wholesaler.create(data);
@@ -31,7 +32,7 @@ exports.addWholesaler = async (req, res) => {
 exports.getWholesalers = async (req, res) => {
     try {
         const { q } = req.query;
-        const where = {};
+        const where = { ShopId: await activeShopId() };
         if (q && String(q).trim()) {
             const term = `%${String(q).trim()}%`;
             where[Op.or] = [
@@ -51,8 +52,10 @@ exports.getWholesalers = async (req, res) => {
 exports.updateWholesaler = async (req, res) => {
     try {
         const row = await Wholesaler.findByPk(req.params.id);
-        if (!row) return res.status(404).json({ message: 'Wholesaler not found.' });
-        const data = payloadFrom(req.body);
+        if (!row || !sameShop(row, await activeShopId())) {
+            return res.status(404).json({ message: 'Wholesaler not found.' });
+        }
+        const data = await payloadFrom(req.body);
         if (!data.name) return res.status(400).json({ message: 'Wholesaler name is required.' });
         if (!data.phone) return res.status(400).json({ message: 'Phone number is required.' });
         Object.assign(row, data);
@@ -66,7 +69,9 @@ exports.updateWholesaler = async (req, res) => {
 exports.deleteWholesaler = async (req, res) => {
     try {
         const row = await Wholesaler.findByPk(req.params.id);
-        if (!row) return res.status(404).json({ message: 'Wholesaler not found.' });
+        if (!row || !sameShop(row, await activeShopId())) {
+            return res.status(404).json({ message: 'Wholesaler not found.' });
+        }
         await WholesalerLedger.destroy({ where: { wholesalerId: row.id } });
         await row.destroy();
         res.status(200).json({ message: 'Wholesaler deleted.' });

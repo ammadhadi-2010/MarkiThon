@@ -7,7 +7,9 @@ const {
     deleteWholesaler
 } = require('../controllers/wholesalerController');
 const ledger = require('../controllers/wholesalerLedgerController');
+const { requireVendorShop } = require('../middleware/requireVendorShop');
 
+router.use(requireVendorShop);
 router.post('/add', addWholesaler);
 router.get('/list', getWholesalers);
 router.get('/:id/ledger', ledger.listLedger);

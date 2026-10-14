@@ -12,10 +12,12 @@ function sameName(left, right) {
 }
 
 async function loadShop() {
-    const profile = await ShopProfile.findOne({ where: { ShopId: 1 } });
+    const { activeShopId } = require('../utils/shopScope');
+    const shopId = await activeShopId();
+    const profile = await ShopProfile.findOne({ where: { ShopId: shopId } });
     const shopType = resolveShopType((profile && profile.shopType) || 'Clothing & Fashion');
     return {
-        shopId: profile ? Number(profile.ShopId) : 1,
+        shopId,
         shopType,
         productTypes: Array.isArray(profile && profile.productTypes) ? profile.productTypes : [],
         ownerName: (profile && profile.ownerName) || '',

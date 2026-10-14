@@ -8,13 +8,14 @@ const {
 } = require('../controllers/productController');
 const { getPublicProduct } = require('../controllers/publicProductController');
 const { listProductReviews, addProductReview } = require('../controllers/productReviewController');
+const { requireVendorShop } = require('../middleware/requireVendorShop');
 
-router.post('/add', addProduct);
-router.get('/list', getProducts);
+router.post('/add', requireVendorShop, addProduct);
+router.get('/list', requireVendorShop, getProducts);
 router.get('/:id/reviews', listProductReviews);
 router.post('/:id/reviews', addProductReview);
 router.get('/:id', getPublicProduct);
-router.put('/:id', updateProduct);
-router.delete('/:id', deleteProduct);
+router.put('/:id', requireVendorShop, updateProduct);
+router.delete('/:id', requireVendorShop, deleteProduct);
 
 module.exports = router;

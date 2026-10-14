@@ -6,22 +6,24 @@ const { getBanner, putBanner } = require('../controllers/storeBannerController')
 const { getBranding, putBranding } = require('../controllers/storeBrandingController');
 const { getTheme, putTheme } = require('../controllers/storeThemeController');
 const { listOrders, getOrder, createOrder, patchOrder } = require('../controllers/storeOrderController');
+const { requireVendorShop } = require('../middleware/requireVendorShop');
 
-router.get('/products/:id', getProduct);
-router.put('/products/:id', patchProduct);
-router.delete('/products/:id', deleteProduct);
-router.get('/stickers', listStickers);
-router.post('/stickers', uploadSticker);
-router.delete('/stickers/:name', deleteSticker);
-router.get('/banner', getBanner);
-router.put('/banner', putBanner);
-router.get('/branding', getBranding);
-router.put('/branding', putBranding);
-router.get('/theme', getTheme);
-router.put('/theme', putTheme);
-router.get('/orders', listOrders);
 router.post('/orders', createOrder);
-router.get('/orders/:id', getOrder);
-router.put('/orders/:id', patchOrder);
+
+router.get('/products/:id', requireVendorShop, getProduct);
+router.put('/products/:id', requireVendorShop, patchProduct);
+router.delete('/products/:id', requireVendorShop, deleteProduct);
+router.get('/stickers', requireVendorShop, listStickers);
+router.post('/stickers', requireVendorShop, uploadSticker);
+router.delete('/stickers/:name', requireVendorShop, deleteSticker);
+router.get('/banner', requireVendorShop, getBanner);
+router.put('/banner', requireVendorShop, putBanner);
+router.get('/branding', requireVendorShop, getBranding);
+router.put('/branding', requireVendorShop, putBranding);
+router.get('/theme', requireVendorShop, getTheme);
+router.put('/theme', requireVendorShop, putTheme);
+router.get('/orders', requireVendorShop, listOrders);
+router.get('/orders/:id', requireVendorShop, getOrder);
+router.put('/orders/:id', requireVendorShop, patchOrder);
 
 module.exports = router;

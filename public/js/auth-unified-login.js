@@ -4,6 +4,9 @@ function authLoginRedirect(data) {
     if (data.role === 'shopkeeper' && data.user) {
         localStorage.setItem('vendor', JSON.stringify(data.user));
         localStorage.setItem('mtVendorUser', JSON.stringify(data.user));
+        if (data.shopId || data.user.shopId) {
+            localStorage.setItem('mtShopId', String(data.shopId || data.user.shopId));
+        }
     }
     if (data.role === 'customer' && data.token) {
         localStorage.setItem('mpBuyerToken', data.token);

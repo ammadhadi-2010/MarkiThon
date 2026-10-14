@@ -114,7 +114,7 @@ exports.addPayment = async (req, res) => {
             ref,
             paymentProof: slip ? slip.slice(0, 400000) : null,
             entryDate: req.body.entryDate ? new Date(req.body.entryDate) : new Date(),
-            ShopId: 1
+            ShopId: await require('../utils/shopScope').activeShopId()
         });
         const paidNow = paid + amount;
         try {

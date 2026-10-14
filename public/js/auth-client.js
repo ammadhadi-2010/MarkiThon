@@ -1,16 +1,38 @@
 const AUTH_TOKEN_KEY = 'mtAuthToken';
+const AUTH_SESSION_KEYS = [
+    AUTH_TOKEN_KEY,
+    AUTH_TOKEN_KEY + ':admin',
+    AUTH_TOKEN_KEY + ':vendor',
+    AUTH_TOKEN_KEY + ':customer',
+    'vendor',
+    'mtVendorUser',
+    'mpBuyerToken',
+    'mpBuyer',
+    'mtShopId',
+    'ShopId'
+];
 
 function authToken(role) {
     return localStorage.getItem(AUTH_TOKEN_KEY + ':' + role) || localStorage.getItem(AUTH_TOKEN_KEY) || '';
 }
 
+function authClearAllSessions() {
+    AUTH_SESSION_KEYS.forEach((key) => localStorage.removeItem(key));
+    try {
+        sessionStorage.clear();
+    } catch (error) {
+        /* ignore */
+    }
+}
+
 function authSaveToken(role, token) {
+    authClearAllSessions();
     localStorage.setItem(AUTH_TOKEN_KEY, token);
     localStorage.setItem(AUTH_TOKEN_KEY + ':' + role, token);
 }
 
 function authClearToken(role) {
-    localStorage.removeItem(AUTH_TOKEN_KEY);
+    authClearAllSessions();
     if (role) localStorage.removeItem(AUTH_TOKEN_KEY + ':' + role);
 }
 

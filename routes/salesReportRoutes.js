@@ -2,7 +2,9 @@ const express = require('express');
 const router = express.Router();
 const salesReport = require('../controllers/salesReportController');
 const report = require('../controllers/reportController');
+const { requireVendorShop } = require('../middleware/requireVendorShop');
 
+router.use(requireVendorShop);
 router.get('/', report.sales);
 router.get('/summary', salesReport.summary);
 router.get('/by-category', salesReport.byCategory);

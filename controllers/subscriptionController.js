@@ -7,9 +7,11 @@ const {
     limitsForShop,
     cleanPlan
 } = require('../utils/subscriptionPlans');
+const { activeShopId } = require('../utils/shopScope');
 
 async function getOrCreateSub() {
-    let row = await ShopSubscription.findOne({ where: { ShopId: 1 } });
+    const shopId = await activeShopId();
+    let row = await ShopSubscription.findOne({ where: { ShopId: shopId } });
     if (!row) {
         const basic = findPlan('Basic');
         row = await ShopSubscription.create({
@@ -20,7 +22,7 @@ async function getOrCreateSub() {
             productLimit: basic?.productLimit || 50,
             orderLimit: basic?.orderLimit || 100,
             paymentStatus: 'free',
-            ShopId: 1
+            ShopId: shopId
         });
     }
     return row;

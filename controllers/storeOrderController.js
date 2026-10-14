@@ -2,6 +2,8 @@ const StoreOrder = require('../models/StoreOrder');
 const { readBuyerToken } = require('../utils/buyerToken');
 const { normalizeItems, mergeDetails, packOrder } = require('../utils/storeOrderDetails');
 const { resolveCustomerEmail, queueOrderEmail } = require('../utils/orderEmail');
+const { verifyAuth, readAuthToken } = require('../utils/authToken');
+const { activeShopId, sameShop } = require('../utils/shopScope');
 
 const STATUSES = StoreOrder.STATUSES;
 const PAYMENTS = StoreOrder.PAYMENTS;
@@ -19,7 +21,11 @@ async function nextNumber() {
 
 exports.listOrders = async (req, res) => {
     try {
-        const rows = await StoreOrder.findAll({ order: [['createdAt', 'DESC']] });
+        const shopId = await activeShopId();
+        const rows = await StoreOrder.findAll({
+            where: { ShopId: shopId },
+            order: [['createdAt', 'DESC']]
+        });
         res.status(200).json({ orders: rows.map(pack), statuses: STATUSES });
     } catch (error) {
         res.status(500).json({ message: 'Could not load store orders.', error: error.message });
@@ -28,8 +34,11 @@ exports.listOrders = async (req, res) => {
 
 exports.getOrder = async (req, res) => {
     try {
+        const shopId = await activeShopId();
         const row = await StoreOrder.findByPk(req.params.id);
-        if (!row) return res.status(404).json({ message: 'Order not found.' });
+        if (!row || !sameShop(row, shopId)) {
+            return res.status(404).json({ message: 'Order not found.' });
+        }
         res.status(200).json(pack(row));
     } catch (error) {
         res.status(500).json({ message: 'Could not load order.', error: error.message });
@@ -52,6 +61,15 @@ exports.createOrder = async (req, res) => {
         } catch (error) {
             buyerId = null;
         }
+        let shopId = 0;
+        const auth = verifyAuth(readAuthToken(req));
+        if (auth && auth.role === 'vendor' && Number(auth.shopId) > 0) {
+            shopId = Number(auth.shopId);
+        } else if (Number(body.shopId) > 0) {
+            shopId = Number(body.shopId);
+        } else {
+            shopId = await activeShopId();
+        }
         const orderNumber = await nextNumber();
         const row = await StoreOrder.create({
             orderNumber,
@@ -65,7 +83,7 @@ exports.createOrder = async (req, res) => {
             note: String(body.note || '').trim(),
             details,
             buyerId,
-            ShopId: 1
+            ShopId: shopId
         });
         const placed = body.source === 'checkout';
         const email = await resolveCustomerEmail({
@@ -90,8 +108,11 @@ exports.createOrder = async (req, res) => {
 
 exports.patchOrder = async (req, res) => {
     try {
+        const shopId = await activeShopId();
         const row = await StoreOrder.findByPk(req.params.id);
-        if (!row) return res.status(404).json({ message: 'Order not found.' });
+        if (!row || !sameShop(row, shopId)) {
+            return res.status(404).json({ message: 'Order not found.' });
+        }
         const body = req.body || {};
         const status = STATUSES.includes(body.status) ? body.status : row.status;
         const payment = PAYMENTS.includes(body.payment) ? body.payment : row.payment;

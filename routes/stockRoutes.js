@@ -4,7 +4,9 @@ const { getProductStockHistory, getStockMovement } = require('../controllers/sto
 const { receiveStock } = require('../controllers/receiveController');
 const { listVouchers, getVoucher } = require('../controllers/voucherList');
 const { updateVoucher, deleteVoucher } = require('../controllers/voucherMutate');
+const { requireVendorShop } = require('../middleware/requireVendorShop');
 
+router.use(requireVendorShop);
 router.post('/receive', receiveStock);
 router.get('/vouchers', listVouchers);
 router.get('/vouchers/:id', getVoucher);

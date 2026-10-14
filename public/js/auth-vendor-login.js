@@ -25,6 +25,9 @@ authBindForm('authForm', async (form) => {
             localStorage.setItem('vendor', JSON.stringify(data.user));
             localStorage.setItem('mtVendorUser', JSON.stringify(data.user));
         }
+        if (data.shopId || (data.user && data.user.shopId)) {
+            localStorage.setItem('mtShopId', String(data.shopId || data.user.shopId));
+        }
         location.assign('/app');
     } catch (error) {
         if (error.status === 403) {
@@ -69,6 +72,9 @@ document.getElementById('authBioBtn').addEventListener('click', async () => {
         if (data.user) {
             localStorage.setItem('vendor', JSON.stringify(data.user));
             localStorage.setItem('mtVendorUser', JSON.stringify(data.user));
+        }
+        if (data.shopId || (data.user && data.user.shopId)) {
+            localStorage.setItem('mtShopId', String(data.shopId || data.user.shopId));
         }
         location.assign('/app');
     } catch (err) {

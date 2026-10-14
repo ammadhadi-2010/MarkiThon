@@ -1,10 +1,11 @@
 const { Op } = require('sequelize');
 const Supplier = require('../models/Supplier');
 const { withTotals } = require('./supplierLedgerController');
+const { activeShopId, sameShop } = require('../utils/shopScope');
 
 exports.addSupplier = async (req, res) => {
     try {
-        const { name, contactPerson, phone, email, address, status, ShopId } = req.body;
+        const { name, contactPerson, phone, email, address, status } = req.body;
 
         if (!name || !String(name).trim()) {
             return res.status(400).json({ message: 'Supplier name is required.' });
@@ -20,7 +21,7 @@ exports.addSupplier = async (req, res) => {
             email,
             address,
             status: status === 'Inactive' ? 'Inactive' : 'Active',
-            ShopId: ShopId || 1
+            ShopId: await activeShopId()
         });
 
         res.status(201).json({ message: 'Supplier saved successfully.', supplier });
@@ -32,7 +33,7 @@ exports.addSupplier = async (req, res) => {
 exports.getSuppliers = async (req, res) => {
     try {
         const { q } = req.query;
-        const where = {};
+        const where = { ShopId: await activeShopId() };
 
         if (q && String(q).trim()) {
             const term = `%${String(q).trim()}%`;
@@ -57,7 +58,7 @@ exports.getSuppliers = async (req, res) => {
 exports.toggleSupplierStatus = async (req, res) => {
     try {
         const supplier = await Supplier.findByPk(req.params.id);
-        if (!supplier) {
+        if (!supplier || !sameShop(supplier, await activeShopId())) {
             return res.status(404).json({ message: 'Supplier not found.' });
         }
 
@@ -73,7 +74,7 @@ exports.toggleSupplierStatus = async (req, res) => {
 exports.updateSupplier = async (req, res) => {
     try {
         const supplier = await Supplier.findByPk(req.params.id);
-        if (!supplier) {
+        if (!supplier || !sameShop(supplier, await activeShopId())) {
             return res.status(404).json({ message: 'Supplier not found.' });
         }
 
@@ -95,7 +96,7 @@ exports.updateSupplier = async (req, res) => {
 exports.deleteSupplier = async (req, res) => {
     try {
         const supplier = await Supplier.findByPk(req.params.id);
-        if (!supplier) {
+        if (!supplier || !sameShop(supplier, await activeShopId())) {
             return res.status(404).json({ message: 'Supplier not found.' });
         }
 

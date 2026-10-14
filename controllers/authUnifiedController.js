@@ -4,6 +4,7 @@ const { matchPassword, cleanEmail, validEmail } = require('../utils/authCrypto')
 const { signAuth, setAuthCookie } = require('../utils/authToken');
 const { publicAdmin, verifyAdmin, ensureOfficialAdmin } = require('../utils/adminAuthStore');
 const { publicVendor } = require('../utils/vendorProfile');
+const { ensureVendorShopBound } = require('../utils/vendorShopBind');
 
 function publicCustomer(row) {
     const buyer = row.toJSON ? row.toJSON() : row;
@@ -49,13 +50,20 @@ async function unifiedLogin(req, res) {
                     role: 'shopkeeper'
                 });
             }
-            const token = signAuth({ sub: vendor.id, role: 'vendor', status: vendor.status }, '7d');
+            const shopId = await ensureVendorShopBound(vendor);
+            const token = signAuth({
+                sub: vendor.id,
+                role: 'vendor',
+                status: vendor.status,
+                shopId
+            }, '7d');
             setAuthCookie(res, token);
             return res.status(200).json({
                 token,
                 role: 'shopkeeper',
                 redirect: '/app',
                 user: publicVendor(vendor),
+                shopId,
                 message: 'Signed in as shopkeeper.'
             });
         }

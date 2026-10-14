@@ -1,15 +1,17 @@
 const ShopDigitalSetup = require('../models/ShopDigitalSetup');
 const Setting = require('../models/Setting');
+const { activeShopId } = require('../utils/shopScope');
 
 async function getOrCreate() {
-    let row = await Setting.findOne({ where: { ShopId: 1 } });
+    const shopId = await activeShopId();
+    let row = await Setting.findOne({ where: { ShopId: shopId } });
     if (!row) {
         row = await Setting.create({
             shopName: 'Ammad Hadi Stor',
             ownerName: 'Admin',
             phone: '0300-1234567',
             address: 'Pakistan',
-            ShopId: 1
+            ShopId: shopId
         });
     }
     return row;
@@ -65,9 +67,10 @@ exports.getStoreQr = async (req, res) => {
 
 exports.getStoreApproval = async (req, res) => {
     try {
+        const shopId = await activeShopId();
         const [row] = await ShopDigitalSetup.findOrCreate({
-            where: { ShopId: 1 },
-            defaults: { ShopId: 1, isApproved: false }
+            where: { ShopId: shopId },
+            defaults: { ShopId: shopId, isApproved: false }
         });
         res.status(200).json({ isApproved: Boolean(row.isApproved) });
     } catch (error) {
@@ -77,15 +80,17 @@ exports.getStoreApproval = async (req, res) => {
 
 exports.putStoreApproval = async (req, res) => {
     try {
+        const shopId = Number(req.body && req.body.shopId) || 1;
         const [row] = await ShopDigitalSetup.findOrCreate({
-            where: { ShopId: 1 },
-            defaults: { ShopId: 1, isApproved: false }
+            where: { ShopId: shopId },
+            defaults: { ShopId: shopId, isApproved: false }
         });
         const isApproved = Boolean(req.body && req.body.isApproved);
         await row.update({ isApproved });
         res.status(200).json({
             message: isApproved ? 'Store approved and verified.' : 'Store set to pending admin approval.',
-            isApproved
+            isApproved,
+            shopId
         });
     } catch (error) {
         res.status(500).json({ message: 'Could not update store approval.' });

@@ -13,6 +13,7 @@ const VendorAccount = sequelize.define('VendorAccount', {
     password: { type: DataTypes.STRING, allowNull: false },
     imageUrl: { type: DataTypes.TEXT },
     status: { type: DataTypes.STRING, allowNull: false, defaultValue: 'Pending Admin Approval' },
+    shopId: { type: DataTypes.INTEGER, allowNull: true },
     biometricEnabled: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: false },
     webauthnCredId: { type: DataTypes.STRING },
     webauthnPublicKey: { type: DataTypes.TEXT }

@@ -1,5 +1,6 @@
 const ShopProfile = require('../models/ShopProfile');
 const ShopDigitalSetup = require('../models/ShopDigitalSetup');
+const { activeShopId } = require('../utils/shopScope');
 
 function packBranding(profile, digital) {
     const p = profile ? (profile.toJSON ? profile.toJSON() : profile) : {};
@@ -13,8 +14,9 @@ function packBranding(profile, digital) {
 }
 
 async function loadRows() {
+    const shopId = await activeShopId();
     const [profile] = await ShopProfile.findOrCreate({
-        where: { ShopId: 1 },
+        where: { ShopId: shopId },
         defaults: {
             shopName: 'Ammad Hadi Stor',
             ownerName: 'Ammad Hadi',
@@ -23,12 +25,12 @@ async function loadRows() {
             marketName: 'Central Market',
             shopNumber: '12-B',
             shopAddress: 'Main Market, Punjab',
-            ShopId: 1
+            ShopId: shopId
         }
     });
     const [digital] = await ShopDigitalSetup.findOrCreate({
-        where: { ShopId: 1 },
-        defaults: { ShopId: 1 }
+        where: { ShopId: shopId },
+        defaults: { ShopId: shopId }
     });
     return { profile, digital };
 }

@@ -1,8 +1,18 @@
+function apiAuthHeaders() {
+    const token = localStorage.getItem('mtAuthToken:vendor')
+        || localStorage.getItem('mtAuthToken:admin')
+        || localStorage.getItem('mtAuthToken')
+        || '';
+    const headers = { 'Content-Type': 'application/json' };
+    if (token) headers.Authorization = 'Bearer ' + token;
+    return headers;
+}
+
 async function apiRequest(url, options = {}) {
     const target = typeof apiUrl === 'function' ? apiUrl(url) : url;
     const res = await fetch(target, {
         credentials: 'include',
-        headers: { 'Content-Type': 'application/json', ...(options.headers || {}) },
+        headers: { ...apiAuthHeaders(), ...(options.headers || {}) },
         ...options
     }).catch(() => {
         throw new Error('OFFLINE');

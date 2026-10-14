@@ -1,7 +1,9 @@
 const express = require('express');
 const router = express.Router();
 const report = require('../controllers/reportController');
+const { requireVendorShop } = require('../middleware/requireVendorShop');
 
+router.use(requireVendorShop);
 router.get('/sales', report.sales);
 router.get('/purchases', report.purchases);
 router.get('/stock', report.stock);

@@ -5,11 +5,13 @@ const {
     packStoreTheme,
     assetTooLarge
 } = require('../utils/storeThemes');
+const { activeShopId } = require('../utils/shopScope');
 
 async function loadDigital() {
+    const shopId = await activeShopId();
     const [row] = await ShopDigitalSetup.findOrCreate({
-        where: { ShopId: 1 },
-        defaults: { ShopId: 1, storeThemeId: 'standard-retail', themeAssets: {} }
+        where: { ShopId: shopId },
+        defaults: { ShopId: shopId, storeThemeId: 'standard-retail', themeAssets: {} }
     });
     return row;
 }

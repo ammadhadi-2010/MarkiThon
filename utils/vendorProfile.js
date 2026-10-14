@@ -12,6 +12,7 @@ function publicVendor(row) {
         id: vendor.id,
         role: 'vendor',
         shopkeeperId: vendor.shopkeeperId,
+        shopId: Number(vendor.shopId) || 0,
         shopName: vendor.shopName,
         ownerName: vendor.ownerName,
         fullName: vendor.ownerName || '',
@@ -99,6 +100,7 @@ async function ensureDefaultVendor() {
         address: 'Local Market, Pakistan',
         password: await hashPassword('Shopkeeper@123'),
         status: 'Active',
+        shopId: 1,
         biometricEnabled: false
     });
 }

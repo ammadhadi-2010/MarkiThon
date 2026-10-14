@@ -1,4 +1,5 @@
 const ShopDigitalSetup = require('../models/ShopDigitalSetup');
+const { activeShopId } = require('../utils/shopScope');
 
 const defaults = {
     enabled: false,
@@ -24,9 +25,10 @@ function packBanner(row) {
 }
 
 async function getRow() {
+    const shopId = await activeShopId();
     const [row] = await ShopDigitalSetup.findOrCreate({
-        where: { ShopId: 1 },
-        defaults: { ShopId: 1 }
+        where: { ShopId: shopId },
+        defaults: { ShopId: shopId }
     });
     return row;
 }

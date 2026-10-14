@@ -5,6 +5,7 @@ const { parseRange } = require('../utils/dateRange');
 const {
     CAT_SALARY, CAT_ADVANCE, EXPENSE_CATEGORIES, isStaffCategory, monthRange, sumBy
 } = require('../utils/expenseStaff');
+const { activeShopId, sameShop } = require('../utils/shopScope');
 
 async function resolveStaff(body, category) {
     if (!isStaffCategory(category)) return null;
@@ -15,7 +16,7 @@ async function resolveStaff(body, category) {
         throw err;
     }
     const staff = await Staff.findByPk(id);
-    if (!staff) {
+    if (!staff || !sameShop(staff, await activeShopId())) {
         const err = new Error('Staff member not found.');
         err.status = 404;
         throw err;
@@ -70,7 +71,7 @@ exports.addExpense = async (req, res) => {
             staffId: staff ? staff.id : null,
             staffName: staff ? staff.fullName : '',
             offsetAmount,
-            ShopId: req.body.ShopId || 1
+            ShopId: await activeShopId()
         });
         const message = category === CAT_SALARY
             ? `Salary saved. Advance offset Rs. ${offsetAmount.toLocaleString()}. Net paid Rs. ${amount.toLocaleString()}.`
@@ -85,7 +86,7 @@ exports.listExpenses = async (req, res) => {
     try {
         const { from, to } = parseRange(req.query);
         const rows = await Expense.findAll({
-            where: { spentOn: { [Op.between]: [from, to] } },
+            where: { ShopId: await activeShopId(), spentOn: { [Op.between]: [from, to] } },
             order: [['spentOn', 'DESC']]
         });
         const total = rows.reduce((s, r) => s + Number(r.amount || 0), 0);

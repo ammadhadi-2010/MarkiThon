@@ -46,8 +46,12 @@ async function saLogoutAdmin() {
     } catch (error) {
         /* Clear local session anyway. */
     }
-    localStorage.removeItem(SA_AUTH_KEY);
-    localStorage.removeItem('mtAuthToken');
+    if (typeof authClearAllSessions === 'function') {
+        authClearAllSessions();
+    } else {
+        localStorage.removeItem(SA_AUTH_KEY);
+        localStorage.removeItem('mtAuthToken');
+    }
     location.replace('/login');
 }
 

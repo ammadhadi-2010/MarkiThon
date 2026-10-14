@@ -100,7 +100,7 @@ async function adminUpdatePassword(req, res) {
 
 function logout(req, res) {
     clearAuthCookie(res);
-    res.status(200).json({ message: 'Signed out.' });
+    res.status(200).json({ message: 'Signed out.', clearClient: true });
 }
 
 module.exports = {

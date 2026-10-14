@@ -111,12 +111,18 @@ function bindTopbarProfile() {
         } catch (error) {
             /* clear local session anyway */
         }
-        localStorage.removeItem('mtAuthToken');
-        localStorage.removeItem('mtAuthToken:admin');
-        localStorage.removeItem('mtAuthToken:vendor');
-        localStorage.removeItem('mtAuthToken:customer');
-        localStorage.removeItem('vendor');
-        localStorage.removeItem('mtVendorUser');
+        if (typeof authClearAllSessions === 'function') {
+            authClearAllSessions();
+        } else {
+            localStorage.removeItem('mtAuthToken');
+            localStorage.removeItem('mtAuthToken:admin');
+            localStorage.removeItem('mtAuthToken:vendor');
+            localStorage.removeItem('mtAuthToken:customer');
+            localStorage.removeItem('vendor');
+            localStorage.removeItem('mtVendorUser');
+            localStorage.removeItem('mpBuyerToken');
+            localStorage.removeItem('mtShopId');
+        }
         location.assign('/login');
     });
 

@@ -209,8 +209,15 @@ function bindVendorProfile() {
         } catch (error) {
             /* Clear local token anyway. */
         }
-        localStorage.removeItem(VP_TOKEN_KEY);
-        localStorage.removeItem('mtAuthToken');
+        if (typeof authClearAllSessions === 'function') {
+            authClearAllSessions();
+        } else {
+            localStorage.removeItem(VP_TOKEN_KEY);
+            localStorage.removeItem('mtAuthToken');
+            localStorage.removeItem('vendor');
+            localStorage.removeItem('mtVendorUser');
+            localStorage.removeItem('mtShopId');
+        }
         location.assign('/vendor/login');
     });
     disableAutofill(root);

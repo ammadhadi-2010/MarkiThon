@@ -1,15 +1,17 @@
 const Staff = require('../models/Staff');
 const ShopProfile = require('../models/ShopProfile');
+const { activeShopId, sameShop } = require('../utils/shopScope');
 
 const ACCESS_KEYS = ['Owner', 'Manager', 'Salesman', 'Inventory Staff', 'Accountant'];
 
 async function shopProfile() {
-    return ShopProfile.findOne({ where: { ShopId: 1 } });
+    return ShopProfile.findOne({ where: { ShopId: await activeShopId() } });
 }
 
 exports.listStaff = async (req, res) => {
     try {
-        const rows = await Staff.findAll({ where: { ShopId: 1 }, order: [['id', 'ASC']] });
+        const shopId = await activeShopId();
+        const rows = await Staff.findAll({ where: { ShopId: shopId }, order: [['id', 'ASC']] });
         const shop = await shopProfile();
         res.status(200).json({
             rows,
@@ -35,7 +37,7 @@ exports.addStaff = async (req, res) => {
             salary: Number(req.body.salary) || 0,
             status: req.body.status === 'Inactive' ? 'Inactive' : 'Active',
             permissions: Array.isArray(req.body.permissions) ? req.body.permissions : [],
-            ShopId: 1
+            ShopId: await activeShopId()
         });
         res.status(201).json({ message: 'Staff member saved.', staff });
     } catch (error) {
@@ -46,7 +48,9 @@ exports.addStaff = async (req, res) => {
 exports.updateStaff = async (req, res) => {
     try {
         const staff = await Staff.findByPk(req.params.id);
-        if (!staff) return res.status(404).json({ message: 'Staff member not found.' });
+        if (!staff || !sameShop(staff, await activeShopId())) {
+            return res.status(404).json({ message: 'Staff member not found.' });
+        }
         const role = Staff.STAFF_ROLES.includes(req.body.role) ? req.body.role : staff.role;
         await staff.update({
             fullName: String(req.body.fullName || staff.fullName).trim(),
@@ -64,7 +68,9 @@ exports.updateStaff = async (req, res) => {
 exports.deleteStaff = async (req, res) => {
     try {
         const staff = await Staff.findByPk(req.params.id);
-        if (!staff) return res.status(404).json({ message: 'Staff member not found.' });
+        if (!staff || !sameShop(staff, await activeShopId())) {
+            return res.status(404).json({ message: 'Staff member not found.' });
+        }
         await staff.destroy();
         res.status(200).json({ message: 'Staff member removed.' });
     } catch (error) {

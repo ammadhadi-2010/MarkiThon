@@ -2,6 +2,7 @@ const ShopProfile = require('../models/ShopProfile');
 const CatalogTerm = require('../models/CatalogTerm');
 const { listCategories } = require('../utils/adminCategories');
 const { resolveShopType } = require('../utils/shopTypeCatalog');
+const { activeShopId } = require('../utils/shopScope');
 
 function sameName(left, right) {
     return String(left || '').trim().toLowerCase() === String(right || '').trim().toLowerCase();
@@ -10,7 +11,7 @@ function sameName(left, right) {
 async function shopTypeFromRequest(req) {
     const queryType = String(req.query.shopType || '').trim();
     if (queryType) return resolveShopType(queryType);
-    const profile = await ShopProfile.findOne({ where: { ShopId: 1 } });
+    const profile = await ShopProfile.findOne({ where: { ShopId: await activeShopId() } });
     return resolveShopType((profile && profile.shopType) || 'Clothing & Fashion');
 }
 
@@ -40,8 +41,8 @@ exports.listSubcategories = async (req, res) => {
         const parent = String(req.query.parent || req.query.category || '').trim();
         const group = listCategories().find((row) => row.shopType === shopType);
         const mains = (group && group.categories) || [];
-        const profile = await ShopProfile.findOne({ where: { ShopId: 1 } });
-        const shopId = profile ? Number(profile.ShopId) : 1;
+        const shopId = await activeShopId();
+        const profile = await ShopProfile.findOne({ where: { ShopId: shopId } });
         const terms = await CatalogTerm.findAll({
             where: { kind: 'subcategory', shopId },
             order: [['name', 'ASC']]

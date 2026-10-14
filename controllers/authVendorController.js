@@ -9,14 +9,21 @@ const {
     randomChallenge,
     ensureDefaultVendor
 } = require('../utils/vendorProfile');
+const { ensureVendorShopBound } = require('../utils/vendorShopBind');
 const { sendWelcomeEmail, queueEmail } = require('../services/emailService');
 
 const PENDING = 'Pending Admin Approval';
 
-function sendVendor(res, vendor, status) {
-    const token = signAuth({ sub: vendor.id, role: 'vendor', status: vendor.status }, '7d');
+async function sendVendor(res, vendor, status) {
+    const shopId = await ensureVendorShopBound(vendor);
+    const token = signAuth({
+        sub: vendor.id,
+        role: 'vendor',
+        status: vendor.status,
+        shopId
+    }, '7d');
     setAuthCookie(res, token);
-    res.status(status || 200).json({ token, user: publicVendor(vendor) });
+    res.status(status || 200).json({ token, user: publicVendor(vendor), shopId });
 }
 
 async function vendorRegister(req, res) {
@@ -45,10 +52,12 @@ async function vendorRegister(req, res) {
             password: await hashPassword(password),
             status: PENDING
         });
+        await ensureVendorShopBound(vendor);
         queueEmail(() => sendWelcomeEmail(email, shopName));
         return res.status(201).json({
             message: 'Registration submitted. Your account is Pending Admin Approval.',
-            user: publicVendor(vendor)
+            user: publicVendor(vendor),
+            shopId: vendor.shopId
         });
     } catch (error) {
         return res.status(500).json({ message: 'Could not register the shopkeeper account.' });
@@ -70,7 +79,7 @@ async function vendorLogin(req, res) {
                 user: publicVendor(vendor)
             });
         }
-        return sendVendor(res, vendor);
+        return await sendVendor(res, vendor);
     } catch (error) {
         return res.status(500).json({ message: 'Could not sign in as a shopkeeper.' });
     }
@@ -80,7 +89,8 @@ async function vendorMe(req, res) {
     try {
         const vendor = await VendorAccount.findByPk(req.auth.sub);
         if (!vendor) return res.status(401).json({ message: 'Sign in as a shopkeeper to continue.' });
-        return res.status(200).json({ user: publicVendor(vendor) });
+        await ensureVendorShopBound(vendor);
+        return res.status(200).json({ user: publicVendor(vendor), shopId: vendor.shopId });
     } catch (error) {
         return res.status(401).json({ message: 'Sign in as a shopkeeper to continue.' });
     }
@@ -119,7 +129,7 @@ async function vendorWebauthnFinish(req, res) {
         if (!vendor || vendor.webauthnCredId !== credId || !vendor.biometricEnabled || vendor.status !== 'Active') {
             return res.status(401).json({ message: 'Thumb scan login failed.' });
         }
-        return sendVendor(res, vendor);
+        return await sendVendor(res, vendor);
     } catch (error) {
         return res.status(500).json({ message: 'Could not finish thumb scan login.' });
     }

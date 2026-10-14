@@ -2,7 +2,9 @@ const express = require('express');
 const router = express.Router();
 const { getStep1, saveStep1, saveStep2, saveStep5, saveStep6 } = require('../controllers/onboardingController');
 const staff = require('../controllers/onboardingStaffController');
+const { requireVendorShop } = require('../middleware/requireVendorShop');
 
+router.use(requireVendorShop);
 router.get('/step-1', getStep1);
 router.post('/step-1', saveStep1);
 router.post('/step-2', saveStep2);

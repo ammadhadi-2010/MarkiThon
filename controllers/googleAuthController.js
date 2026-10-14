@@ -4,6 +4,7 @@ const VendorAccount = require('../models/VendorAccount');
 const { signBuyer, publicBuyer } = require('../utils/buyerToken');
 const { signAuth, setAuthCookie } = require('../utils/authToken');
 const { publicVendor } = require('../utils/vendorProfile');
+const { ensureVendorShopBound } = require('../utils/vendorShopBind');
 const { cleanEmail } = require('../utils/authCrypto');
 
 function clientId() {
@@ -35,7 +36,8 @@ async function verifyGoogleCredential(credential) {
     return payload;
 }
 
-function sendVendorSession(res, vendor) {
+async function sendVendorSession(res, vendor) {
+    const shopId = await ensureVendorShopBound(vendor);
     const user = publicVendor(vendor);
     if (vendor.status !== 'Active') {
         return res.status(403).json({
@@ -47,13 +49,19 @@ function sendVendorSession(res, vendor) {
             fullName: user.ownerName || user.shopName
         });
     }
-    const token = signAuth({ sub: vendor.id, role: 'vendor', status: vendor.status }, '30d');
+    const token = signAuth({
+        sub: vendor.id,
+        role: 'vendor',
+        status: vendor.status,
+        shopId
+    }, '30d');
     setAuthCookie(res, token);
     return res.status(200).json({
         token,
         role: 'shopkeeper',
         redirect: '/app',
         user,
+        shopId,
         shopName: user.shopName,
         fullName: user.ownerName || user.shopName
     });
@@ -122,7 +130,7 @@ async function googleSignIn(req, res) {
         const email = String(payload.email || '').trim().toLowerCase();
 
         const vendor = await findVendorByGoogleEmail(email);
-        if (vendor) return sendVendorSession(res, vendor);
+        if (vendor) return await sendVendorSession(res, vendor);
 
         const buyer = await upsertGoogleBuyer(payload);
         return sendBuyerSession(res, buyer);

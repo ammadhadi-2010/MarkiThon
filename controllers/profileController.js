@@ -4,6 +4,7 @@ const Setting = require('../models/Setting');
 const { SHOP_TYPES, BUSINESS_TYPES } = ShopProfile;
 const { categoriesForShop } = require('../utils/shopCatalog');
 const { resolveShopType } = require('../utils/shopTypeCatalog');
+const { activeShopId } = require('../utils/shopScope');
 
 function pickShopType(raw, fallback) {
     if (SHOP_TYPES.includes(raw)) return raw;
@@ -12,7 +13,8 @@ function pickShopType(raw, fallback) {
 }
 
 async function getOrCreateProfile() {
-    let row = await ShopProfile.findOne({ where: { ShopId: 1 } });
+    const shopId = await activeShopId();
+    let row = await ShopProfile.findOne({ where: { ShopId: shopId } });
     if (!row) {
         row = await ShopProfile.create({
             shopName: 'Ammad Hadi Stor',
@@ -24,15 +26,16 @@ async function getOrCreateProfile() {
             shopAddress: 'Main Market, Punjab',
             shopType: 'Clothing & Fashion',
             businessType: 'Both',
-            ShopId: 1
+            ShopId: shopId
         });
     }
     return row;
 }
 
 async function getOrCreateDigital() {
-    let row = await ShopDigitalSetup.findOne({ where: { ShopId: 1 } });
-    if (!row) row = await ShopDigitalSetup.create({ ShopId: 1 });
+    const shopId = await activeShopId();
+    let row = await ShopDigitalSetup.findOne({ where: { ShopId: shopId } });
+    if (!row) row = await ShopDigitalSetup.create({ ShopId: shopId });
     return row;
 }
 
@@ -45,13 +48,14 @@ async function mergedProfile() {
 }
 
 async function syncSetting(profile) {
-    let setting = await Setting.findOne({ where: { ShopId: 1 } });
+    const shopId = await activeShopId();
+    let setting = await Setting.findOne({ where: { ShopId: shopId } });
     const data = {
         shopName: profile.shopName,
         ownerName: profile.ownerName,
         phone: profile.phoneNumber,
         address: profile.shopAddress,
-        ShopId: 1
+        ShopId: shopId
     };
     if (!setting) await Setting.create(data);
     else await setting.update(data);

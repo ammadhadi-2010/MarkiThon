@@ -2,16 +2,18 @@ const { Op } = require('sequelize');
 const Expense = require('../models/Expense');
 const Staff = require('../models/Staff');
 const { CAT_SALARY, CAT_ADVANCE, monthRange, sumBy } = require('../utils/expenseStaff');
+const { activeShopId } = require('../utils/shopScope');
 
 exports.staffLedger = async (req, res) => {
     try {
         const { from, to } = monthRange(req.query.date);
+        const shopId = await activeShopId();
         const [staff, rows] = await Promise.all([
             Staff.findAll({
-                where: { ShopId: 1, status: 'Active' },
+                where: { ShopId: shopId, status: 'Active' },
                 order: [['fullName', 'ASC']]
             }),
-            Expense.findAll({ where: { spentOn: { [Op.between]: [from, to] } } })
+            Expense.findAll({ where: { ShopId: shopId, spentOn: { [Op.between]: [from, to] } } })
         ]);
         const ledger = staff.map((s) => {
             const mine = rows.filter((e) => String(e.staffId) === String(s.id));

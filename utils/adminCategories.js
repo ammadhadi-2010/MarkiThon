@@ -1,23 +1,6 @@
-const fs = require('fs');
-const path = require('path');
 const { SHOP_CATALOG, resolveShopType } = require('./shopTypeCatalog');
 const { SHOP_TYPE_ICONS } = require('./adminCategoryIcons');
-
-const treeFile = path.join(__dirname, '../data/admin-category-tree.json');
-
-function readJson(target, fallback) {
-    try {
-        const data = JSON.parse(fs.readFileSync(target, 'utf8'));
-        return data == null ? fallback : data;
-    } catch (error) {
-        return fallback;
-    }
-}
-
-function writeJson(target, data) {
-    fs.mkdirSync(path.dirname(target), { recursive: true });
-    fs.writeFileSync(target, JSON.stringify(data, null, 2));
-}
+const { loadTree, saveTree } = require('./adminCategoryStore');
 
 function clean(value) {
     return String(value || '').trim().slice(0, 80);
@@ -46,54 +29,6 @@ function packEntry(entry, fallbackLocked) {
         subs: [...new Set(subs)],
         icon: cleanIcon(row.icon)
     };
-}
-
-function emptyTree() {
-    const tree = {};
-    Object.keys(SHOP_CATALOG).forEach((shopType) => {
-        tree[shopType] = {};
-        SHOP_CATALOG[shopType].categories.forEach((name) => {
-            tree[shopType][name] = { locked: true, isCustomized: false, subs: [], icon: '📁' };
-        });
-    });
-    return tree;
-}
-
-function isTreeEmpty(saved) {
-    if (!saved || typeof saved !== 'object') return true;
-    return !Object.keys(saved).some((shopType) => {
-        const row = saved[shopType];
-        return row && typeof row === 'object' && Object.keys(row).length > 0;
-    });
-}
-
-/** Load saved tree only. Seed defaults once when the file is completely empty. */
-function loadTree() {
-    const saved = readJson(treeFile, null);
-    if (isTreeEmpty(saved)) {
-        const seeded = emptyTree();
-        writeJson(treeFile, seeded);
-        return seeded;
-    }
-    const tree = {};
-    Object.keys(saved).forEach((shopType) => {
-        const row = saved[shopType];
-        if (!row || typeof row !== 'object') return;
-        tree[shopType] = {};
-        Object.keys(row).forEach((name) => {
-            const standard = SHOP_CATALOG[shopType]
-                && SHOP_CATALOG[shopType].categories.includes(name);
-            tree[shopType][name] = packEntry(row[name], Boolean(standard));
-        });
-    });
-    Object.keys(SHOP_CATALOG).forEach((shopType) => {
-        if (!tree[shopType]) tree[shopType] = {};
-    });
-    return tree;
-}
-
-function saveTree(tree) {
-    writeJson(treeFile, tree);
 }
 
 function listCategories() {
@@ -144,7 +79,7 @@ function findTarget(tree, id) {
     return null;
 }
 
-function addCategory(body) {
+async function addCategory(body) {
     const shopType = clean(body.shopType);
     const name = clean(body.name || body.categoryName);
     const icon = cleanIcon(body.icon);
@@ -159,7 +94,7 @@ function addCategory(body) {
     if (!tree[shopType]) tree[shopType] = {};
     if (tree[shopType][name]) return { error: 'That category already exists.' };
     tree[shopType][name] = { locked: false, isCustomized: true, subs, icon };
-    saveTree(tree);
+    await saveTree(tree);
     return {
         ok: true,
         message: subs.length ? 'Category and subcategories added.' : 'Category added.',
@@ -167,7 +102,7 @@ function addCategory(body) {
     };
 }
 
-function addSubcategory(body) {
+async function addSubcategory(body) {
     const name = clean(body.name || body.subcategoryName);
     if (name.length < 2) return { error: 'Enter a subcategory name.' };
     const tree = loadTree();
@@ -190,11 +125,11 @@ function addSubcategory(body) {
     }
     tree[shopType][parent].subs = subs.concat(name);
     tree[shopType][parent].isCustomized = true;
-    saveTree(tree);
+    await saveTree(tree);
     return { ok: true, message: 'Subcategory added.', shopType };
 }
 
-function updateCategory(id, body) {
+async function updateCategory(id, body) {
     const tree = loadTree();
     const target = findTarget(tree, id);
     if (!target) return { missing: true };
@@ -219,11 +154,11 @@ function updateCategory(id, body) {
         target.entry.isCustomized = true;
         target.entry.locked = false;
     }
-    saveTree(tree);
+    await saveTree(tree);
     return { ok: true, message: 'Category name updated.', shopType: target.shopType };
 }
 
-function removeCategory(id) {
+async function removeCategory(id) {
     const tree = loadTree();
     const target = findTarget(tree, id);
     if (!target) return { missing: true };
@@ -233,7 +168,7 @@ function removeCategory(id) {
         target.entry.subs = (target.entry.subs || []).filter((item) => item !== target.sub);
         target.entry.isCustomized = true;
     }
-    saveTree(tree);
+    await saveTree(tree);
     const kind = target.kind === 'sub' ? 'Subcategory' : 'Category';
     return { ok: true, message: kind + ' deleted.', shopType: target.shopType };
 }
@@ -244,6 +179,7 @@ function mainNamesForType(shopType) {
     if (group && group.categories.length) return group.categories.map((row) => row.name);
     return (SHOP_CATALOG[key] || SHOP_CATALOG['General / Multi-Category']).categories.slice();
 }
+
 module.exports = {
     SHOP_TYPE_ICONS, listCategories, mainNamesForType,
     addCategory, addSubcategory, updateCategory, removeCategory

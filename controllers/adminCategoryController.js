@@ -1,5 +1,4 @@
 const {
-    listCategories,
     addCategory,
     addSubcategory,
     updateCategory,
@@ -21,7 +20,7 @@ exports.categories = async (req, res) => {
 
 exports.createCategory = async (req, res) => {
     try {
-        const result = addCategory(req.body || {});
+        const result = await addCategory(req.body || {});
         if (result.error) return res.status(400).json({ message: result.error });
         res.status(201).json({
             message: result.message,
@@ -35,7 +34,7 @@ exports.createCategory = async (req, res) => {
 
 exports.createSubcategory = async (req, res) => {
     try {
-        const result = addSubcategory(req.body || {});
+        const result = await addSubcategory(req.body || {});
         if (result.error) return res.status(400).json({ message: result.error });
         res.status(201).json({
             message: result.message,
@@ -59,7 +58,7 @@ exports.updateCategory = async (req, res) => {
                 shopTypes: await treePayload()
             });
         }
-        const row = updateCategory(req.params.id, req.body || {});
+        const row = await updateCategory(req.params.id, req.body || {});
         if (row && row.missing) return res.status(404).json({ message: 'Category not found.' });
         if (row && row.error) return res.status(400).json({ message: row.error });
         res.status(200).json({
@@ -83,7 +82,7 @@ exports.deleteCategory = async (req, res) => {
                 shopTypes: await treePayload()
             });
         }
-        const row = removeCategory(req.params.id);
+        const row = await removeCategory(req.params.id);
         if (row && row.missing) return res.status(404).json({ message: 'Category not found.' });
         if (row && row.error) return res.status(400).json({ message: row.error });
         res.status(200).json({

@@ -1,6 +1,7 @@
 let saCatTree = [];
 let saCatOpen = {};
 let saCatFlash = '';
+const saCatSelectedParent = {};
 
 function saCatIcon(svg) {
     return saSvg(svg);
@@ -8,10 +9,11 @@ function saCatIcon(svg) {
 
 function saCatActions(shopType) {
     const type = saText(shopType);
+    const parent = saText(saCatSelectedParent[shopType] || '');
     return `
-        <div class="sa-cat-actions" onclick="event.stopPropagation()">
+        <div class="sa-cat-actions">
             <button type="button" class="sa-cat-btn is-add" data-cat-add="${type}">+ Add Category</button>
-            <button type="button" class="sa-cat-btn is-sub" data-cat-sub="${type}">+ Add Subcategory</button>
+            <button type="button" class="sa-cat-btn is-sub" data-cat-sub="${type}" data-cat-parent="${parent}">+ Add Subcategory</button>
         </div>`;
 }
 
@@ -40,7 +42,9 @@ function saCatSection(cat, shopType) {
     const adminChips = (cat.subcategories || []).map(saCatChip).join('');
     const shopChips = (cat.shopSubs || []).map(saCatChip).join('');
     const pen = saCatIcon('<path d="M4 20h4L18 10l-4-4L4 16v4z"/>');
-    return `<div class="sa-cat-section" data-cat-id="${saText(cat.id)}">
+    const selected = saCatSelectedParent[shopType] === cat.name;
+    return `<div class="sa-cat-section${selected ? ' is-selected' : ''}" data-cat-id="${saText(cat.id)}"
+        data-cat-pick="${saText(cat.name)}" data-shop-type="${saText(shopType)}">
         <div class="sa-cat-section-head">
             <div class="sa-cat-section-title">
                 <span class="sa-cat-folder" aria-hidden="true">${saText(cat.icon || '📁')}</span>

@@ -1,7 +1,17 @@
+function saCatAuthHeaders() {
+    const token = localStorage.getItem('mtAuthToken:admin')
+        || localStorage.getItem('mtAuthToken')
+        || '';
+    const headers = { 'Content-Type': 'application/json' };
+    if (token) headers.Authorization = 'Bearer ' + token;
+    return headers;
+}
+
 async function saCatApi(url, method, body) {
     const response = await fetch(url, {
         method,
-        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        headers: saCatAuthHeaders(),
         body: body ? JSON.stringify(body) : undefined
     });
     const data = await response.json().catch(() => ({}));
@@ -17,7 +27,6 @@ async function saCatApi(url, method, body) {
     saCatToast(data.message || 'Saved.');
     if (body && body.shopType) saCatOpen[body.shopType] = true;
     else if (data.shopType) saCatOpen[data.shopType] = true;
-    /* Always re-fetch from API so the UI matches persisted DB/file state. */
     await saMountCategories();
     return data;
 }
@@ -54,16 +63,30 @@ function saCatModalFields(shopType, mode, parents) {
 }
 
 function saWireCatModal() {
-    document.getElementById('saFormCancel').onclick = () => document.getElementById('saShopModal').remove();
+    const cancel = document.getElementById('saFormCancel');
+    if (cancel) {
+        cancel.onclick = () => {
+            const modal = document.getElementById('saShopModal');
+            if (modal) modal.remove();
+        };
+    }
 }
 
 function saOpenAddCategory(shopType) {
+    if (typeof saShopModal !== 'function') {
+        saCatToast('Category form is not ready. Refresh the page.', true);
+        return;
+    }
     const tags = [];
     saShopModal('Add New Main Category & Subcategories', saCatModalFields(shopType, 'add'),
         '<button type="button" id="saFormCancel">Cancel</button><button class="sa-add" type="submit">Save All</button>');
     saWireCatModal();
     saWireSubTags(tags);
-    document.querySelector('#saShopModal form').onsubmit = (event) => {
+    const nameInput = document.getElementById('saFormCatName');
+    if (nameInput) nameInput.focus();
+    const form = document.querySelector('#saShopModal form');
+    if (!form) return;
+    form.onsubmit = (event) => {
         event.preventDefault();
         saFlushSubDraft(tags);
         const categoryName = document.getElementById('saFormCatName').value;
@@ -77,18 +100,27 @@ function saOpenAddCategory(shopType) {
 }
 
 function saOpenAddSubcategory(shopType, parentName) {
+    if (typeof saShopModal !== 'function') {
+        saCatToast('Category form is not ready. Refresh the page.', true);
+        return;
+    }
     const group = saCatGroup(shopType);
     const parents = (group && group.categories || []).map((row) => row.name);
     if (!parents.length) {
         saCatToast('Add a main category first.', true);
         return;
     }
+    const preferred = parentName || saCatSelectedParent[shopType] || parents[0];
     saShopModal('Add Subcategory', saCatModalFields(shopType, 'sub', parents),
         '<button type="button" id="saFormCancel">Cancel</button><button class="sa-add" type="submit">Save Subcategory</button>');
     saWireCatModal();
     const parent = document.getElementById('saFormParent');
-    if (parentName && parents.includes(parentName)) parent.value = parentName;
-    document.querySelector('#saShopModal form').onsubmit = (event) => {
+    if (parent && preferred && parents.includes(preferred)) parent.value = preferred;
+    const nameInput = document.getElementById('saFormCatName');
+    if (nameInput) nameInput.focus();
+    const form = document.querySelector('#saShopModal form');
+    if (!form) return;
+    form.onsubmit = (event) => {
         event.preventDefault();
         saCatApi('/api/admin/subcategories', 'POST', {
             shopType,
@@ -168,19 +200,27 @@ document.addEventListener('click', (event) => {
     const sub = event.target.closest('[data-cat-sub]');
     const edit = event.target.closest('[data-cat-edit]');
     const del = event.target.closest('[data-cat-del]');
-    if (toggle) {
-        saCatOpen[toggle.dataset.catToggle] = !saCatOpen[toggle.dataset.catToggle];
-        saPaintCategories();
+    const pick = event.target.closest('[data-cat-pick]');
+    if (add) {
+        event.preventDefault();
+        event.stopPropagation();
+        saOpenAddCategory(add.getAttribute('data-cat-add') || add.dataset.catAdd || '');
         return;
     }
-    if (add) { event.preventDefault(); saOpenAddCategory(add.dataset.catAdd); return; }
     if (sub) {
         event.preventDefault();
-        saOpenAddSubcategory(sub.dataset.catSub, sub.dataset.catParent || '');
+        event.stopPropagation();
+        const shopType = sub.getAttribute('data-cat-sub') || sub.dataset.catSub || '';
+        const parent = sub.getAttribute('data-cat-parent')
+            || sub.dataset.catParent
+            || saCatSelectedParent[shopType]
+            || '';
+        saOpenAddSubcategory(shopType, parent);
         return;
     }
     if (edit) {
         event.preventDefault();
+        event.stopPropagation();
         const hit = saCatFind(edit.dataset.catEdit);
         if (hit) saOpenCatEdit(hit);
         return;
@@ -189,6 +229,20 @@ document.addEventListener('click', (event) => {
         event.preventDefault();
         event.stopPropagation();
         saCatDelete(del.dataset.catDel, del.dataset.catKind || '');
+        return;
+    }
+    if (pick) {
+        const shopType = pick.getAttribute('data-shop-type') || '';
+        const parent = pick.getAttribute('data-cat-pick') || '';
+        if (shopType && parent) {
+            saCatSelectedParent[shopType] = parent;
+            saPaintCategories();
+        }
+        return;
+    }
+    if (toggle) {
+        saCatOpen[toggle.dataset.catToggle] = !saCatOpen[toggle.dataset.catToggle];
+        saPaintCategories();
     }
 });
 

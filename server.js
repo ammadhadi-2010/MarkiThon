@@ -31,6 +31,7 @@ require('./models/ProductReview');
 require('./models/CatalogTerm');
 require('./models/BuyerAccount');
 require('./models/VendorAccount');
+require('./models/PlatformCategoryStore');
 
 const productRoutes = require('./routes/productRoutes');
 const saleRoutes = require('./routes/saleRoutes');
@@ -123,6 +124,12 @@ async function connectDatabase() {
                 }
             } catch (purgeError) {
                 console.warn('[db] Demo marketplace cleanup skipped:', purgeError.message);
+            }
+            try {
+                const { initCategoryStore } = require('./utils/adminCategoryStore');
+                await initCategoryStore();
+            } catch (catError) {
+                console.warn('[categories] Store init skipped:', catError.message);
             }
             markDbReady();
             console.log('PostgreSQL connection and models synced');

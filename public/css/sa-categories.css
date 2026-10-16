@@ -40,18 +40,23 @@
     position: absolute;
     top: 14px;
     right: 14px;
+    z-index: 5;
     display: flex;
     flex-wrap: wrap;
     gap: 8px;
     justify-content: flex-end;
+    pointer-events: auto;
 }
 .sa-cat-btn {
+    position: relative;
+    z-index: 6;
     padding: 6px 12px;
     border-radius: 8px;
     font-size: 12px;
     font-weight: 700;
     cursor: pointer;
     border: 0;
+    pointer-events: auto;
 }
 .sa-cat-btn.is-add { background: #2563eb; color: #fff; }
 .sa-cat-btn.is-add:hover { background: #1d4ed8; }
@@ -72,6 +77,11 @@
     border: 1px solid rgba(148, 163, 184, 0.16);
     border-radius: 12px;
     padding: 12px 14px;
+    cursor: pointer;
+}
+.sa-cat-section.is-selected {
+    border-color: rgba(59, 130, 246, 0.55);
+    box-shadow: inset 0 0 0 1px rgba(59, 130, 246, 0.25);
 }
 .sa-cat-section-head {
     display: flex;
